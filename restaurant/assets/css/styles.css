@@ -140,14 +140,13 @@ ul{list-style:none}
 :root{--disc:clamp(200px,32vw,320px);--wheelw:calc(var(--disc)*0.52)}
 .scene--menu{padding-block:0;scroll-behavior:smooth}
 .menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:var(--disc);
-  display:flex;flex-direction:column;justify-content:center;
-  padding-block:20px;padding-right:calc(var(--wheelw) + 30px)}
+  padding-block:18px;padding-right:calc(var(--wheelw) + 30px)}
 /* نوارِ تارِ بالای صفحه: محتوای زیرین را محو می‌کند و در پایین نرم فِید می‌شود */
 .menu__sticky::before{content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(180deg,var(--bg) 30%,color-mix(in srgb,var(--bg) 60%,transparent) 62%,transparent);
   backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
   -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent);mask-image:linear-gradient(180deg,#000 60%,transparent)}
-.menu__title{display:flex;flex-direction:column;gap:6px}
+.menu__title{position:absolute;left:0;bottom:22px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left}
 .menu__eyebrow{font-family:var(--display);font-weight:700;font-size:clamp(1rem,2.2vw,1.3rem);color:var(--text-dim);line-height:1.1}
 .menu__active{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
 .menu__active-fa{font-family:var(--display);font-size:clamp(1.9rem,5vw,3rem);color:var(--accent-2);line-height:1.05;
