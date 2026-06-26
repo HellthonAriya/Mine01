@@ -78,19 +78,56 @@
 
     /* ----------------------------- منو ----------------------------- */
     let activeCourse = COURSES[0] ? COURSES[0].id : "";
-    const tabsWrap = $("#courseTabs");
-    tabsWrap.innerHTML = COURSES.map((c, i) =>
-      `<button class="ctab ${i === 0 ? "is-on" : ""}" data-course="${c.id}" role="tab">${c.fa}</button>`).join("")
-      + `<span class="ctabs__ink" id="ctabsInk"></span>`;
-    function placeInk() {
-      const on = tabsWrap.querySelector(".ctab.is-on"), ink = $("#ctabsInk");
-      if (!on || !ink) return;
-      ink.style.left = on.offsetLeft + "px";
-      ink.style.width = on.offsetWidth + "px";
+
+    /* ---------- چرخِ انتخابِ دسته (دیسکِ سی‌دی‌مانند) ---------- */
+    const wheel = $("#wheel"), disc = $("#wheelDisc");
+    const N = COURSES.length, STEP = N ? 360 / N : 0, MARK = 135; // نشانگر: پایین‌چپ
+    const rad = (d) => d * Math.PI / 180;
+    let rot = 0, activeIdx = 0;
+    disc.innerHTML = COURSES.map((c, i) =>
+      `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button"><span>${c.fa}</span></button>`).join("");
+    const items = $$(".wheel__item", disc);
+    function layoutWheel() {
+      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.39;
+      items.forEach((el, i) => {
+        const a = i * STEP;
+        el.style.left = (c + Rr * Math.cos(rad(a))) + "px";
+        el.style.top = (c + Rr * Math.sin(rad(a))) + "px";
+      });
     }
-    addEventListener("resize", placeInk);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeInk);
-    requestAnimationFrame(placeInk); setTimeout(placeInk, 400);
+    function setRot(animate) {
+      const t = animate ? "transform .6s cubic-bezier(.22,1,.36,1)" : "none";
+      disc.style.transition = t; disc.style.transform = `rotate(${rot}deg)`;
+      items.forEach((el) => { el.style.transition = t; el.style.transform = `translate(-50%,-50%) rotate(${-rot}deg)`; });
+    }
+    function nearestRotFor(i) { let target = MARK - i * STEP; target += Math.round((rot - target) / 360) * 360; return target; }
+    function selectCourse(i, animate) {
+      if (!N) return; i = ((i % N) + N) % N; activeIdx = i; rot = nearestRotFor(i); setRot(animate !== false);
+      items.forEach((el, k) => el.classList.toggle("is-on", k === i));
+      const c = COURSES[i]; $("#wheelFa").textContent = c.fa; $("#wheelEn").textContent = c.en || "";
+      if (activeCourse !== c.id) {
+        activeCourse = c.id; const w = $("#dishList"); w.classList.add("is-switching");
+        setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); w.classList.remove("is-switching"); }, 220);
+      }
+    }
+    disc.addEventListener("click", (e) => { const b = e.target.closest(".wheel__item"); if (b) selectCourse(+b.dataset.idx); });
+    /* چرخاندن با درگ */
+    let dragging = false, lastA = 0, moved = false;
+    const angAt = (ev) => { const r = disc.getBoundingClientRect(); return Math.atan2(ev.clientY - (r.top + r.height / 2), ev.clientX - (r.left + r.width / 2)) * 180 / Math.PI; };
+    wheel.addEventListener("pointerdown", (e) => { dragging = true; moved = false; lastA = angAt(e); setRot(false); try { wheel.setPointerCapture(e.pointerId); } catch (_) {} });
+    addEventListener("pointermove", (e) => {
+      if (!dragging) return; const a = angAt(e); let d = a - lastA; if (d > 180) d -= 360; if (d < -180) d += 360;
+      if (Math.abs(d) > 0.5) moved = true; rot += d; lastA = a; setRot(false);
+    });
+    addEventListener("pointerup", () => {
+      if (!dragging) return; dragging = false;
+      if (!moved) return; // کلیکِ ساده را به هندلرِ آیتم بسپار
+      let best = 0, bd = 999;
+      for (let i = 0; i < N; i++) { const cur = ((i * STEP + rot) % 360 + 360) % 360; const diff = Math.abs(((cur - MARK + 540) % 360) - 180); if (diff < bd) { bd = diff; best = i; } }
+      selectCourse(best);
+    });
+    addEventListener("resize", () => { layoutWheel(); setRot(false); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layoutWheel(); setRot(false); });
     const dishRow = (d, i) => `
       <article class="dcard" data-dish="${d.id}" style="transition-delay:${((i % 6) * 0.06).toFixed(2)}s">
         <div class="dcard__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
@@ -122,19 +159,9 @@
       wrap.innerHTML = list.length ? list.map(dishRow).join("") : `<p class="scene__lead" style="text-align:center;padding:40px">آیتمی در این دسته نیست.</p>`;
       observeDishes();
     }
-    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); placeInk(); }
-    tabsWrap.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-course]"); if (!b) return;
-      if (b.dataset.course === activeCourse) return;
-      activeCourse = b.dataset.course;
-      $$("#courseTabs .ctab").forEach((c) => c.classList.toggle("is-on", c.dataset.course === activeCourse));
-      placeInk();
-      b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
-      const wrap = $("#dishList");
-      wrap.classList.add("is-switching");
-      setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); wrap.classList.remove("is-switching"); }, 220);
-    });
+    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); layoutWheel(); setRot(false); }
     renderDishes();
+    layoutWheel(); selectCourse(0, false);
 
     /* مودالِ غذا */
     const modal = $("#dishModal"), panel = $("#dishPanel");

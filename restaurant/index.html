@@ -115,12 +115,18 @@
   <!-- منو -->
   <section class="scene scene--menu" id="scene-menu">
     <div class="menu__sticky">
-      <div class="menu__bar">
-        <div class="menu__title">
-          <span class="kicker" data-edit="menu.kicker">منوی فصلی</span>
-          <h2 class="menu__h2" data-edit="menu.title">منوی دمسا</h2>
+      <div class="menu__title">
+        <span class="kicker" data-edit="menu.kicker">منوی فصلی</span>
+        <h2 class="menu__h2" data-edit="menu.title">منوی دمسا</h2>
+        <div class="menu__active">
+          <span class="menu__active-fa" id="wheelFa">—</span>
+          <span class="menu__active-en" id="wheelEn"></span>
         </div>
-        <nav class="ctabs" id="courseTabs" role="tablist" aria-label="دوره‌ها"></nav>
+        <span class="menu__spin">دیسک را بچرخان و دسته را انتخاب کن ↻</span>
+      </div>
+      <div class="wheel" id="wheel" aria-label="انتخابِ دسته با چرخاندنِ دیسک">
+        <div class="wheel__disc" id="wheelDisc"></div>
+        <span class="wheel__marker" aria-hidden="true"></span>
       </div>
     </div>
     <div class="dishes" id="dishList"></div>
