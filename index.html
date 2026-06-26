@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>کافهٔ دمسا · خانهٔ قهوهٔ دست‌ساز</title>
-  <meta name="description" content="کافهٔ دمسا؛ قهوهٔ تک‌خاستگاهِ دست‌دم، صبحانهٔ تازه، دسرهای خانگی و فضایی شبانه و دل‌نشین. رزرو میز و سفارش آنلاین." />
+  <meta name="description" content="کافهٔ دمسا؛ قهوهٔ تک‌خاستگاهِ دست‌دم، صبحانهٔ تازه، دسرهای خانگی و فضایی شبانه و دل‌نشین. منو را ببین و آیتم‌های دلخواهت را در لیستِ سفارش نگه دار." />
   <meta name="theme-color" content="#14100D" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="کافهٔ دمسا · خانهٔ قهوهٔ دست‌ساز" />
@@ -216,7 +216,10 @@
         <svg class="ic ic--sun"><use href="#i-sun"></use></svg>
         <svg class="ic ic--moon"><use href="#i-moon"></use></svg>
       </button>
-      <a href="#reserve" class="btn btn--primary nav__cta">رزرو میز</a>
+      <button class="icon-btn nav__list" id="navList" aria-label="لیستِ سفارش" data-open-list>
+        <svg class="ic"><use href="#i-cart"></use></svg>
+        <span class="count-badge" data-count hidden>۰</span>
+      </button>
       <button class="icon-btn nav__burger" id="burger" aria-label="منو" aria-expanded="false">
         <svg class="ic"><use href="#i-menu"></use></svg>
       </button>
@@ -231,11 +234,11 @@
     <a href="#about"><span>۰۱</span>دربارهٔ ما</a>
     <a href="#featured"><span>۰۲</span>منوی ویژه</a>
     <a href="#menu"><span>۰۳</span>منوی کامل</a>
-    <a href="#reserve"><span>۰۴</span>رزرو میز</a>
-    <a href="#gallery"><span>۰۵</span>گالری</a>
-    <a href="#events"><span>۰۶</span>رویدادها</a>
-    <a href="#loyalty"><span>۰۷</span>باشگاه مشتریان</a>
-    <a href="#contact"><span>۰۸</span>تماس</a>
+    <a href="#gallery"><span>۰۴</span>گالری</a>
+    <a href="#events"><span>۰۵</span>رویدادها</a>
+    <a href="#loyalty"><span>۰۶</span>باشگاه مشتریان</a>
+    <a href="#contact"><span>۰۷</span>تماس</a>
+    <a href="#" data-open-list><span>۰۸</span>لیستِ سفارش</a>
   </nav>
   <div class="mobilemenu__foot">
     <a href="tel:+982100000000"><svg class="ic"><use href="#i-phone"></use></svg>۰۲۱–۰۰۰۰۰۰۰۰</a>
@@ -264,7 +267,7 @@
       </p>
       <div class="hero__cta" data-reveal>
         <a href="#menu" class="btn btn--primary btn--lg" data-magnetic>مشاهدهٔ منو</a>
-        <a href="#reserve" class="btn btn--ghost btn--lg" data-magnetic>رزرو میز</a>
+        <a href="#featured" class="btn btn--ghost btn--lg" data-magnetic>منوی ویژه</a>
       </div>
       <div class="hero__meta" data-reveal>
         <div class="hero__rating">
@@ -386,50 +389,6 @@
   </div>
 </section>
 
-<!-- ============================ رزرو میز ============================ -->
-<section class="reserve section" id="reserve">
-  <div class="container reserve__grid">
-    <div class="reserve__intro">
-      <span class="kicker" data-reveal>رزرو میز</span>
-      <h2 class="h2" data-reveal>میزت را پیش از آمدن نگه دار</h2>
-      <p data-reveal>چند ثانیه کافی‌ست. تاریخ و ساعت را انتخاب کن، تعداد مهمان‌ها را بگو و خواسته‌های ویژه‌ات را برایمان بنویس.</p>
-      <ul class="reserve__perks" data-reveal>
-        <li><svg class="ic"><use href="#i-check"></use></svg> نگه‌داشتنِ میز تا ۱۵ دقیقه</li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> امکانِ انتخابِ میزِ کنارِ پنجره</li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> هماهنگیِ مناسبت‌های ویژه</li>
-      </ul>
-    </div>
-
-    <form class="reserve__card" id="reserveForm" data-reveal novalidate>
-      <div class="field">
-        <label>تاریخ</label>
-        <div class="daypick" id="dayPick"></div>
-      </div>
-      <div class="field">
-        <label>ساعت</label>
-        <div class="timepick" id="timePick"></div>
-      </div>
-      <div class="field">
-        <label>تعداد مهمان</label>
-        <div class="stepper">
-          <button type="button" class="stepper__btn" data-guest="-1" aria-label="کمتر"><svg class="ic"><use href="#i-minus"></use></svg></button>
-          <output id="guestCount">۲</output>
-          <button type="button" class="stepper__btn" data-guest="1" aria-label="بیشتر"><svg class="ic"><use href="#i-plus"></use></svg></button>
-        </div>
-      </div>
-      <div class="field field--row">
-        <div><label>نام</label><input type="text" id="resName" placeholder="نام شما" required /></div>
-        <div><label>شمارهٔ تماس</label><input type="tel" id="resPhone" placeholder="۰۹…" required /></div>
-      </div>
-      <div class="field">
-        <label>خواستهٔ ویژه <span class="muted">(اختیاری)</span></label>
-        <textarea id="resNote" rows="2" placeholder="مثلاً میز کنار پنجره، جشن تولد…"></textarea>
-      </div>
-      <button type="submit" class="btn btn--primary btn--block btn--lg">ثبت رزرو</button>
-    </form>
-  </div>
-</section>
-
 <!-- ============================ نظرات ============================ -->
 <section class="reviews section" id="reviews">
   <div class="container">
@@ -534,9 +493,9 @@
   <div class="container faq" id="faq">
     <h3 class="faq__title" data-reveal>پرسش‌های پرتکرار</h3>
     <div class="faq__list">
-      <details class="faq__item" data-reveal><summary>برای رزرو حتماً باید پیش‌پرداخت بدهم؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>خیر. رزرو رایگان است و میز تا ۱۵ دقیقه نگه داشته می‌شود.</p></details>
+      <details class="faq__item" data-reveal><summary>«لیستِ سفارش» چطور کار می‌کند؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>هر آیتمی که دوست داری را به لیست اضافه کن تا یادت بماند. لیست روی همین گوشی ذخیره می‌شود؛ موقعِ حضور در کافه یا تماس، از روی آن سفارشت را بده. این فقط یک یادداشت است و خرید یا پرداختِ آنلاینی در کار نیست.</p></details>
       <details class="faq__item" data-reveal><summary>گزینهٔ گیاهی و بدون گلوتن دارید؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>بله؛ آیتم‌های گیاهی و بدون گلوتن در منو با برچسبِ مخصوص مشخص شده‌اند.</p></details>
-      <details class="faq__item" data-reveal><summary>برای گروه یا مناسبتِ ویژه چطور رزرو کنم؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>در فرمِ رزرو، تعداد مهمان را مشخص کن و در «خواستهٔ ویژه» مناسبت را بنویس؛ ما هماهنگی لازم را انجام می‌دهیم.</p></details>
+      <details class="faq__item" data-reveal><summary>می‌توانم لیستم را برایتان بفرستم؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>بله. در پایینِ لیست، دکمهٔ «کپیِ لیست» را بزن تا متنِ سفارشت کپی شود؛ بعد می‌توانی آن را در واتساپ یا تماس برایمان بفرستی.</p></details>
       <details class="faq__item" data-reveal><summary>امتیازهای باشگاه چطور استفاده می‌شوند؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>هر ۱۰۰ امتیاز معادلِ یک نوشیدنیِ هدیه است که هنگامِ حضور در کافه قابلِ استفاده است.</p></details>
     </div>
   </div>
@@ -556,7 +515,7 @@
       </div>
     </div>
     <nav class="footer__col"><h4>کافه</h4><a href="#about">دربارهٔ ما</a><a href="#menu">منو</a><a href="#events">رویدادها</a><a href="#loyalty">باشگاه</a></nav>
-    <nav class="footer__col"><h4>خدمات</h4><a href="#reserve">رزرو میز</a><a href="#gallery">گالری</a><a href="#contact">تماس</a><a href="#faq">سؤالات</a></nav>
+    <nav class="footer__col"><h4>خدمات</h4><a href="#" data-open-list>لیستِ سفارش</a><a href="#gallery">گالری</a><a href="#contact">تماس</a><a href="#faq">سؤالات</a></nav>
     <div class="footer__news">
       <h4>خبرنامه</h4>
       <p>از منوی فصلی و رویدادها زودتر باخبر شو.</p>
@@ -572,18 +531,42 @@
   </div>
 </footer>
 
-<!-- ============================ دکمهٔ شناورِ رزرو (موبایل) ============================ -->
-<a href="#reserve" class="fab" id="fab" aria-label="رزرو میز">
-  <svg class="ic"><use href="#i-cal"></use></svg><span>رزرو میز</span>
-</a>
+<!-- ============================ دکمهٔ شناورِ لیستِ سفارش (موبایل) ============================ -->
+<button class="fab" id="fab" aria-label="لیستِ سفارش" data-open-list>
+  <svg class="ic"><use href="#i-cart"></use></svg><span>لیستِ سفارش</span>
+  <span class="count-badge" data-count hidden>۰</span>
+</button>
 
 <!-- ============================ ناوبریِ پایینِ موبایل ============================ -->
 <nav class="bottomnav" aria-label="ناوبری موبایل">
   <a href="#hero" class="is-active"><svg class="ic"><use href="#i-home"></use></svg><span>خانه</span></a>
   <a href="#menu"><svg class="ic"><use href="#i-book"></use></svg><span>منو</span></a>
-  <a href="#reserve"><svg class="ic"><use href="#i-cal"></use></svg><span>رزرو</span></a>
+  <button type="button" data-open-list><svg class="ic"><use href="#i-cart"></use></svg><span>لیست</span><span class="count-badge count-badge--nav" data-count hidden>۰</span></button>
   <a href="#contact"><svg class="ic"><use href="#i-phone"></use></svg><span>تماس</span></a>
 </nav>
+
+<!-- ============================ کشوی لیستِ سفارش ============================ -->
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="لیستِ سفارش">
+  <div class="drawer__scrim" data-close-list></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <header class="drawer__head">
+      <div>
+        <h2 id="drawerTitle" class="drawer__title">لیستِ سفارشِ من</h2>
+        <p class="drawer__sub">یادداشتِ آیتم‌هایی که دوست داری — بدونِ خرید یا پرداخت.</p>
+      </div>
+      <button class="icon-btn" data-close-list aria-label="بستن"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="drawer__body" id="drawerBody"></div>
+    <footer class="drawer__foot" id="drawerFoot" hidden>
+      <div class="drawer__total"><span>جمعِ تقریبی</span><b id="drawerTotal">۰ تومان</b></div>
+      <p class="drawer__hint"><svg class="ic"><use href="#i-spark"></use></svg> این فقط یک یادداشت است. موقعِ سفارش در کافه یا تماس از روی آن استفاده کن.</p>
+      <div class="drawer__actions">
+        <button class="btn btn--primary btn--lg" id="copyList"><svg class="ic"><use href="#i-check"></use></svg>کپیِ لیست</button>
+        <button class="btn btn--ghost" id="clearList">خالی‌کردنِ لیست</button>
+      </div>
+    </footer>
+  </div>
+</aside>
 
 <!-- ============================ مودالِ جزئیات محصول ============================ -->
 <div class="modal" id="productModal" aria-hidden="true" role="dialog" aria-modal="true">

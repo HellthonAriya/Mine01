@@ -1,7 +1,7 @@
 /* ===========================================================================
    کافهٔ دمسا — app.js
-   لایهٔ تعامل: لودر، تم، ناوبری، ذرات، انیمیشن، منو، سبد، رزرو، نظرات،
-   گالری، رویدادها، باشگاه، توست.
+   لایهٔ تعامل: لودر، تم، ناوبری، ذرات، انیمیشن، منو، لیستِ سفارش (یادداشت)،
+   نظرات، گالری، رویدادها، باشگاه، توست.
    =========================================================================== */
 (function () {
   "use strict";
@@ -56,8 +56,8 @@
   $$("#mobilemenu a").forEach((a) => a.addEventListener("click", closeMM));
 
   /* اسکرول‌اسپای برای ناوبری پایین */
-  const navMap = { hero: 0, menu: 1, reserve: 2 };
-  const spyTargets = ["hero", "menu", "reserve"].map((id) => $("#" + id));
+  const navMap = { hero: 0, menu: 1, contact: 2 };
+  const spyTargets = ["hero", "menu", "contact"].map((id) => $("#" + id));
   const bottomLinks = $$(".bottomnav a");
   const spy = new IntersectionObserver((ents) => {
     ents.forEach((e) => {
@@ -138,7 +138,7 @@
   const saveFavs = () => localStorage.setItem("damsa-favs", JSON.stringify([...favs]));
 
   const cardHTML = (m) => `
-    <article class="pcard" data-id="${m.id}">
+    <article class="pcard" data-quick="${m.id}">
       <div class="pcard__media" style="background:${artBG(m.art)}">
         ${illusUse(m.illus)}
         <div class="pcard__tags">${m.tags.map(tagHTML).join("")}</div>
@@ -158,7 +158,7 @@
         </div>
         <div class="pcard__foot">
           <span class="price">${fmt(m.price)}<small> تومان</small></span>
-          <button class="add-btn" data-quick="${m.id}"><svg class="ic"><use href="#i-search"></use></svg>جزئیات</button>
+          <button class="add-btn" data-add="${m.id}"><svg class="ic"><use href="#i-plus"></use></svg>به لیست</button>
         </div>
       </div>
     </article>`;
@@ -208,7 +208,7 @@
           ${m.tags[0] ? tagHTML(m.tags[0]) : ""}
         </div>
       </div>
-      <button class="mrow__add" data-quick="${m.id}" aria-label="جزئیات"><svg class="ic"><use href="#i-search"></use></svg></button>
+      <button class="mrow__add" data-add="${m.id}" aria-label="افزودن به لیست"><svg class="ic"><use href="#i-plus"></use></svg></button>
     </article>`;
   const renderMenu = () => {
     let list = MENU;
@@ -231,8 +231,10 @@
   document.addEventListener("click", (e) => {
     const fav = e.target.closest("[data-fav]");
     if (fav) { const id = fav.dataset.fav; favs.has(id) ? favs.delete(id) : favs.add(id); fav.classList.toggle("is-on"); saveFavs(); return; }
+    const add = e.target.closest("[data-add]");
+    if (add) { e.preventDefault(); e.stopPropagation(); pulse(add); addToList(add.dataset.add); return; }
     const quick = e.target.closest("[data-quick]");
-    if (quick && !e.target.closest("[data-fav]")) openProduct(quick.dataset.quick);
+    if (quick) openProduct(quick.dataset.quick);
   });
   const pulse = (el) => { el.animate([{ transform: "scale(1)" }, { transform: "scale(.86)" }, { transform: "scale(1)" }], { duration: 280, easing: "ease" }); };
 
@@ -264,48 +266,113 @@
         `<span>${a.fa}${a.p ? " · +" + fmt(a.p) + " ت" : ""}</span>`).join("")}</div></div>` : ""}
     </div>
     <div class="pm__foot">
-      <span class="price">${fmt(m.price)}<small> تومان</small></span>
-      <button class="btn btn--primary btn--lg" id="mReserve">برای چشیدن، میز رزرو کن</button>
+      <div class="stepper">
+        <button type="button" class="stepper__btn" data-mqty="-1" aria-label="کمتر"><svg class="ic"><use href="#i-minus"></use></svg></button>
+        <output id="pmQty">۱</output>
+        <button type="button" class="stepper__btn" data-mqty="1" aria-label="بیشتر"><svg class="ic"><use href="#i-plus"></use></svg></button>
+      </div>
+      <button class="btn btn--primary btn--lg" id="mAdd"><svg class="ic"><use href="#i-cart"></use></svg>افزودن به لیست</button>
     </div>`;
   };
+  let pmQty = 1;
   function openProduct(id) {
     modalItem = byId[id];
+    pmQty = 1;
     panel.innerHTML = productHTML(modalItem);
     modal.classList.add("is-open"); modal.setAttribute("aria-hidden", "false"); document.body.classList.add("is-locked");
   }
   const closeModal = () => { modal.classList.remove("is-open"); modal.setAttribute("aria-hidden", "true"); document.body.classList.remove("is-locked"); };
   modal.addEventListener("click", (e) => {
     if (e.target.closest("[data-close]") || e.target.classList.contains("modal__scrim")) return closeModal();
-    if (e.target.closest("#mReserve")) {
-      closeModal();
-      const el = $("#reserve");
-      if (el) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-    }
+    const q = e.target.closest("[data-mqty]");
+    if (q) { pmQty = Math.min(20, Math.max(1, pmQty + (+q.dataset.mqty))); $("#pmQty").textContent = fmt(pmQty); return; }
+    if (e.target.closest("#mAdd") && modalItem) { addToList(modalItem.id, pmQty); closeModal(); }
   });
 
-  /* ----------------------------- رزرو ----------------------------- */
-  const dayPick = $("#dayPick"), timePick = $("#timePick");
-  const wdFmt = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { weekday: "short" });
-  const dFmt = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { day: "numeric" });
-  const mFmt = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { month: "short" });
-  let resDay = 0, resTime = "۱۸:۰۰", guests = 2;
-  dayPick.innerHTML = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(); d.setDate(d.getDate() + i);
-    return `<button type="button" class="day ${i === 0 ? "is-on" : ""}" data-day="${i}">
-      <span>${i === 0 ? "امروز" : wdFmt.format(d)}</span><b>${dFmt.format(d)}</b><span>${mFmt.format(d)}</span></button>`;
-  }).join("");
-  const TIMES = ["۰۹:۰۰", "۱۰:۳۰", "۱۲:۰۰", "۱۴:۰۰", "۱۶:۰۰", "۱۸:۰۰", "۲۰:۰۰", "۲۱:۳۰"];
-  timePick.innerHTML = TIMES.map((t, i) =>
-    `<button type="button" class="time ${t === resTime ? "is-on" : ""}" data-time="${t}" ${i === 1 ? "disabled" : ""}>${t}</button>`).join("");
-  dayPick.addEventListener("click", (e) => { const b = e.target.closest("[data-day]"); if (!b) return; $$(".day").forEach((x) => x.classList.remove("is-on")); b.classList.add("is-on"); resDay = +b.dataset.day; });
-  timePick.addEventListener("click", (e) => { const b = e.target.closest("[data-time]"); if (!b || b.disabled) return; $$(".time").forEach((x) => x.classList.remove("is-on")); b.classList.add("is-on"); resTime = b.dataset.time; });
-  $$("[data-guest]").forEach((b) => b.addEventListener("click", () => { guests = Math.min(12, Math.max(1, guests + (+b.dataset.guest))); $("#guestCount").textContent = fmt(guests); }));
-  $("#reserveForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (!$("#resName").value.trim() || !$("#resPhone").value.trim()) { toast("نام و شماره را کامل کن", "error"); return; }
-    toast(`رزرو ثبت شد · ${fmt(guests)} نفر · ساعت ${resTime} ✨`);
-    confetti(); e.target.reset(); guests = 2; $("#guestCount").textContent = fmt(2);
+  /* ----------------------------- لیستِ سفارش (یادداشت) ----------------------------- */
+  // فقط یک یادداشت روی همین دستگاه است؛ نه خرید، نه پرداخت، نه ارسال.
+  const LIST_KEY = "damsa-list";
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(LIST_KEY) || "[]").filter((x) => byId[x.id]); } catch { list = []; }
+  const saveList = () => localStorage.setItem(LIST_KEY, JSON.stringify(list));
+  const listCount = () => list.reduce((s, x) => s + x.qty, 0);
+  const listTotal = () => list.reduce((s, x) => s + (byId[x.id].price * x.qty), 0);
+
+  const drawer = $("#drawer"), drawerBody = $("#drawerBody"), drawerFoot = $("#drawerFoot");
+
+  const renderBadges = () => {
+    const n = listCount();
+    $$("[data-count]").forEach((b) => { b.textContent = fmt(n); b.hidden = n === 0; });
+  };
+
+  const renderDrawer = () => {
+    if (!list.length) {
+      drawerBody.innerHTML = `<div class="drawer__empty">
+        <svg viewBox="0 0 24 24"><use href="#i-cart"></use></svg>
+        <p>لیستت خالی است.<br>از منو هر چیزی که دوست داری را اضافه کن تا یادت بماند.</p>
+      </div>`;
+      drawerFoot.hidden = true;
+      return;
+    }
+    drawerBody.innerHTML = list.map((x) => {
+      const m = byId[x.id];
+      return `<div class="litem" data-row="${m.id}">
+        <div class="litem__thumb" style="background:${artBG(m.art)}"><svg viewBox="0 0 120 120"><use href="#illus-${m.illus}"></use></svg></div>
+        <div class="litem__main">
+          <div class="litem__name">${m.name}</div>
+          <div class="litem__price">${fmt(m.price)} تومان</div>
+          <div class="litem__qty">
+            <button data-dec="${m.id}" aria-label="کمتر"><svg class="ic"><use href="#i-minus"></use></svg></button>
+            <b>${fmt(x.qty)}</b>
+            <button data-inc="${m.id}" aria-label="بیشتر"><svg class="ic"><use href="#i-plus"></use></svg></button>
+          </div>
+        </div>
+        <button class="litem__rm" data-rm="${m.id}" aria-label="حذف"><svg class="ic"><use href="#i-close"></use></svg></button>
+      </div>`;
+    }).join("");
+    $("#drawerTotal").textContent = `${fmt(listTotal())} تومان`;
+    drawerFoot.hidden = false;
+  };
+
+  const refreshList = () => { saveList(); renderBadges(); renderDrawer(); };
+
+  function addToList(id, qty = 1) {
+    if (!byId[id]) return;
+    const row = list.find((x) => x.id === id);
+    if (row) row.qty = Math.min(20, row.qty + qty); else list.push({ id, qty });
+    refreshList();
+    toast(`«${byId[id].name}» به لیست اضافه شد`);
+  }
+  const setQty = (id, d) => {
+    const row = list.find((x) => x.id === id); if (!row) return;
+    row.qty += d;
+    if (row.qty < 1) list = list.filter((x) => x.id !== id);
+    refreshList();
+  };
+  const removeFromList = (id) => { list = list.filter((x) => x.id !== id); refreshList(); };
+
+  const openDrawer = () => { renderDrawer(); drawer.classList.add("is-open"); drawer.setAttribute("aria-hidden", "false"); document.body.classList.add("is-locked"); };
+  const closeDrawer = () => { drawer.classList.remove("is-open"); drawer.setAttribute("aria-hidden", "true"); document.body.classList.remove("is-locked"); };
+
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-open-list]")) { e.preventDefault(); openDrawer(); } });
+  drawer.addEventListener("click", (e) => {
+    if (e.target.closest("[data-close-list]") || e.target.classList.contains("drawer__scrim")) return closeDrawer();
+    const inc = e.target.closest("[data-inc]"), dec = e.target.closest("[data-dec]"), rm = e.target.closest("[data-rm]");
+    if (inc) return setQty(inc.dataset.inc, +1);
+    if (dec) return setQty(dec.dataset.dec, -1);
+    if (rm) return removeFromList(rm.dataset.rm);
   });
+
+  $("#clearList").addEventListener("click", () => { if (!list.length) return; list = []; refreshList(); toast("لیست خالی شد"); });
+  $("#copyList").addEventListener("click", async () => {
+    if (!list.length) return;
+    const lines = list.map((x) => `• ${byId[x.id].name} ×${fmt(x.qty)}`);
+    const text = `🧾 لیستِ سفارشِ من از کافهٔ دمسا\n${lines.join("\n")}\n— جمعِ تقریبی: ${fmt(listTotal())} تومان`;
+    try { await navigator.clipboard.writeText(text); toast("لیست کپی شد ✓"); confetti(); }
+    catch { toast("کپی نشد؛ دستی انتخاب کن", "error"); }
+  });
+
+  renderBadges();
 
   /* ----------------------------- نظرات ----------------------------- */
   const track = $("#reviewsTrack"), dotsWrap = $("#reviewsDots");
@@ -438,7 +505,7 @@
   /* بستن با Escape */
   addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-    closeModal(); closeMM();
+    closeModal(); closeMM(); closeDrawer();
     lb.classList.remove("is-open"); document.body.classList.remove("is-locked");
   });
 

@@ -7,6 +7,10 @@
 #    sudo bash deploy.sh                      # فقط با IP سرور
 #    sudo bash deploy.sh example.com          # دامنه + SSL (بدون ایمیل)
 #    sudo bash deploy.sh example.com you@mail # دامنه + SSL + ایمیل
+#
+#  نکته: پیکربندیِ Nginx را خودِ این اسکریپت می‌سازد و به Certbot اجازهٔ
+#  دست‌کاریِ آن را نمی‌دهد (certonly). به‌این‌ترتیب دسترسی با IP روی HTTP
+#  حفظ می‌شود و دامنه روی HTTPS بالا می‌آید — حتی بعد از گرفتنِ گواهی.
 # ===========================================================================
 set -euo pipefail
 
@@ -40,16 +44,8 @@ else
 fi
 chown -R www-data:www-data "${APP_DIR}"
 
-say "ساخت پیکربندی Nginx…"
-SERVER_NAME="_"
-[ -n "${DOMAIN}" ] && SERVER_NAME="${DOMAIN} www.${DOMAIN}"
-
-cat > "/etc/nginx/sites-available/${SITE}" <<EOF
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name ${SERVER_NAME};
-
+# --- بلوک‌های مشترکِ پیکربندی ----------------------------------------------
+read -r -d '' SITE_BODY <<EOF || true
     root ${APP_DIR};
     index index.html;
 
@@ -66,41 +62,101 @@ server {
     gzip on;
     gzip_comp_level 5;
     gzip_types text/css application/javascript image/svg+xml application/json;
-}
 EOF
 
+# پیکربندیِ HTTP-only (همیشه ساخته می‌شود؛ IP را روی پورت ۸۰ سرو می‌کند)
+write_http_only() {
+  cat > "/etc/nginx/sites-available/${SITE}" <<EOF
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+${SITE_BODY}
+}
+EOF
+}
+
+# پیکربندیِ نهاییِ HTTPS: ۴۴۳ برای دامنه + ۸۰ که هم IP را سرو می‌کند هم دامنه را
+# به HTTPS هدایت می‌کند. (Certbot به این فایل دست نمی‌زند.)
+write_https() {
+  local names="$1"   # مثلاً: "example.com www.example.com"
+  cat > "/etc/nginx/sites-available/${SITE}" <<EOF
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${names};
+
+    ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+${SITE_BODY}
+}
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+
+    # دامنه را به HTTPS بفرست؛ IP روی HTTP باقی می‌ماند.
+    if (\$host ~* ^(www\.)?${DOMAIN//./\\.}\$) { return 301 https://${DOMAIN}\$request_uri; }
+${SITE_BODY}
+}
+EOF
+}
+
+say "ساخت پیکربندی Nginx (HTTP)…"
+write_http_only
 ln -sf "/etc/nginx/sites-available/${SITE}" "/etc/nginx/sites-enabled/${SITE}"
 rm -f /etc/nginx/sites-enabled/default
 
 say "بازکردن پورت‌ها در فایروال (در صورت فعال‌بودن)…"
 ufw allow 'Nginx Full' >/dev/null 2>&1 || true
+ufw allow 80/tcp        >/dev/null 2>&1 || true
+ufw allow 443/tcp       >/dev/null 2>&1 || true
 
 say "اعتبارسنجی و بارگذاری Nginx…"
 nginx -t
 systemctl enable nginx >/dev/null 2>&1 || true
-systemctl reload nginx
+systemctl restart nginx
 
 if [ -n "${DOMAIN}" ]; then
-  say "نصب Certbot و گرفتن گواهی SSL برای ${DOMAIN}…"
+  say "نصب Certbot و گرفتنِ گواهی SSL برای ${DOMAIN}…"
   apt-get install -y -qq certbot python3-certbot-nginx
   EMAIL_ARG="--register-unsafely-without-email"
   [ -n "${EMAIL}" ] && EMAIL_ARG="--email ${EMAIL}"
+
+  # فقط گواهی را می‌گیریم (certonly) و اجازه نمی‌دهیم Certbot پیکربندی را تغییر دهد.
   # ابتدا با www؛ اگر DNSِ www تنظیم نباشد، فقط دامنهٔ اصلی.
-  if ! certbot --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --non-interactive --agree-tos --redirect ${EMAIL_ARG}; then
-    say "گرفتن گواهی برای www ناموفق بود؛ تلاش فقط برای ${DOMAIN}…"
-    certbot --nginx -d "${DOMAIN}" --non-interactive --agree-tos --redirect ${EMAIL_ARG} \
-      || say "هشدار: SSL گرفته نشد. مطمئن شو رکورد A دامنه به IP این سرور اشاره می‌کند، سپس دوباره اجرا کن."
+  SSL_NAMES="${DOMAIN}"
+  if certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" \
+       --non-interactive --agree-tos ${EMAIL_ARG} 2>/dev/null; then
+    SSL_NAMES="${DOMAIN} www.${DOMAIN}"
+  elif certbot certonly --nginx -d "${DOMAIN}" \
+       --non-interactive --agree-tos ${EMAIL_ARG}; then
+    SSL_NAMES="${DOMAIN}"
+    say "گواهیِ www گرفته نشد (DNSِ www تنظیم نیست)؛ فقط ${DOMAIN} روی SSL رفت."
+  else
+    say "هشدار: SSL گرفته نشد. مطمئن شو رکورد A دامنه به IP این سرور اشاره می‌کند، سپس دوباره اجرا کن."
   fi
-  # تمدیدِ خودکار با تایمر سیستم‌دی فعال است.
-  systemctl enable certbot.timer >/dev/null 2>&1 || true
+
+  if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
+    say "نوشتنِ پیکربندیِ نهاییِ HTTPS…"
+    write_https "${SSL_NAMES}"
+    nginx -t && systemctl restart nginx
+    systemctl enable certbot.timer >/dev/null 2>&1 || true
+  fi
 fi
 
 echo
 say "نصب کامل شد ✓"
-if [ -n "${DOMAIN}" ]; then
-  echo "   آدرس: https://${DOMAIN}"
+IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
+if [ -n "${DOMAIN}" ] && [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
+  echo "   دامنه:  https://${DOMAIN}"
+  echo "   با IP:  http://${IP:-<IP-سرور>}"
 else
-  IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
-  echo "   آدرس: http://${IP:-<IP-سرور>}"
+  echo "   آدرس:  http://${IP:-<IP-سرور>}"
 fi
 echo "   برای آپدیت بعدی:  sudo bash ${APP_DIR}/scripts/update.sh"

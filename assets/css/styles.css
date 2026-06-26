@@ -54,14 +54,16 @@
 
 /* ----------------------------- پایه ----------------------------- */
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
   font-family:var(--font);
   background:var(--bg);
   color:var(--text);
   line-height:1.7;
-  overflow-x:hidden;
+  width:100%;
+  max-width:100%;
+  overflow-x:clip;
   -webkit-font-smoothing:antialiased;
   transition:background .5s var(--ease),color .5s var(--ease);
 }
@@ -370,30 +372,7 @@ ul,ol{list-style:none}
 .mrow__add:hover{background:linear-gradient(135deg,var(--saffron),var(--bronze));color:#1a120a}
 .menu__empty{text-align:center;color:var(--text-dim);padding:40px}
 
-/* ----------------------------- رزرو ----------------------------- */
-.reserve{background:var(--bg-elev);border-block:1px solid var(--line-soft)}
-.reserve__grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(32px,6vw,64px);align-items:start}
-.reserve__intro p{color:var(--text-dim);margin-bottom:1.6rem;max-width:42ch}
-.reserve__perks{display:grid;gap:.7rem}
-.reserve__perks li{display:flex;align-items:center;gap:.6rem;color:var(--text-dim)}
-.reserve__perks .ic{color:var(--firouzeh)}
-.reserve__card{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-xl);padding:clamp(20px,4vw,32px);box-shadow:var(--shadow);display:grid;gap:18px}
-.field{display:grid;gap:.5rem}
-.field>label{font-weight:700;font-size:.9rem}
-.field--row{grid-template-columns:1fr 1fr;gap:14px}
-.field--row>div{display:grid;gap:.5rem}
-.field input,.field textarea{padding:.8em 1em;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-elev);outline:none;transition:border-color .3s;width:100%;resize:vertical}
-.field input:focus,.field textarea:focus{border-color:var(--accent)}
-.daypick{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.daypick::-webkit-scrollbar{display:none}
-.day{flex:none;display:grid;place-items:center;gap:2px;min-width:62px;padding:.7em .4em;border-radius:14px;border:1px solid var(--line);background:var(--bg-elev);transition:all .3s var(--ease)}
-.day b{font-size:1.2rem}.day span{font-size:.72rem;color:var(--text-dim)}
-.day.is-on{background:linear-gradient(135deg,var(--saffron),var(--bronze));color:#1a120a;border-color:transparent}
-.day.is-on span{color:#3a2a12}
-.timepick{display:flex;gap:8px;flex-wrap:wrap}
-.time{padding:.55em 1em;border-radius:999px;border:1px solid var(--line);background:var(--bg-elev);font-weight:700;font-size:.9rem;transition:all .3s}
-.time.is-on{background:linear-gradient(135deg,var(--saffron),var(--bronze));color:#1a120a;border-color:transparent}
-.time:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+/* ----------------------------- استپر (تعداد) ----------------------------- */
 .stepper{display:inline-flex;align-items:center;gap:14px;padding:.4em;border:1px solid var(--line);border-radius:999px;width:max-content;background:var(--bg-elev)}
 .stepper__btn{width:40px;height:40px;border-radius:50%;display:grid;place-content:center;background:color-mix(in srgb,var(--saffron) 12%,transparent);color:var(--saffron);transition:all .3s}
 .stepper__btn:hover{background:var(--saffron);color:#1a120a}
@@ -528,6 +507,52 @@ ul,ol{list-style:none}
 .bottomnav .ic{width:1.4rem;height:1.4rem}
 .bottomnav a.is-active,.bottomnav button.is-active{color:var(--saffron)}
 
+/* ----------------------------- نشانِ تعداد ----------------------------- */
+.nav__list{position:relative}
+.count-badge{position:absolute;inset-block-start:-6px;inset-inline-end:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+  background:linear-gradient(135deg,var(--saffron),var(--bronze));color:#1a120a;font-size:.68rem;font-weight:800;line-height:18px;text-align:center;
+  box-shadow:0 2px 8px -2px color-mix(in srgb,var(--saffron) 80%,transparent);animation:badgePop .3s var(--ease)}
+.fab .count-badge{inset-block-start:-7px;inset-inline-end:-7px}
+.count-badge--nav{inset-block-start:0;inset-inline-end:calc(50% - 22px)}
+@keyframes badgePop{from{transform:scale(0)}}
+
+/* ----------------------------- کشوی لیستِ سفارش ----------------------------- */
+.drawer{position:fixed;inset:0;z-index:160;visibility:hidden;opacity:0;transition:opacity .35s var(--ease),visibility .35s}
+.drawer.is-open{visibility:visible;opacity:1}
+.drawer__scrim{position:absolute;inset:0;background:rgba(8,5,3,.7);backdrop-filter:blur(4px)}
+.drawer__panel{position:absolute;inset-block:0;inset-inline-end:0;z-index:2;display:flex;flex-direction:column;
+  width:min(420px,100%);background:var(--bg);border-inline-start:1px solid var(--line);box-shadow:var(--shadow);
+  transform:translateX(105%);transition:transform .4s var(--ease)}
+[dir="ltr"] .drawer__panel{transform:translateX(-105%)}
+.drawer.is-open .drawer__panel{transform:none}
+.drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:22px clamp(18px,4vw,26px);border-bottom:1px solid var(--line-soft)}
+.drawer__title{font-size:1.4rem;font-weight:800}
+.drawer__sub{font-size:.82rem;color:var(--text-dim);margin-top:.2rem}
+.drawer__body{flex:1;overflow-y:auto;padding:clamp(14px,3vw,20px);display:flex;flex-direction:column;gap:12px}
+.drawer__empty{margin:auto;text-align:center;color:var(--text-dim);display:grid;gap:14px;place-items:center;padding:30px}
+.drawer__empty svg{width:56px;height:56px;color:var(--bronze);opacity:.6}
+.litem{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line-soft);border-radius:var(--r);background:var(--bg-elev)}
+.litem__thumb{flex:none;width:52px;height:52px;border-radius:12px;display:grid;place-items:center;overflow:hidden}
+.litem__thumb svg{width:60%;color:var(--cream)}
+.litem__main{flex:1;min-width:0}
+.litem__name{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.litem__price{font-size:.8rem;color:var(--text-dim)}
+.litem__qty{display:inline-flex;align-items:center;gap:10px;margin-top:6px}
+.litem__qty button{width:28px;height:28px;border-radius:8px;display:grid;place-content:center;background:color-mix(in srgb,var(--saffron) 12%,transparent);color:var(--saffron);transition:all .25s}
+.litem__qty button:hover{background:var(--saffron);color:#1a120a}
+.litem__qty .ic{width:.9rem;height:.9rem}
+.litem__qty b{min-width:1.4ch;text-align:center;font-weight:800}
+.litem__rm{flex:none;color:var(--text-dim);width:30px;height:30px;border-radius:8px;display:grid;place-content:center;transition:color .25s,background .25s}
+.litem__rm:hover{color:#ff6b7a;background:color-mix(in srgb,#ff6b7a 12%,transparent)}
+.drawer__foot{padding:clamp(16px,3vw,22px);border-top:1px solid var(--line-soft);display:grid;gap:12px;background:var(--bg)}
+.drawer__total{display:flex;align-items:center;justify-content:space-between;font-size:1.05rem}
+.drawer__total b{font-family:var(--display);font-size:1.3rem;color:var(--saffron)}
+.drawer__hint{display:flex;gap:.5rem;align-items:flex-start;font-size:.78rem;color:var(--text-dim);line-height:1.5}
+.drawer__hint .ic{flex:none;width:1rem;height:1rem;color:var(--firouzeh);margin-top:.15rem}
+.drawer__actions{display:grid;gap:8px}
+.drawer__actions .btn--lg{width:100%}
+.drawer__actions .btn--ghost{width:100%}
+
 /* ----------------------------- مودال محصول ----------------------------- */
 .modal{position:fixed;inset:0;z-index:150;display:grid;place-items:end center;opacity:0;visibility:hidden;transition:.4s var(--ease)}
 @media(min-width:760px){.modal{place-items:center}}
@@ -580,7 +605,7 @@ ul,ol{list-style:none}
   .hero__inner{grid-template-columns:1fr;gap:30px}
   .hero__stage{order:-1}
   .hero__cupwrap{width:min(60vw,300px)}
-  .about__grid,.reserve__grid,.contact__grid{grid-template-columns:1fr}
+  .about__grid,.contact__grid{grid-template-columns:1fr}
   .footer__grid{grid-template-columns:1fr 1fr}
   .masonry{columns:2}
 }
@@ -598,7 +623,6 @@ ul,ol{list-style:none}
   .section-head{flex-direction:column;align-items:flex-start}
   .countdown{align-items:flex-start}
   .menu__list{grid-template-columns:1fr}
-  .field--row{grid-template-columns:1fr}
   .footer__grid{grid-template-columns:1fr;gap:24px}
   .footer__bar{flex-direction:column;text-align:center}
   .masonry{columns:2;column-gap:12px}
