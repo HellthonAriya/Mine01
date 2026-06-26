@@ -11,3 +11,7 @@ Thumbs.db
 *.log
 node_modules/
 .cache/
+
+# محتوای ویرایش‌شده توسطِ ادمین (روی سرور تولید می‌شود؛ نباید بازنویسی شود)
+content.json
+content.json.tmp

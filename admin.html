@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>پنلِ مدیریت · کافهٔ دمسا</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body>
+
+<!-- ورود -->
+<div class="login" id="login">
+  <form class="login__card" id="loginForm" autocomplete="off">
+    <div class="login__logo">د</div>
+    <h1>پنلِ مدیریت دمسا</h1>
+    <p>برای ویرایشِ سایت، رمزِ مدیریت را وارد کن.</p>
+    <label class="field">
+      <span>رمزِ عبور</span>
+      <input type="password" id="pw" placeholder="••••••••" required />
+    </label>
+    <button class="btn btn--primary" type="submit" id="loginBtn">ورود</button>
+    <p class="login__err" id="loginErr" hidden></p>
+  </form>
+</div>
+
+<!-- اپ -->
+<div class="app" id="app" hidden>
+  <header class="abar">
+    <div class="abar__brand"><span class="abar__mark">د</span> پنلِ دمسا</div>
+    <div class="abar__actions">
+      <span class="abar__status" id="saveStatus"></span>
+      <a class="btn btn--ghost" href="/" target="_blank" rel="noopener">مشاهدهٔ سایت ↗</a>
+      <button class="btn btn--primary" id="saveBtn">ذخیره و انتشار</button>
+      <button class="btn btn--ghost" id="logoutBtn" title="خروج">خروج</button>
+    </div>
+  </header>
+
+  <div class="awrap">
+    <aside class="atabs" id="atabs"></aside>
+    <main class="aeditor" id="aeditor"></main>
+    <section class="apreview">
+      <div class="apreview__bar">
+        <span>پیش‌نمایشِ زنده</span>
+        <div class="apreview__modes">
+          <button data-vw="100%" class="is-on" title="دسکتاپ">🖥</button>
+          <button data-vw="390px" title="موبایل">📱</button>
+          <button id="reloadPreview" title="بازخوانی">↻</button>
+        </div>
+      </div>
+      <div class="apreview__frame" id="previewWrap">
+        <iframe id="preview" src="/?preview=1" title="پیش‌نمایش"></iframe>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- انتخابگرِ رنگِ پیشرفته (پاپ‌اوور) -->
+<div class="cpick" id="cpick" hidden>
+  <div class="cpick__sv" id="cpSv"><i class="cpick__svthumb" id="cpSvThumb"></i></div>
+  <div class="cpick__row">
+    <div class="cpick__hue" id="cpHue"><i class="cpick__huethumb" id="cpHueThumb"></i></div>
+  </div>
+  <div class="cpick__row cpick__row--in">
+    <span class="cpick__sw" id="cpSwatch"></span>
+    <input type="text" id="cpHex" class="cpick__hex" maxlength="7" />
+    <button class="btn btn--sm" id="cpDone">تأیید</button>
+  </div>
+  <div class="cpick__presets" id="cpPresets"></div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="assets/js/theme-engine.js"></script>
+<script src="assets/js/menu-data.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
