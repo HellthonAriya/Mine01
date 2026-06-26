@@ -96,7 +96,7 @@
     const items = $$(".wheel__item", disc);
     function itemAngle(i) { return -90 + i * SEG + SEG / 2; } // مرکزِ سکتور
     function layoutWheel() {
-      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.355;
+      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.3;
       items.forEach((el, i) => {
         const a = itemAngle(i);
         el.style.left = (c + Rr * Math.cos(rad(a))) + "px";

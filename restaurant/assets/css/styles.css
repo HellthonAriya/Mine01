@@ -137,16 +137,16 @@ ul{list-style:none}
 @keyframes marq{to{transform:translateX(-50%)}}
 
 /* ----------------------------- صحنهٔ منو (گریدِ عکس‌محور + چرخِ انتخاب) ----------------------------- */
-:root{--disc:clamp(200px,42vw,440px)}
+:root{--disc:clamp(210px,34vw,360px)}
 .scene--menu{padding-block:0;scroll-behavior:smooth}
-.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:calc(var(--disc)*0.56);
-  padding-block:clamp(30px,4.5vw,54px) 16px;padding-right:calc(var(--disc) + 28px)}
-/* نوارِ تارِ پس‌زمینه با فِیدِ نرم در پایین (تا کارت‌ها یک‌دفعه ظاهر نشوند) */
+.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:calc(var(--disc)*0.5 + 56px);
+  padding-block:clamp(46px,6vw,82px) 22px;padding-right:calc(var(--disc) + 28px)}
+/* نوارِ تارِ بالای صفحه: محتوای زیرین را محو می‌کند و در پایین نرم فِید می‌شود */
 .menu__sticky::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(180deg,var(--bg),var(--bg) 52%,transparent);
-  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
-  -webkit-mask-image:linear-gradient(180deg,#000 58%,transparent);mask-image:linear-gradient(180deg,#000 58%,transparent)}
-.menu__title{display:flex;flex-direction:column;gap:6px;padding-top:4px}
+  background:linear-gradient(180deg,var(--bg) 30%,color-mix(in srgb,var(--bg) 60%,transparent) 62%,transparent);
+  backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
+  -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent);mask-image:linear-gradient(180deg,#000 60%,transparent)}
+.menu__title{display:flex;flex-direction:column;gap:6px}
 .menu__eyebrow{font-family:var(--display);font-weight:700;font-size:clamp(1rem,2.2vw,1.3rem);color:var(--text-dim);line-height:1.1}
 .menu__active{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
 .menu__active-fa{font-family:var(--display);font-size:clamp(1.9rem,5vw,3rem);color:var(--accent-2);line-height:1.05;
@@ -154,22 +154,17 @@ ul{list-style:none}
 .menu__active-en{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
 @keyframes roIn{from{opacity:0;transform:translateY(10px)}}
 
-/* دیسکِ بزرگ؛ حدودِ نیمی از دایره در گوشهٔ بالا-راست دیده می‌شود */
-.wheel{position:absolute;top:0;right:0;width:var(--disc);height:calc(var(--disc)*0.56);
+/* دیسک: نیم‌دایره، محور روی لبهٔ بالا؛ بدونِ پس‌زمینهٔ تاریک و بدونِ سوراخِ مرکز */
+.wheel{position:absolute;top:0;right:0;width:var(--disc);height:calc(var(--disc)*0.5 + 6px);
   overflow:hidden;z-index:7;touch-action:none;cursor:grab}
 .wheel:active{cursor:grabbing}
-.wheel__disc{position:absolute;left:0;top:calc(var(--disc)*-0.44);width:var(--disc);height:var(--disc);border-radius:50%;
-  background:var(--sectors,transparent),
-    conic-gradient(from 0deg,var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2),var(--bg-elev));
-  border:1px solid var(--line);box-shadow:inset 0 0 60px rgba(0,0,0,.55),0 26px 60px -26px #000;will-change:transform}
+.wheel__disc{position:absolute;left:0;top:calc(var(--disc)*-0.5);width:var(--disc);height:var(--disc);border-radius:50%;
+  background:var(--sectors,transparent);border:1px solid var(--line-soft);will-change:transform}
 .wheel__disc::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
   background:
-    radial-gradient(circle at 50% 50%,transparent 19%,var(--line-soft) 19.4% 19.9%,transparent 20.3%),
-    radial-gradient(circle at 50% 50%,transparent 31%,var(--line-soft) 31.4% 31.9%,transparent 32.3%),
-    radial-gradient(circle at 50% 50%,transparent 43%,var(--line-soft) 43.4% 43.9%,transparent 44.3%),
-    radial-gradient(circle at 50% 50%,transparent 55%,var(--line-soft) 55.4% 55.9%,transparent 56.3%)}
-.wheel__disc::after{content:"";position:absolute;left:50%;top:50%;width:13%;height:13%;transform:translate(-50%,-50%);border-radius:50%;
-  background:var(--bg);border:1px solid var(--line);box-shadow:inset 0 0 8px rgba(0,0,0,.6)}
+    radial-gradient(circle at 50% 50%,transparent 30%,var(--line-soft) 30.4% 30.9%,transparent 31.3%),
+    radial-gradient(circle at 50% 50%,transparent 44%,var(--line-soft) 44.4% 44.9%,transparent 45.3%),
+    radial-gradient(circle at 50% 50%,transparent 58%,var(--line-soft) 58.4% 58.9%,transparent 59.3%)}
 .wheel__item{position:absolute;white-space:nowrap;font-family:var(--display);font-size:clamp(.82rem,1.5vw,1.02rem);
   color:var(--text-dim);background:none;border:none;padding:.1em .25em;cursor:pointer;
   transition:color .35s var(--ease),text-shadow .35s var(--ease)}
@@ -178,7 +173,7 @@ ul{list-style:none}
 
 .dishes{max-width:1140px;margin-inline:auto;width:100%;
   display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:clamp(16px,2.4vw,26px);
-  padding-block:clamp(18px,3vw,34px) 16vh;transition:opacity .22s var(--ease)}
+  padding-block:clamp(30px,4vw,52px) 16vh;transition:opacity .22s var(--ease)}
 .dishes.is-switching{opacity:0;transform:translateY(8px)}
 
 .dtag{font-size:.7rem;font-weight:700;padding:.26em .75em;border-radius:999px}
