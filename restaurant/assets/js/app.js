@@ -79,50 +79,55 @@
     /* ----------------------------- منو ----------------------------- */
     let activeCourse = COURSES[0] ? COURSES[0].id : "";
 
-    /* ---------- چرخِ انتخابِ دسته (دیسکِ سی‌دیِ کامل و چرخان) ---------- */
+    /* ---------- چرخِ انتخابِ دسته (دیسکِ سی‌دیِ چرخان) ---------- */
     const wheel = $("#wheel"), disc = $("#wheelDisc");
-    const N = COURSES.length, STEP = N ? 360 / N : 0;
+    const N = COURSES.length, SEG = N ? 360 / N : 0;
     const rad = (d) => d * Math.PI / 180;
     const CCOLORS = ["#C0392B", "#C99A3B", "#3F9B6D", "#2F8F86", "#9B59B6", "#E67E22", "#1ABC9C"];
-    let rot = 0, selIdx = 0, dragging = false, hover = false;
+    const cc = (i) => CCOLORS[i % CCOLORS.length];
+    let rot = 0, selIdx = 0, dragging = false, hover = false, moved = false;
+    // سکتورهای خیلی کم‌رنگ روی خودِ دیسک (هم‌تراز با برچسب‌ها)
+    if (N) {
+      const stops = COURSES.map((c, i) => `color-mix(in srgb, ${cc(i)} 12%, transparent) ${i * SEG}deg ${(i + 1) * SEG}deg`).join(",");
+      disc.style.setProperty("--sectors", `conic-gradient(from -90deg, ${stops})`);
+    }
     disc.innerHTML = COURSES.map((c, i) =>
-      `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button" style="--cc:${CCOLORS[i % CCOLORS.length]}"><span>${c.fa}</span></button>`).join("");
+      `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button" style="--cc:${cc(i)}"><span>${c.fa}</span></button>`).join("");
     const items = $$(".wheel__item", disc);
+    function itemAngle(i) { return -90 + i * SEG + SEG / 2; } // مرکزِ سکتور
     function layoutWheel() {
-      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.34;
+      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.355;
       items.forEach((el, i) => {
-        const a = i * STEP - 90; // از بالا شروع کن
+        const a = itemAngle(i);
         el.style.left = (c + Rr * Math.cos(rad(a))) + "px";
         el.style.top = (c + Rr * Math.sin(rad(a))) + "px";
+        el.style.transform = `translate(-50%,-50%) rotate(${a - 90}deg)`; // شعاعی: بالا به مرکز
       });
     }
-    function drawWheel() {
-      disc.style.transform = `rotate(${rot}deg)`;
-      items.forEach((el) => { el.style.transform = `translate(-50%,-50%) rotate(${-rot}deg)`; });
-    }
+    function drawWheel() { disc.style.transform = `rotate(${rot}deg)`; }
     function selectCourse(i) {
       if (!N) return; i = ((i % N) + N) % N; selIdx = i;
       items.forEach((el, k) => el.classList.toggle("is-on", k === i));
       const c = COURSES[i];
-      const fa = $("#wheelFa"); fa.textContent = c.fa; fa.style.color = CCOLORS[i % CCOLORS.length];
+      const fa = $("#wheelFa"); fa.textContent = c.fa; fa.style.color = cc(i);
       $("#wheelEn").textContent = c.en || "";
       if (activeCourse !== c.id) {
         activeCourse = c.id; const w = $("#dishList"); w.classList.add("is-switching");
         setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); w.classList.remove("is-switching"); }, 200);
       }
     }
-    disc.addEventListener("click", (e) => { const b = e.target.closest(".wheel__item"); if (b) selectCourse(+b.dataset.idx); });
-    /* چرخشِ نرمِ خودکار + درگِ دستی */
+    disc.addEventListener("click", (e) => { if (moved) return; const b = e.target.closest(".wheel__item"); if (b) selectCourse(+b.dataset.idx); });
+    /* چرخشِ نرمِ خودکار + درگِ دستی (بدونِ pointer-capture تا کلیک کار کند) */
     let lastA = 0;
     const angAt = (ev) => { const r = disc.getBoundingClientRect(); return Math.atan2(ev.clientY - (r.top + r.height / 2), ev.clientX - (r.left + r.width / 2)) * 180 / Math.PI; };
     wheel.addEventListener("pointerenter", () => hover = true);
     wheel.addEventListener("pointerleave", () => hover = false);
-    wheel.addEventListener("pointerdown", (e) => { dragging = true; lastA = angAt(e); try { wheel.setPointerCapture(e.pointerId); } catch (_) {} });
-    addEventListener("pointermove", (e) => { if (!dragging) return; const a = angAt(e); let d = a - lastA; if (d > 180) d -= 360; if (d < -180) d += 360; rot += d; lastA = a; drawWheel(); });
-    addEventListener("pointerup", () => { dragging = false; });
+    wheel.addEventListener("pointerdown", (e) => { dragging = true; moved = false; lastA = angAt(e); });
+    addEventListener("pointermove", (e) => { if (!dragging) return; const a = angAt(e); let d = a - lastA; if (d > 180) d -= 360; if (d < -180) d += 360; if (Math.abs(d) > 1.2) moved = true; rot += d; lastA = a; drawWheel(); });
+    addEventListener("pointerup", () => { dragging = false; setTimeout(() => { moved = false; }, 40); });
     addEventListener("resize", () => { layoutWheel(); drawWheel(); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layoutWheel(); drawWheel(); });
-    function spin() { if (!dragging && !hover && !reduce) rot += 0.07; drawWheel(); requestAnimationFrame(spin); }
+    function spin() { if (!dragging && !hover && !reduce) { rot += 0.06; drawWheel(); } requestAnimationFrame(spin); }
     requestAnimationFrame(spin);
     const dishRow = (d, i) => `
       <article class="dcard" data-dish="${d.id}" style="transition-delay:${((i % 6) * 0.06).toFixed(2)}s">

@@ -137,45 +137,44 @@ ul{list-style:none}
 @keyframes marq{to{transform:translateX(-50%)}}
 
 /* ----------------------------- صحنهٔ منو (گریدِ عکس‌محور + چرخِ انتخاب) ----------------------------- */
-:root{--wheel:clamp(190px,27vw,300px)}
+:root{--disc:clamp(200px,42vw,440px)}
 .scene--menu{padding-block:0;scroll-behavior:smooth}
-.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:calc(var(--wheel) + 18px);
-  padding-block:clamp(16px,2.4vw,26px) 16px;padding-right:calc(var(--wheel) + 30px)}
+.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:calc(var(--disc)*0.56);
+  padding-block:clamp(30px,4.5vw,54px) 16px;padding-right:calc(var(--disc) + 28px)}
 /* نوارِ تارِ پس‌زمینه با فِیدِ نرم در پایین (تا کارت‌ها یک‌دفعه ظاهر نشوند) */
 .menu__sticky::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(180deg,var(--bg),var(--bg) 55%,transparent);
+  background:linear-gradient(180deg,var(--bg),var(--bg) 52%,transparent);
   backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
-  -webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);mask-image:linear-gradient(180deg,#000 62%,transparent)}
-.menu__title{display:flex;flex-direction:column;gap:4px}
+  -webkit-mask-image:linear-gradient(180deg,#000 58%,transparent);mask-image:linear-gradient(180deg,#000 58%,transparent)}
+.menu__title{display:flex;flex-direction:column;gap:6px;padding-top:4px}
 .menu__eyebrow{font-family:var(--display);font-weight:700;font-size:clamp(1rem,2.2vw,1.3rem);color:var(--text-dim);line-height:1.1}
 .menu__active{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
-.menu__active-fa{font-family:var(--display);font-size:clamp(2rem,5vw,3rem);color:var(--accent-2);line-height:1.05;
+.menu__active-fa{font-family:var(--display);font-size:clamp(1.9rem,5vw,3rem);color:var(--accent-2);line-height:1.05;
   transition:color .4s var(--ease);animation:roIn .45s var(--ease)}
 .menu__active-en{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
 @keyframes roIn{from{opacity:0;transform:translateY(10px)}}
 
-/* دیسکِ سی‌دیِ کامل و چرخان، گوشهٔ بالا-راست */
-.wheel{position:absolute;top:6px;right:0;width:var(--wheel);height:var(--wheel);
-  z-index:7;touch-action:none;cursor:grab;border-radius:50%}
+/* دیسکِ بزرگ؛ حدودِ نیمی از دایره در گوشهٔ بالا-راست دیده می‌شود */
+.wheel{position:absolute;top:0;right:0;width:var(--disc);height:calc(var(--disc)*0.56);
+  overflow:hidden;z-index:7;touch-action:none;cursor:grab}
 .wheel:active{cursor:grabbing}
-.wheel__disc{position:absolute;inset:0;border-radius:50%;
-  background:
-    radial-gradient(circle at 50% 50%,transparent 11%,color-mix(in srgb,var(--accent) 30%,transparent) 11.5% 12.5%,transparent 13%),
-    radial-gradient(circle at 50% 50%,transparent 26%,var(--line-soft) 26.5% 27%,transparent 27.5%),
-    radial-gradient(circle at 50% 50%,transparent 40%,var(--line-soft) 40.5% 41%,transparent 41.5%),
-    radial-gradient(circle at 50% 50%,transparent 54%,var(--line-soft) 54.5% 55%,transparent 55.5%),
-    radial-gradient(circle at 38% 32%,color-mix(in srgb,var(--accent-2) 16%,transparent),transparent 45%),
+.wheel__disc{position:absolute;left:0;top:calc(var(--disc)*-0.44);width:var(--disc);height:var(--disc);border-radius:50%;
+  background:var(--sectors,transparent),
     conic-gradient(from 0deg,var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2),var(--bg-elev));
-  border:1px solid var(--line);box-shadow:inset 0 0 50px rgba(0,0,0,.55),0 30px 70px -28px #000;will-change:transform}
-.wheel__disc::after{content:"";position:absolute;inset:42%;border-radius:50%;background:var(--bg);
-  border:1px solid var(--line);box-shadow:inset 0 0 10px rgba(0,0,0,.6)} /* سوراخِ مرکزِ سی‌دی */
-.wheel__item{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-family:var(--display);
-  font-size:clamp(.74rem,1.5vw,.95rem);color:var(--text);padding:.28em .8em;border-radius:999px;cursor:pointer;
-  background:color-mix(in srgb,var(--cc) 14%,transparent);border:1px solid color-mix(in srgb,var(--cc) 26%,transparent);
-  transition:background .35s var(--ease),border-color .35s,box-shadow .35s,color .35s}
-.wheel__item:hover{background:color-mix(in srgb,var(--cc) 26%,transparent)}
-.wheel__item.is-on{background:color-mix(in srgb,var(--cc) 34%,transparent);border-color:var(--cc);
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--cc) 40%,transparent),0 6px 18px -8px var(--cc)}
+  border:1px solid var(--line);box-shadow:inset 0 0 60px rgba(0,0,0,.55),0 26px 60px -26px #000;will-change:transform}
+.wheel__disc::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 50%,transparent 19%,var(--line-soft) 19.4% 19.9%,transparent 20.3%),
+    radial-gradient(circle at 50% 50%,transparent 31%,var(--line-soft) 31.4% 31.9%,transparent 32.3%),
+    radial-gradient(circle at 50% 50%,transparent 43%,var(--line-soft) 43.4% 43.9%,transparent 44.3%),
+    radial-gradient(circle at 50% 50%,transparent 55%,var(--line-soft) 55.4% 55.9%,transparent 56.3%)}
+.wheel__disc::after{content:"";position:absolute;left:50%;top:50%;width:13%;height:13%;transform:translate(-50%,-50%);border-radius:50%;
+  background:var(--bg);border:1px solid var(--line);box-shadow:inset 0 0 8px rgba(0,0,0,.6)}
+.wheel__item{position:absolute;white-space:nowrap;font-family:var(--display);font-size:clamp(.82rem,1.5vw,1.02rem);
+  color:var(--text-dim);background:none;border:none;padding:.1em .25em;cursor:pointer;
+  transition:color .35s var(--ease),text-shadow .35s var(--ease)}
+.wheel__item:hover{color:var(--text)}
+.wheel__item.is-on{color:var(--cc);text-shadow:0 0 12px color-mix(in srgb,var(--cc) 55%,transparent)}
 
 .dishes{max-width:1140px;margin-inline:auto;width:100%;
   display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:clamp(16px,2.4vw,26px);
@@ -322,9 +321,10 @@ ul{list-style:none}
   .stage{inset-inline-end:0;inset-block-start:0}
   .scene{padding-block:74px 40px;justify-content:flex-start}
   .scene--home{justify-content:safe center}
-  .scene--menu{padding-block:0}
-  .menu__sticky{padding-top:70px}
-  .wheel{top:70px}
+  .scene--menu{padding-block:0;--disc:clamp(150px,48vw,230px)}
+  .menu__sticky{padding-top:64px;padding-right:calc(var(--disc) + 14px)}
+  .wheel{top:56px}
+  .menu__active-fa{font-size:clamp(1.5rem,7vw,2rem)}
   .dishes{padding-bottom:20vh}
 }
 @media (prefers-reduced-motion:reduce){
