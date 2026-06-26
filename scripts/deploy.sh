@@ -111,6 +111,9 @@ say "ساخت پیکربندی Nginx (HTTP)…"
 write_http_only
 ln -sf "/etc/nginx/sites-available/${SITE}" "/etc/nginx/sites-enabled/${SITE}"
 rm -f /etc/nginx/sites-enabled/default
+# پاک‌کردنِ فایل‌های اضافیِ احتمالی از عیب‌یابی‌های قبلی (تداخلِ default_server)
+rm -f /etc/nginx/sites-enabled/damsa-fix-http /etc/nginx/sites-available/damsa-fix-http
+rm -f /etc/nginx/sites-enabled/damsa-ip /etc/nginx/sites-available/damsa-ip
 
 say "بازکردن پورت‌ها در فایروال (در صورت فعال‌بودن)…"
 ufw allow 'Nginx Full' >/dev/null 2>&1 || true
