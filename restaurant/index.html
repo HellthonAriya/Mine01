@@ -55,7 +55,6 @@
   <nav class="rail__nav" aria-label="ناوبری">
     <a href="#home" data-scene="home" class="is-active"><span data-edit="nav.home">خانه</span></a>
     <a href="#menu" data-scene="menu"><span data-edit="nav.menu">منو</span></a>
-    <a href="#reserve" data-scene="reserve"><span data-edit="nav.reserve">رزرو میز</span></a>
     <a href="#story" data-scene="story"><span data-edit="nav.story">داستان</span></a>
     <a href="#contact" data-scene="contact"><span data-edit="nav.contact">تماس</span></a>
   </nav>
@@ -79,7 +78,6 @@
   <nav>
     <a href="#home" data-scene="home"><span data-edit="nav.home">خانه</span></a>
     <a href="#menu" data-scene="menu"><span data-edit="nav.menu">منو</span></a>
-    <a href="#reserve" data-scene="reserve"><span data-edit="nav.reserve">رزرو میز</span></a>
     <a href="#story" data-scene="story"><span data-edit="nav.story">داستان</span></a>
     <a href="#contact" data-scene="contact"><span data-edit="nav.contact">تماس</span></a>
   </nav>
@@ -98,7 +96,7 @@
         <p class="lede reveal" data-edit="home.sub">آشپزیِ خلاق با مواد اولیهٔ فصلی، در فضایی تیره، گرم و به‌یادماندنی. هر بشقاب، یک روایت.</p>
         <div class="home__cta reveal">
           <button class="btn btn--gold" data-scene="menu" data-edit="home.cta1">دیدنِ منو</button>
-          <button class="btn btn--ghost" data-scene="reserve" data-edit="home.cta2">رزرو میز</button>
+          <button class="btn btn--ghost" data-scene="story" data-edit="home.cta2">داستانِ ما</button>
         </div>
         <div class="home__stats reveal">
           <div><b data-count-to="12">۰</b><span data-edit="home.stat1">سال تجربه</span></div>
@@ -116,51 +114,15 @@
 
   <!-- منو -->
   <section class="scene scene--menu" id="scene-menu">
-    <div class="scene__head">
-      <span class="kicker" data-edit="menu.kicker">منوی فصلی</span>
-      <h2 class="display" data-edit="menu.title">منوی دمسا</h2>
-      <p class="scene__lead" data-edit="menu.lead">روی هر دوره بزن؛ غذاها با جزئیات نمایش داده می‌شوند.</p>
-    </div>
-    <div class="courses" id="courseTabs" role="tablist" aria-label="دوره‌ها"></div>
-    <div class="dishes" id="dishList"></div>
-  </section>
-
-  <!-- رزرو -->
-  <section class="scene scene--reserve" id="scene-reserve">
-    <div class="reserve__grid">
-      <div class="reserve__intro">
-        <span class="kicker" data-edit="reserve.kicker">رزرو میز</span>
-        <h2 class="display" data-edit="reserve.title">میزت را نگه می‌داریم</h2>
-        <p class="scene__lead" data-edit="reserve.lead">فرم را پر کن؛ برای تأییدِ نهایی با تو تماس می‌گیریم.</p>
-        <ul class="reserve__points">
-          <li><svg class="ic"><use href="#i-clock"></use></svg><span data-edit="reserve.point1">هر روز ۱۳ تا ۲۴</span></li>
-          <li><svg class="ic"><use href="#i-users"></use></svg><span data-edit="reserve.point2">گروه‌های بزرگ با هماهنگی</span></li>
-          <li><svg class="ic"><use href="#i-phone"></use></svg><span data-edit="reserve.point3">۰۲۱–۰۰۰۰۰۰۰۰</span></li>
-        </ul>
+    <div class="menu__sticky">
+      <div class="scene__head menu__head">
+        <span class="kicker" data-edit="menu.kicker">منوی فصلی</span>
+        <h2 class="display" data-edit="menu.title">منوی دمسا</h2>
       </div>
-      <form class="reserve__form" id="reserveForm">
-        <div class="rf__row">
-          <label class="rf"><span>نام و نام خانوادگی</span><input type="text" required placeholder="نامِ شما" /></label>
-          <label class="rf"><span>شمارهٔ تماس</span><input type="tel" required placeholder="۰۹…" /></label>
-        </div>
-        <div class="rf__row">
-          <label class="rf"><span>تاریخ</span><input type="text" required placeholder="مثلاً ۲۵ تیر" /></label>
-          <label class="rf"><span>ساعت</span>
-            <select><option>۱۳:۰۰</option><option>۱۴:۳۰</option><option>۱۸:۰۰</option><option>۱۹:۳۰</option><option>۲۱:۰۰</option><option>۲۲:۳۰</option></select>
-          </label>
-        </div>
-        <div class="rf__row">
-          <label class="rf"><span>تعداد مهمان</span>
-            <select><option>۱ نفر</option><option>۲ نفر</option><option>۳ نفر</option><option>۴ نفر</option><option>۵ نفر</option><option>۶+ نفر</option></select>
-          </label>
-          <label class="rf"><span>میز</span>
-            <select><option>سالن اصلی</option><option>کنار پنجره</option><option>فضای باز</option><option>اتاق خصوصی</option></select>
-          </label>
-        </div>
-        <label class="rf"><span>توضیحِ ویژه (اختیاری)</span><textarea rows="2" placeholder="جشن تولد، رژیم غذایی و…"></textarea></label>
-        <button class="btn btn--gold btn--block" type="submit" data-edit="reserve.submit">ثبتِ درخواستِ رزرو</button>
-      </form>
+      <div class="courses" id="courseTabs" role="tablist" aria-label="دوره‌ها"></div>
     </div>
+    <p class="menu__hint" data-edit="menu.lead">برای دیدنِ غذاها صفحه را پایین بکش ↓</p>
+    <div class="dishes" id="dishList"></div>
   </section>
 
   <!-- داستان -->

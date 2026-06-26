@@ -81,27 +81,48 @@
     $("#courseTabs").innerHTML = COURSES.map((c, i) =>
       `<button class="course ${i === 0 ? "is-on" : ""}" data-course="${c.id}" role="tab">${c.fa}</button>`).join("");
     const dishRow = (d, i) => `
-      <article class="dish" data-dish="${d.id}" style="animation-delay:${(i * 0.05).toFixed(2)}s">
-        <div class="dish__thumb ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
-          ${hasImg(d) ? `<img src="${esc(d.image)}" alt="${esc(d.name)}" loading="lazy" decoding="async">` : `<svg viewBox="0 0 120 120"><use href="#illus-${d.illus || "plate"}"></use></svg>`}
+      <article class="rdish ${i % 2 ? "rdish--alt" : ""}" data-dish="${d.id}">
+        <div class="rdish__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
+          ${hasImg(d) ? `<img src="${esc(d.image)}" alt="${esc(d.name)}" loading="lazy" decoding="async">` : `<svg class="rdish__illus" viewBox="0 0 120 120"><use href="#illus-${d.illus || "plate"}"></use></svg>`}
+          <span class="rdish__price">${fmt(d.price)} <small>تومان</small></span>
         </div>
-        <div class="dish__main">
-          <div class="dish__top"><span class="dish__name">${d.name}</span><span class="dish__leader"></span><span class="dish__price">${fmt(d.price)}</span></div>
-          <div class="dish__desc">${d.desc || ""}</div>
-          <div class="dish__tags">${(d.tags || []).map(dtag).join("")}</div>
+        <div class="rdish__info">
+          <span class="rdish__no">${fmt(i + 1)}</span>
+          <div class="rdish__tags">${(d.tags || []).map(dtag).join("")}</div>
+          <h3 class="rdish__name">${d.name}</h3>
+          <div class="rdish__en">${d.en || ""}</div>
+          <p class="rdish__desc">${d.desc || ""}</p>
+          <button class="rdish__more">مشاهدهٔ جزئیات <svg class="ic"><use href="#i-arrow"></use></svg></button>
         </div>
-        <span class="dish__go"><svg class="ic"><use href="#i-arrow"></use></svg></span>
       </article>`;
+
+    const menuScene = $("#scene-menu");
+    let io = null;
+    function observeDishes() {
+      if (io) io.disconnect();
+      if (reduce) { $$(".rdish").forEach((el) => el.classList.add("is-in")); return; }
+      io = new IntersectionObserver((ents) => {
+        ents.forEach((e) => e.target.classList.toggle("is-in", e.isIntersecting));
+      }, { root: menuScene, threshold: 0.4, rootMargin: "0px 0px -8% 0px" });
+      $$(".rdish").forEach((el) => io.observe(el));
+    }
     function renderDishes() {
       const list = DISHES.filter((d) => d.course === activeCourse);
-      $("#dishList").innerHTML = list.length ? list.map(dishRow).join("") : `<p class="scene__lead" style="text-align:center">آیتمی در این دسته نیست.</p>`;
+      const wrap = $("#dishList");
+      wrap.innerHTML = list.length ? list.map(dishRow).join("") : `<p class="scene__lead" style="text-align:center;padding:40px">آیتمی در این دسته نیست.</p>`;
+      observeDishes();
+      // اولین آیتم بلافاصله دیده شود
+      const first = wrap.querySelector(".rdish"); if (first) first.classList.add("is-in");
     }
-    function replayDishes() { renderDishes(); } // رندرِ مجدد → انیمیشنِ ورود دوباره پخش می‌شود
+    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); }
     $("#courseTabs").addEventListener("click", (e) => {
       const b = e.target.closest("[data-course]"); if (!b) return;
+      if (b.dataset.course === activeCourse) return;
       activeCourse = b.dataset.course;
       $$("#courseTabs .course").forEach((c) => c.classList.toggle("is-on", c.dataset.course === activeCourse));
-      renderDishes();
+      const wrap = $("#dishList");
+      wrap.classList.add("is-switching");
+      setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); wrap.classList.remove("is-switching"); }, 220);
     });
     renderDishes();
 
@@ -122,7 +143,6 @@
             ${d.kcal ? `<span class="dm__fact"><svg class="ic"><use href="#i-flame"></use></svg>${fmt(d.kcal)} کالری</span>` : ""}
             ${(d.tags || []).map(dtag).join("")}
           </div>
-          <div class="dm__foot"><button class="btn btn--gold" data-scene="reserve">برای چشیدن، میز رزرو کن</button></div>
         </div>`;
       modal.classList.add("is-open"); modal.setAttribute("aria-hidden", "false"); document.body.classList.add("is-locked");
     };
@@ -146,11 +166,6 @@
       ti = (ti + 1) % TESTIMONIALS.length;
       track.style.transform = `translateX(${ti * 100}%)`; // RTL: مثبت به‌سمتِ بعدی
     }, 4500);
-
-    /* فرمِ رزرو */
-    $("#reserveForm").addEventListener("submit", (e) => {
-      e.preventDefault(); toast("درخواستِ رزرو ثبت شد! به‌زودی تماس می‌گیریم ✓"); e.target.reset();
-    });
 
     /* راه‌اندازیِ اولیه از روی هش */
     go((location.hash || "#home").replace("#", ""));

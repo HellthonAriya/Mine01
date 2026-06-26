@@ -16,8 +16,8 @@
       --ease:cubic-bezier(.22,1,.36,1);
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{font-family:var(--font);background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+    html,body{min-height:100%}
+    body{font-family:var(--font);background:var(--bg);color:var(--ink);overflow-x:hidden;overflow-y:auto;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
 
     /* پس‌زمینهٔ متحرک */
@@ -29,7 +29,7 @@
     @keyframes drift{to{transform:translate3d(6vw,5vh,0) scale(1.12)}}
     .grain{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(var(--ink) .5px,transparent .5px);background-size:4px 4px;mix-blend-mode:overlay}
 
-    .wrap{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;padding:clamp(20px,4vw,46px)}
+    .wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;padding:clamp(20px,4vw,46px)}
     header.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.25rem;letter-spacing:.01em}
     .brand .mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#15110b;font-weight:900;font-size:1.5rem;
