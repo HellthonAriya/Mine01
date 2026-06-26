@@ -365,11 +365,12 @@ ul,ol{list-style:none}
 .mrow__thumb{flex:none;width:64px;height:64px;border-radius:14px;display:grid;place-items:center}
 .mrow__thumb svg{width:60%;height:60%;color:var(--cream);opacity:.9}
 .mrow__main{flex:1;min-width:0}
-.mrow__top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.mrow__name{font-weight:800}
-.mrow__price{font-family:var(--display);color:var(--saffron);white-space:nowrap}
+.mrow__top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
+.mrow__name{font-weight:800;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow__price{font-family:var(--display);color:var(--saffron);white-space:nowrap;flex:none}
 .mrow__desc{font-size:.82rem;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mrow__meta{display:flex;gap:10px;font-size:.72rem;color:var(--text-dim);margin-top:2px}
+.mrow__meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:.72rem;color:var(--text-dim);margin-top:4px;min-width:0}
+.mrow__meta>span{white-space:nowrap}
 .mrow__meta .ic{width:.85rem;height:.85rem;color:var(--bronze)}
 .mrow__add{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-content:center;background:color-mix(in srgb,var(--saffron) 14%,transparent);color:var(--saffron);border:1px solid var(--line);transition:all .3s}
 .mrow__add:hover{background:linear-gradient(135deg,var(--saffron),var(--bronze));color:#1a120a}
@@ -568,6 +569,7 @@ ul,ol{list-style:none}
 .pm__media{position:relative;aspect-ratio:16/10;display:grid;place-items:center}
 .pm__media svg.illus{width:34%;color:var(--cream)}
 .pm__close{position:absolute;inset-block-start:16px;inset-inline-start:16px;z-index:3;background:var(--glass);backdrop-filter:blur(8px)}
+.pm__tags{position:absolute;inset-block-start:16px;inset-inline-end:16px;inset-inline-start:auto;z-index:2;display:flex;flex-wrap:wrap;gap:6px;max-width:60%;justify-content:flex-end}
 .pm__body{padding:clamp(20px,4vw,30px);display:grid;gap:16px}
 .pm__head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .pm__name{font-size:1.6rem;font-weight:800}

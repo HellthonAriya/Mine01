@@ -268,7 +268,7 @@
     <div class="pm__media" style="background:${artBG(m.art)}">
       ${illusUse(m.illus)}
       <button class="pm__close icon-btn" data-close aria-label="بستن"><svg class="ic"><use href="#i-close"></use></svg></button>
-      <div class="pcard__tags" style="position:absolute;top:16px;inset-inline-end:16px;left:auto">${m.tags.map(tagHTML).join("")}</div>
+      <div class="pm__tags">${m.tags.map(tagHTML).join("")}</div>
     </div>
     <div class="pm__body">
       <div class="pm__head">
