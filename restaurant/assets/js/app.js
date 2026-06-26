@@ -79,55 +79,51 @@
     /* ----------------------------- منو ----------------------------- */
     let activeCourse = COURSES[0] ? COURSES[0].id : "";
 
-    /* ---------- چرخِ انتخابِ دسته (دیسکِ سی‌دی‌مانند) ---------- */
+    /* ---------- چرخِ انتخابِ دسته (دیسکِ سی‌دیِ کامل و چرخان) ---------- */
     const wheel = $("#wheel"), disc = $("#wheelDisc");
-    const N = COURSES.length, STEP = N ? 360 / N : 0, MARK = 135; // نشانگر: پایین‌چپ
+    const N = COURSES.length, STEP = N ? 360 / N : 0;
     const rad = (d) => d * Math.PI / 180;
-    let rot = 0, activeIdx = 0;
+    const CCOLORS = ["#C0392B", "#C99A3B", "#3F9B6D", "#2F8F86", "#9B59B6", "#E67E22", "#1ABC9C"];
+    let rot = 0, selIdx = 0, dragging = false, hover = false;
     disc.innerHTML = COURSES.map((c, i) =>
-      `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button"><span>${c.fa}</span></button>`).join("");
+      `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button" style="--cc:${CCOLORS[i % CCOLORS.length]}"><span>${c.fa}</span></button>`).join("");
     const items = $$(".wheel__item", disc);
     function layoutWheel() {
-      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.39;
+      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.34;
       items.forEach((el, i) => {
-        const a = i * STEP;
+        const a = i * STEP - 90; // از بالا شروع کن
         el.style.left = (c + Rr * Math.cos(rad(a))) + "px";
         el.style.top = (c + Rr * Math.sin(rad(a))) + "px";
       });
     }
-    function setRot(animate) {
-      const t = animate ? "transform .6s cubic-bezier(.22,1,.36,1)" : "none";
-      disc.style.transition = t; disc.style.transform = `rotate(${rot}deg)`;
-      items.forEach((el) => { el.style.transition = t; el.style.transform = `translate(-50%,-50%) rotate(${-rot}deg)`; });
+    function drawWheel() {
+      disc.style.transform = `rotate(${rot}deg)`;
+      items.forEach((el) => { el.style.transform = `translate(-50%,-50%) rotate(${-rot}deg)`; });
     }
-    function nearestRotFor(i) { let target = MARK - i * STEP; target += Math.round((rot - target) / 360) * 360; return target; }
-    function selectCourse(i, animate) {
-      if (!N) return; i = ((i % N) + N) % N; activeIdx = i; rot = nearestRotFor(i); setRot(animate !== false);
+    function selectCourse(i) {
+      if (!N) return; i = ((i % N) + N) % N; selIdx = i;
       items.forEach((el, k) => el.classList.toggle("is-on", k === i));
-      const c = COURSES[i]; $("#wheelFa").textContent = c.fa; $("#wheelEn").textContent = c.en || "";
+      const c = COURSES[i];
+      const fa = $("#wheelFa"); fa.textContent = c.fa; fa.style.color = CCOLORS[i % CCOLORS.length];
+      $("#wheelEn").textContent = c.en || "";
       if (activeCourse !== c.id) {
         activeCourse = c.id; const w = $("#dishList"); w.classList.add("is-switching");
-        setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); w.classList.remove("is-switching"); }, 220);
+        setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); w.classList.remove("is-switching"); }, 200);
       }
     }
     disc.addEventListener("click", (e) => { const b = e.target.closest(".wheel__item"); if (b) selectCourse(+b.dataset.idx); });
-    /* چرخاندن با درگ */
-    let dragging = false, lastA = 0, moved = false;
+    /* چرخشِ نرمِ خودکار + درگِ دستی */
+    let lastA = 0;
     const angAt = (ev) => { const r = disc.getBoundingClientRect(); return Math.atan2(ev.clientY - (r.top + r.height / 2), ev.clientX - (r.left + r.width / 2)) * 180 / Math.PI; };
-    wheel.addEventListener("pointerdown", (e) => { dragging = true; moved = false; lastA = angAt(e); setRot(false); try { wheel.setPointerCapture(e.pointerId); } catch (_) {} });
-    addEventListener("pointermove", (e) => {
-      if (!dragging) return; const a = angAt(e); let d = a - lastA; if (d > 180) d -= 360; if (d < -180) d += 360;
-      if (Math.abs(d) > 0.5) moved = true; rot += d; lastA = a; setRot(false);
-    });
-    addEventListener("pointerup", () => {
-      if (!dragging) return; dragging = false;
-      if (!moved) return; // کلیکِ ساده را به هندلرِ آیتم بسپار
-      let best = 0, bd = 999;
-      for (let i = 0; i < N; i++) { const cur = ((i * STEP + rot) % 360 + 360) % 360; const diff = Math.abs(((cur - MARK + 540) % 360) - 180); if (diff < bd) { bd = diff; best = i; } }
-      selectCourse(best);
-    });
-    addEventListener("resize", () => { layoutWheel(); setRot(false); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layoutWheel(); setRot(false); });
+    wheel.addEventListener("pointerenter", () => hover = true);
+    wheel.addEventListener("pointerleave", () => hover = false);
+    wheel.addEventListener("pointerdown", (e) => { dragging = true; lastA = angAt(e); try { wheel.setPointerCapture(e.pointerId); } catch (_) {} });
+    addEventListener("pointermove", (e) => { if (!dragging) return; const a = angAt(e); let d = a - lastA; if (d > 180) d -= 360; if (d < -180) d += 360; rot += d; lastA = a; drawWheel(); });
+    addEventListener("pointerup", () => { dragging = false; });
+    addEventListener("resize", () => { layoutWheel(); drawWheel(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layoutWheel(); drawWheel(); });
+    function spin() { if (!dragging && !hover && !reduce) rot += 0.07; drawWheel(); requestAnimationFrame(spin); }
+    requestAnimationFrame(spin);
     const dishRow = (d, i) => `
       <article class="dcard" data-dish="${d.id}" style="transition-delay:${((i % 6) * 0.06).toFixed(2)}s">
         <div class="dcard__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
@@ -159,9 +155,9 @@
       wrap.innerHTML = list.length ? list.map(dishRow).join("") : `<p class="scene__lead" style="text-align:center;padding:40px">آیتمی در این دسته نیست.</p>`;
       observeDishes();
     }
-    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); layoutWheel(); setRot(false); }
+    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); layoutWheel(); drawWheel(); }
     renderDishes();
-    layoutWheel(); selectCourse(0, false);
+    layoutWheel(); selectCourse(0);
 
     /* مودالِ غذا */
     const modal = $("#dishModal"), panel = $("#dishPanel");

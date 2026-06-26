@@ -137,44 +137,45 @@ ul{list-style:none}
 @keyframes marq{to{transform:translateX(-50%)}}
 
 /* ----------------------------- صحنهٔ منو (گریدِ عکس‌محور + چرخِ انتخاب) ----------------------------- */
+:root{--wheel:clamp(190px,27vw,300px)}
 .scene--menu{padding-block:0;scroll-behavior:smooth}
-.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:var(--wheel);
-  padding-block:clamp(16px,2.4vw,26px) 10px;padding-right:calc(var(--wheel) + 28px);
-  background:linear-gradient(180deg,var(--bg) 82%,transparent);backdrop-filter:blur(8px)}
-.menu__title{display:flex;flex-direction:column;gap:2px}
-.menu__title .kicker{margin:0}
-.menu__h2{font-family:var(--display);font-weight:700;font-size:clamp(1.4rem,3vw,2rem);line-height:1.1}
-.menu__active{display:flex;align-items:baseline;gap:.6rem;margin-top:.8rem;min-height:2.2rem}
-.menu__active-fa{font-family:var(--display);font-size:clamp(1.5rem,4vw,2.4rem);color:var(--accent-2);line-height:1;
-  animation:roIn .45s var(--ease)}
-.menu__active-en{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
-@keyframes roIn{from{opacity:0;transform:translateY(8px)}}
-.menu__spin{display:inline-block;margin-top:.5rem;font-size:.8rem;color:var(--text-dim);opacity:.85}
+.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:calc(var(--wheel) + 18px);
+  padding-block:clamp(16px,2.4vw,26px) 16px;padding-right:calc(var(--wheel) + 30px)}
+/* نوارِ تارِ پس‌زمینه با فِیدِ نرم در پایین (تا کارت‌ها یک‌دفعه ظاهر نشوند) */
+.menu__sticky::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(180deg,var(--bg),var(--bg) 55%,transparent);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  -webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);mask-image:linear-gradient(180deg,#000 62%,transparent)}
+.menu__title{display:flex;flex-direction:column;gap:4px}
+.menu__eyebrow{font-family:var(--display);font-weight:700;font-size:clamp(1rem,2.2vw,1.3rem);color:var(--text-dim);line-height:1.1}
+.menu__active{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.menu__active-fa{font-family:var(--display);font-size:clamp(2rem,5vw,3rem);color:var(--accent-2);line-height:1.05;
+  transition:color .4s var(--ease);animation:roIn .45s var(--ease)}
+.menu__active-en{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
+@keyframes roIn{from{opacity:0;transform:translateY(10px)}}
 
-/* چرخِ سی‌دی‌مانند در گوشهٔ بالا-راست (ربع‌دایرهٔ نمایان) */
-:root{--wheel:clamp(168px,24vw,260px)}
-.wheel{position:absolute;top:0;right:0;width:var(--wheel);height:var(--wheel);
-  overflow:hidden;z-index:7;touch-action:none;cursor:grab}
+/* دیسکِ سی‌دیِ کامل و چرخان، گوشهٔ بالا-راست */
+.wheel{position:absolute;top:6px;right:0;width:var(--wheel);height:var(--wheel);
+  z-index:7;touch-action:none;cursor:grab;border-radius:50%}
 .wheel:active{cursor:grabbing}
-.wheel__disc{position:absolute;width:calc(var(--wheel)*2);height:calc(var(--wheel)*2);
-  top:calc(var(--wheel)*-1);right:calc(var(--wheel)*-1);border-radius:50%;
+.wheel__disc{position:absolute;inset:0;border-radius:50%;
   background:
-    radial-gradient(circle at 50% 50%,transparent 30%,color-mix(in srgb,var(--accent) 22%,transparent) 31% 31.6%,transparent 32%),
-    radial-gradient(circle at 50% 50%,transparent 45%,color-mix(in srgb,var(--accent-2) 22%,transparent) 46% 46.6%,transparent 47%),
-    radial-gradient(circle at 50% 50%,transparent 60%,var(--line-soft) 61% 61.5%,transparent 62%),
-    conic-gradient(from 0deg,var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2));
-  border:1px solid var(--line);box-shadow:inset 0 0 60px rgba(0,0,0,.5),0 30px 70px -30px #000;
-  transform-origin:50% 50%}
+    radial-gradient(circle at 50% 50%,transparent 11%,color-mix(in srgb,var(--accent) 30%,transparent) 11.5% 12.5%,transparent 13%),
+    radial-gradient(circle at 50% 50%,transparent 26%,var(--line-soft) 26.5% 27%,transparent 27.5%),
+    radial-gradient(circle at 50% 50%,transparent 40%,var(--line-soft) 40.5% 41%,transparent 41.5%),
+    radial-gradient(circle at 50% 50%,transparent 54%,var(--line-soft) 54.5% 55%,transparent 55.5%),
+    radial-gradient(circle at 38% 32%,color-mix(in srgb,var(--accent-2) 16%,transparent),transparent 45%),
+    conic-gradient(from 0deg,var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2),var(--bg-elev),var(--bg-elev-2),var(--bg-elev));
+  border:1px solid var(--line);box-shadow:inset 0 0 50px rgba(0,0,0,.55),0 30px 70px -28px #000;will-change:transform}
+.wheel__disc::after{content:"";position:absolute;inset:42%;border-radius:50%;background:var(--bg);
+  border:1px solid var(--line);box-shadow:inset 0 0 10px rgba(0,0,0,.6)} /* سوراخِ مرکزِ سی‌دی */
 .wheel__item{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-family:var(--display);
-  font-size:clamp(.78rem,1.5vw,.96rem);color:var(--text-dim);background:none;padding:.2em .4em;cursor:pointer;
-  transition:color .3s var(--ease),transform .6s cubic-bezier(.22,1,.36,1)}
-.wheel__item:hover{color:var(--text)}
-.wheel__item.is-on{color:var(--accent-2);font-weight:700;text-shadow:0 0 12px color-mix(in srgb,var(--accent-2) 60%,transparent)}
-.wheel__item.is-on span{position:relative}
-/* نشانگرِ انتخاب روی قوسِ نمایان (پایین‌چپ) */
-.wheel__marker{position:absolute;top:55%;left:45%;width:13px;height:13px;border-radius:50%;
-  background:var(--accent-2);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent-2) 26%,transparent),0 0 16px var(--accent-2);
-  transform:translate(-50%,-50%);z-index:8;pointer-events:none}
+  font-size:clamp(.74rem,1.5vw,.95rem);color:var(--text);padding:.28em .8em;border-radius:999px;cursor:pointer;
+  background:color-mix(in srgb,var(--cc) 14%,transparent);border:1px solid color-mix(in srgb,var(--cc) 26%,transparent);
+  transition:background .35s var(--ease),border-color .35s,box-shadow .35s,color .35s}
+.wheel__item:hover{background:color-mix(in srgb,var(--cc) 26%,transparent)}
+.wheel__item.is-on{background:color-mix(in srgb,var(--cc) 34%,transparent);border-color:var(--cc);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--cc) 40%,transparent),0 6px 18px -8px var(--cc)}
 
 .dishes{max-width:1140px;margin-inline:auto;width:100%;
   display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:clamp(16px,2.4vw,26px);
@@ -322,7 +323,8 @@ ul{list-style:none}
   .scene{padding-block:74px 40px;justify-content:flex-start}
   .scene--home{justify-content:safe center}
   .scene--menu{padding-block:0}
-  .menu__sticky{padding-top:74px}
+  .menu__sticky{padding-top:70px}
+  .wheel{top:70px}
   .dishes{padding-bottom:20vh}
 }
 @media (prefers-reduced-motion:reduce){
