@@ -137,10 +137,11 @@ ul{list-style:none}
 @keyframes marq{to{transform:translateX(-50%)}}
 
 /* ----------------------------- صحنهٔ منو (گریدِ عکس‌محور + چرخِ انتخاب) ----------------------------- */
-:root{--disc:clamp(210px,34vw,360px)}
+:root{--disc:clamp(200px,32vw,320px);--wheelw:calc(var(--disc)*0.52)}
 .scene--menu{padding-block:0;scroll-behavior:smooth}
-.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:calc(var(--disc)*0.5 + 56px);
-  padding-block:clamp(46px,6vw,82px) 22px;padding-right:calc(var(--disc) + 28px)}
+.menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:var(--disc);
+  display:flex;flex-direction:column;justify-content:center;
+  padding-block:20px;padding-right:calc(var(--wheelw) + 30px)}
 /* نوارِ تارِ بالای صفحه: محتوای زیرین را محو می‌کند و در پایین نرم فِید می‌شود */
 .menu__sticky::before{content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(180deg,var(--bg) 30%,color-mix(in srgb,var(--bg) 60%,transparent) 62%,transparent);
@@ -154,11 +155,11 @@ ul{list-style:none}
 .menu__active-en{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
 @keyframes roIn{from{opacity:0;transform:translateY(10px)}}
 
-/* دیسک: نیم‌دایره، محور روی لبهٔ بالا؛ بدونِ پس‌زمینهٔ تاریک و بدونِ سوراخِ مرکز */
-.wheel{position:absolute;top:0;right:0;width:var(--disc);height:calc(var(--disc)*0.5 + 6px);
+/* دیسک: نیم‌دایره، محور (مرکز) دقیقاً روی لبهٔ راستِ صفحه؛ بدونِ پس‌زمینهٔ تاریک و بدونِ سوراخِ مرکز */
+.wheel{position:absolute;top:0;right:0;width:var(--wheelw);height:var(--disc);
   overflow:hidden;z-index:7;touch-action:none;cursor:grab}
 .wheel:active{cursor:grabbing}
-.wheel__disc{position:absolute;left:0;top:calc(var(--disc)*-0.5);width:var(--disc);height:var(--disc);border-radius:50%;
+.wheel__disc{position:absolute;top:0;left:auto;right:calc(var(--disc)*-0.48);width:var(--disc);height:var(--disc);border-radius:50%;
   background:var(--sectors,transparent);border:1px solid var(--line-soft);will-change:transform}
 .wheel__disc::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
   background:
@@ -316,9 +317,9 @@ ul{list-style:none}
   .stage{inset-inline-end:0;inset-block-start:0}
   .scene{padding-block:74px 40px;justify-content:flex-start}
   .scene--home{justify-content:safe center}
-  .scene--menu{padding-block:0;--disc:clamp(150px,48vw,230px)}
-  .menu__sticky{padding-top:64px;padding-right:calc(var(--disc) + 14px)}
-  .wheel{top:56px}
+  .scene--menu{padding-block:0;--disc:clamp(160px,52vw,250px)}
+  .menu__sticky{justify-content:flex-start;padding-block:62px 16px;padding-right:calc(var(--wheelw) + 14px);min-height:calc(var(--disc) + 40px)}
+  .wheel{top:54px}
   .menu__active-fa{font-size:clamp(1.5rem,7vw,2rem)}
   .dishes{padding-bottom:20vh}
 }

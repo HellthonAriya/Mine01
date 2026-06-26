@@ -88,7 +88,7 @@
     let rot = 0, selIdx = 0, dragging = false, hover = false, moved = false;
     // سکتورهای خیلی کم‌رنگ روی خودِ دیسک (هم‌تراز با برچسب‌ها)
     if (N) {
-      const stops = COURSES.map((c, i) => `color-mix(in srgb, ${cc(i)} 12%, transparent) ${i * SEG}deg ${(i + 1) * SEG}deg`).join(",");
+      const stops = COURSES.map((c, i) => `color-mix(in srgb, ${cc(i)} 17%, transparent) ${i * SEG}deg ${(i + 1) * SEG}deg`).join(",");
       disc.style.setProperty("--sectors", `conic-gradient(from -90deg, ${stops})`);
     }
     disc.innerHTML = COURSES.map((c, i) =>
