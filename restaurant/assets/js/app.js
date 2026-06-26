@@ -78,8 +78,19 @@
 
     /* ----------------------------- منو ----------------------------- */
     let activeCourse = COURSES[0] ? COURSES[0].id : "";
-    $("#courseTabs").innerHTML = COURSES.map((c, i) =>
-      `<button class="course ${i === 0 ? "is-on" : ""}" data-course="${c.id}" role="tab">${c.fa}</button>`).join("");
+    const tabsWrap = $("#courseTabs");
+    tabsWrap.innerHTML = COURSES.map((c, i) =>
+      `<button class="ctab ${i === 0 ? "is-on" : ""}" data-course="${c.id}" role="tab">${c.fa}</button>`).join("")
+      + `<span class="ctabs__ink" id="ctabsInk"></span>`;
+    function placeInk() {
+      const on = tabsWrap.querySelector(".ctab.is-on"), ink = $("#ctabsInk");
+      if (!on || !ink) return;
+      ink.style.left = on.offsetLeft + "px";
+      ink.style.width = on.offsetWidth + "px";
+    }
+    addEventListener("resize", placeInk);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeInk);
+    requestAnimationFrame(placeInk); setTimeout(placeInk, 400);
     const dishRow = (d, i) => `
       <article class="dcard" data-dish="${d.id}" style="transition-delay:${((i % 6) * 0.06).toFixed(2)}s">
         <div class="dcard__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
@@ -111,12 +122,14 @@
       wrap.innerHTML = list.length ? list.map(dishRow).join("") : `<p class="scene__lead" style="text-align:center;padding:40px">آیتمی در این دسته نیست.</p>`;
       observeDishes();
     }
-    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); }
-    $("#courseTabs").addEventListener("click", (e) => {
+    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); placeInk(); }
+    tabsWrap.addEventListener("click", (e) => {
       const b = e.target.closest("[data-course]"); if (!b) return;
       if (b.dataset.course === activeCourse) return;
       activeCourse = b.dataset.course;
-      $$("#courseTabs .course").forEach((c) => c.classList.toggle("is-on", c.dataset.course === activeCourse));
+      $$("#courseTabs .ctab").forEach((c) => c.classList.toggle("is-on", c.dataset.course === activeCourse));
+      placeInk();
+      b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
       const wrap = $("#dishList");
       wrap.classList.add("is-switching");
       setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); wrap.classList.remove("is-switching"); }, 220);

@@ -115,13 +115,14 @@
   <!-- منو -->
   <section class="scene scene--menu" id="scene-menu">
     <div class="menu__sticky">
-      <div class="scene__head menu__head">
-        <span class="kicker" data-edit="menu.kicker">منوی فصلی</span>
-        <h2 class="display" data-edit="menu.title">منوی دمسا</h2>
+      <div class="menu__bar">
+        <div class="menu__title">
+          <span class="kicker" data-edit="menu.kicker">منوی فصلی</span>
+          <h2 class="menu__h2" data-edit="menu.title">منوی دمسا</h2>
+        </div>
+        <nav class="ctabs" id="courseTabs" role="tablist" aria-label="دوره‌ها"></nav>
       </div>
-      <div class="courses" id="courseTabs" role="tablist" aria-label="دوره‌ها"></div>
     </div>
-    <p class="menu__hint" data-edit="menu.lead">برای دیدنِ غذاها صفحه را پایین بکش ↓</p>
     <div class="dishes" id="dishList"></div>
   </section>
 
