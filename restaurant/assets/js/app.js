@@ -81,18 +81,17 @@
     $("#courseTabs").innerHTML = COURSES.map((c, i) =>
       `<button class="course ${i === 0 ? "is-on" : ""}" data-course="${c.id}" role="tab">${c.fa}</button>`).join("");
     const dishRow = (d, i) => `
-      <article class="rdish ${i % 2 ? "rdish--alt" : ""}" data-dish="${d.id}">
-        <div class="rdish__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
-          ${hasImg(d) ? `<img src="${esc(d.image)}" alt="${esc(d.name)}" loading="lazy" decoding="async">` : `<svg class="rdish__illus" viewBox="0 0 120 120"><use href="#illus-${d.illus || "plate"}"></use></svg>`}
-          <span class="rdish__price">${fmt(d.price)} <small>تومان</small></span>
+      <article class="dcard" data-dish="${d.id}" style="transition-delay:${((i % 6) * 0.06).toFixed(2)}s">
+        <div class="dcard__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
+          ${hasImg(d) ? `<img src="${esc(d.image)}" alt="${esc(d.name)}" loading="lazy" decoding="async">` : `<svg class="dcard__illus" viewBox="0 0 120 120"><use href="#illus-${d.illus || "plate"}"></use></svg>`}
+          <span class="dcard__price">${fmt(d.price)} <small>تومان</small></span>
+          ${(d.tags || []).slice(0, 2).map(dtag).join("")}
+          <span class="dcard__view"><svg class="ic"><use href="#i-arrow"></use></svg></span>
         </div>
-        <div class="rdish__info">
-          <span class="rdish__no">${fmt(i + 1)}</span>
-          <div class="rdish__tags">${(d.tags || []).map(dtag).join("")}</div>
-          <h3 class="rdish__name">${d.name}</h3>
-          <div class="rdish__en">${d.en || ""}</div>
-          <p class="rdish__desc">${d.desc || ""}</p>
-          <button class="rdish__more">مشاهدهٔ جزئیات <svg class="ic"><use href="#i-arrow"></use></svg></button>
+        <div class="dcard__body">
+          <div class="dcard__top"><h3 class="dcard__name">${d.name}</h3>${d.kcal ? `<span class="dcard__kcal"><svg class="ic"><use href="#i-flame"></use></svg>${fmt(d.kcal)}</span>` : ""}</div>
+          <div class="dcard__en">${d.en || ""}</div>
+          <p class="dcard__desc">${d.desc || ""}</p>
         </div>
       </article>`;
 
@@ -100,19 +99,17 @@
     let io = null;
     function observeDishes() {
       if (io) io.disconnect();
-      if (reduce) { $$(".rdish").forEach((el) => el.classList.add("is-in")); return; }
+      if (reduce) { $$(".dcard").forEach((el) => el.classList.add("is-in")); return; }
       io = new IntersectionObserver((ents) => {
-        ents.forEach((e) => e.target.classList.toggle("is-in", e.isIntersecting));
-      }, { root: menuScene, threshold: 0.4, rootMargin: "0px 0px -8% 0px" });
-      $$(".rdish").forEach((el) => io.observe(el));
+        ents.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+      }, { root: menuScene, threshold: 0.18 });
+      $$(".dcard").forEach((el) => io.observe(el));
     }
     function renderDishes() {
       const list = DISHES.filter((d) => d.course === activeCourse);
       const wrap = $("#dishList");
       wrap.innerHTML = list.length ? list.map(dishRow).join("") : `<p class="scene__lead" style="text-align:center;padding:40px">آیتمی در این دسته نیست.</p>`;
       observeDishes();
-      // اولین آیتم بلافاصله دیده شود
-      const first = wrap.querySelector(".rdish"); if (first) first.classList.add("is-in");
     }
     function replayDishes() { menuScene.scrollTop = 0; renderDishes(); }
     $("#courseTabs").addEventListener("click", (e) => {

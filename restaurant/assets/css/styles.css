@@ -136,56 +136,59 @@ ul{list-style:none}
 .marquee__t i{color:var(--accent-2);font-style:normal}
 @keyframes marq{to{transform:translateX(-50%)}}
 
-/* ----------------------------- صحنهٔ منو (نمایشِ بزرگ و اسکرولی) ----------------------------- */
-.scene--menu{padding-block:0;scroll-snap-type:y proximity;scroll-behavior:smooth}
-.menu__sticky{position:sticky;inset-block-start:0;z-index:5;padding-block:clamp(20px,4vw,40px) 14px;
-  background:linear-gradient(180deg,var(--bg) 72%,transparent);backdrop-filter:blur(4px)}
+/* ----------------------------- صحنهٔ منو (گریدِ عکس‌محورِ کارتی) ----------------------------- */
+.scene--menu{padding-block:0;scroll-behavior:smooth}
+.menu__sticky{position:sticky;inset-block-start:0;z-index:5;padding-block:clamp(20px,4vw,38px) 14px;
+  background:linear-gradient(180deg,var(--bg) 74%,transparent);backdrop-filter:blur(6px)}
 .menu__head{margin-bottom:14px}
 .menu__head .display{font-size:clamp(1.8rem,4.4vw,2.8rem)}
 .courses{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
 .course{padding:.55em 1.25em;border-radius:999px;border:1px solid var(--line);color:var(--text-dim);font-weight:700;font-family:var(--display);
-  letter-spacing:.04em;transition:transform .3s var(--ease),color .3s,border-color .3s,background .3s}
+  letter-spacing:.04em;transition:transform .3s var(--ease),color .3s,border-color .3s,background .3s,box-shadow .3s}
 .course:hover{color:var(--text);border-color:var(--accent-2);transform:translateY(-2px)}
 .course.is-on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;box-shadow:0 12px 26px -12px var(--accent-2)}
-.menu__hint{text-align:center;color:var(--text-dim);font-size:.86rem;margin-block:4px 8px;animation:hintbob 2.2s var(--ease) infinite}
-@keyframes hintbob{50%{transform:translateY(5px);opacity:.6}}
+.menu__hint{display:none}
 
-.dishes{max-width:1080px;margin-inline:auto;width:100%;display:flex;flex-direction:column;gap:clamp(40px,8vh,90px);padding-block:clamp(20px,5vh,60px) 30vh;transition:opacity .22s var(--ease)}
-.dishes.is-switching{opacity:0}
+.dishes{max-width:1140px;margin-inline:auto;width:100%;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:clamp(16px,2.4vw,26px);
+  padding-block:clamp(18px,3vw,34px) 16vh;transition:opacity .22s var(--ease)}
+.dishes.is-switching{opacity:0;transform:translateY(8px)}
 
-/* پنلِ بزرگِ هر غذا — عکس بزرگ + جزئیات، یک‌درمیان جابه‌جا */
-.rdish{scroll-snap-align:center;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:clamp(24px,4vw,60px);
-  min-height:min(70vh,560px)}
-.rdish--alt{grid-template-columns:.95fr 1.05fr}
-.rdish--alt .rdish__media{order:2}
-.rdish__media{position:relative;aspect-ratio:4/5;max-height:64vh;border-radius:28px;overflow:hidden;display:grid;place-items:center;
-  border:1px solid var(--line);box-shadow:0 50px 100px -40px #000;
-  opacity:0;transform:scale(.9) translateY(40px);transition:opacity .8s var(--ease),transform .9s var(--ease)}
-.rdish__illus{width:46%;color:var(--accent-2);transition:transform .9s var(--ease)}
-.rdish__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.12);transition:transform 1.1s var(--ease)}
-.rdish__price{position:absolute;inset-block-end:16px;inset-inline-start:16px;z-index:2;font-family:var(--display);
-  background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--line-soft);padding:.4em .9em;border-radius:999px;color:var(--accent-2)}
-.rdish__price small{font-family:var(--font);color:var(--text-dim);font-size:.7em}
-.rdish__info{opacity:0;transform:translateY(40px);transition:opacity .8s var(--ease) .12s,transform .8s var(--ease) .12s}
-.rdish__no{font-family:var(--display);font-size:clamp(2.4rem,6vw,4rem);color:transparent;-webkit-text-stroke:1px var(--line);display:block;line-height:1}
-.rdish__tags{display:flex;gap:6px;flex-wrap:wrap;margin-block:.6rem .5rem}
-.dtag{font-size:.72rem;font-weight:700;padding:.28em .8em;border-radius:999px}
-.dtag--gold{background:color-mix(in srgb,var(--accent-2) 88%,transparent);color:var(--on-accent-2)}
-.dtag--wine{background:color-mix(in srgb,var(--accent) 86%,transparent);color:#fff}
-.dtag--green{background:color-mix(in srgb,#3f9b6d 86%,transparent);color:#06110b}
-.rdish__name{font-family:var(--display);font-size:clamp(1.7rem,4vw,2.6rem);font-weight:700;line-height:1.15}
-.rdish__en{color:var(--text-dim);font-size:.86rem;letter-spacing:.12em;text-transform:uppercase;margin-top:.2rem}
-.rdish__desc{color:var(--text-dim);font-size:1.02rem;line-height:1.9;margin-block:.9rem 1.3rem;max-width:42ch}
-.rdish__more{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;color:var(--accent-2);border:1px solid var(--line);
-  padding:.6em 1.2em;border-radius:999px;cursor:pointer;transition:gap .3s var(--ease),background .3s,color .3s}
-.rdish__more:hover{background:var(--accent-2);color:var(--on-accent-2);gap:.95rem}
-.rdish__more .ic{transform:scaleX(-1)}
-.rdish{cursor:pointer}
+.dtag{font-size:.7rem;font-weight:700;padding:.26em .75em;border-radius:999px}
+.dtag--gold{background:color-mix(in srgb,var(--accent-2) 90%,transparent);color:var(--on-accent-2)}
+.dtag--wine{background:color-mix(in srgb,var(--accent) 88%,transparent);color:#fff}
+.dtag--green{background:color-mix(in srgb,#3f9b6d 88%,transparent);color:#06110b}
 
-/* ورودِ اسکرولی: وقتی پنل وسطِ دید می‌آید فعال می‌شود */
-.rdish.is-in .rdish__media{opacity:1;transform:none}
-.rdish.is-in .rdish__media img{transform:scale(1)}
-.rdish.is-in .rdish__info{opacity:1;transform:none}
+/* کارتِ غذا */
+.dcard{position:relative;background:var(--bg-elev);border:1px solid var(--line-soft);border-radius:24px;overflow:hidden;cursor:pointer;
+  display:flex;flex-direction:column;box-shadow:0 24px 50px -34px #000;
+  opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease),border-color .4s,box-shadow .4s}
+.dcard.is-in{opacity:1;transform:none}
+.dcard:hover{transform:translateY(-8px);border-color:color-mix(in srgb,var(--accent-2) 45%,transparent);box-shadow:0 40px 80px -34px #000}
+.dcard__media{position:relative;aspect-ratio:4/3;overflow:hidden;display:grid;place-items:center;isolation:isolate}
+.dcard__media::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 40%,rgba(8,4,5,.55));pointer-events:none}
+.dcard__illus{width:42%;color:var(--accent-2);opacity:.92;transition:transform .6s var(--ease)}
+.dcard__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.dcard:hover .dcard__media img{transform:scale(1.09)}
+.dcard:hover .dcard__illus{transform:scale(1.1) rotate(-4deg)}
+.dcard__price{position:absolute;inset-block-end:12px;inset-inline-start:12px;z-index:2;font-family:var(--display);font-size:1.05rem;
+  background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--line-soft);padding:.32em .8em;border-radius:999px;color:var(--accent-2)}
+.dcard__price small{font-family:var(--font);color:var(--text-dim);font-size:.66em}
+.dcard__media .dtag{position:absolute;inset-block-start:12px;inset-inline-end:12px;z-index:2}
+.dcard__media .dtag~.dtag{inset-block-start:44px}
+.dcard__view{position:absolute;inset-block-end:12px;inset-inline-end:12px;z-index:2;width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;background:var(--accent-2);color:var(--on-accent-2);
+  transform:scale(0) rotate(-30deg);transition:transform .4s var(--ease)}
+.dcard:hover .dcard__view{transform:scale(1) rotate(0)}
+.dcard__view .ic{transform:scaleX(-1);width:1.05rem;height:1.05rem}
+.dcard__body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:.25rem;flex:1}
+.dcard__top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.dcard__name{font-family:var(--display);font-size:1.18rem;font-weight:700;line-height:1.3}
+.dcard__kcal{display:inline-flex;align-items:center;gap:.25rem;font-size:.76rem;color:var(--text-dim);white-space:nowrap}
+.dcard__kcal .ic{width:.9rem;height:.9rem;color:var(--accent-2)}
+.dcard__en{font-size:.74rem;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase}
+.dcard__desc{color:var(--text-dim);font-size:.9rem;line-height:1.7;margin-top:.4rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 /* ----------------------------- مودالِ غذا ----------------------------- */
 .dmodal{position:fixed;inset:0;z-index:150;display:grid;place-items:center;opacity:0;visibility:hidden;transition:.4s var(--ease)}
@@ -283,11 +286,6 @@ ul{list-style:none}
 @media (max-width:880px){
   .home__grid,.story__grid,.contact__grid{grid-template-columns:1fr}
   .home__art,.story__art{display:none}
-  /* پنلِ غذا: عکسِ بزرگ بالا، جزئیات پایین */
-  .rdish,.rdish--alt{grid-template-columns:1fr;gap:18px;min-height:0}
-  .rdish--alt .rdish__media{order:0}
-  .rdish__media{aspect-ratio:16/11;max-height:46vh}
-  .dishes{gap:48px;padding-block:18px 24vh}
 }
 @media (max-width:720px){
   :root{--rail:0px}
@@ -298,8 +296,9 @@ ul{list-style:none}
   .scene--home{justify-content:safe center}
   .scene--menu{padding-block:0}
   .menu__sticky{padding-top:74px}
+  .dishes{padding-bottom:20vh}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important}
-  .reveal,.rdish__media,.rdish__info{opacity:1!important;transform:none!important}
+  .reveal,.dcard{opacity:1!important;transform:none!important}
 }
