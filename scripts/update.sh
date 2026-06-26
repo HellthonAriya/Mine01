@@ -24,8 +24,16 @@ fi
 say "دریافت آخرین تغییرات…"
 git config --global --add safe.directory "${APP_DIR}" 2>/dev/null || true
 git -C "${APP_DIR}" fetch origin "${BRANCH}" --quiet
+# content.json (محتوای ادمین) untracked است و با reset حذف نمی‌شود.
 git -C "${APP_DIR}" reset --hard "origin/${BRANCH}" --quiet
 chown -R www-data:www-data "${APP_DIR}"
+
+say "ری‌استارتِ سرویسِ سایت…"
+if systemctl list-unit-files 2>/dev/null | grep -q '^damsa\.service'; then
+  systemctl restart damsa || say "هشدار: ری‌استارتِ damsa ناموفق بود؛ لاگ: journalctl -u damsa"
+else
+  say "سرویسِ damsa یافت نشد؛ به‌نظر می‌رسد نسخهٔ قدیمی نصب است. یک‌بار deploy.sh را اجرا کن."
+fi
 
 say "بارگذاری مجدد Nginx…"
 nginx -t && systemctl reload nginx
