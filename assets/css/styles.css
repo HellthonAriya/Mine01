@@ -315,7 +315,7 @@ ul,ol{list-style:none}
 .searchbox input{border:none;background:none;outline:none;width:100%}
 
 /* ----------------------------- کارت محصول ----------------------------- */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(270px,100%),1fr));gap:22px}
 .pcard{
   position:relative;border-radius:var(--r-lg);overflow:hidden;background:var(--bg-elev);
   border:1px solid var(--line-soft);box-shadow:var(--shadow-sm);
@@ -353,10 +353,13 @@ ul,ol{list-style:none}
 .add-btn .ic{width:1.05rem;height:1.05rem}
 
 /* ----------------------------- منوی کامل ----------------------------- */
-.menu__tabs{display:flex;gap:8px;overflow-x:auto;padding-block:6px 16px;margin-bottom:8px;scrollbar-width:none}
+.menu__tabs{display:flex;gap:8px;overflow-x:auto;padding-block:6px 16px;margin-bottom:8px;scrollbar-width:none;
+  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 26px,#000 calc(100% - 26px),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 26px,#000 calc(100% - 26px),transparent 100%)}
 .menu__tabs::-webkit-scrollbar{display:none}
-.menu__tabs .chip{display:inline-flex;align-items:center;gap:.4rem}
-.menu__list{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.menu__tabs .chip{display:inline-flex;align-items:center;gap:.4rem;flex:none;scroll-snap-align:center}
+.menu__list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr));gap:14px}
 .mrow{display:flex;align-items:center;gap:14px;padding:14px;border-radius:var(--r);background:var(--bg-elev);border:1px solid var(--line-soft);transition:transform .3s var(--ease),border-color .3s;cursor:pointer}
 .mrow:hover{transform:translateY(-3px);border-color:var(--line)}
 .mrow__thumb{flex:none;width:64px;height:64px;border-radius:14px;display:grid;place-items:center}
@@ -420,7 +423,7 @@ ul,ol{list-style:none}
 .countdown__cells>div{background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;padding:8px 12px;text-align:center;min-width:56px}
 .countdown__cells b{display:block;font-family:var(--display);font-size:1.5rem;color:var(--saffron)}
 .countdown__cells span{font-size:.68rem;color:var(--text-dim)}
-.events__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.events__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:22px}
 .ecard{border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line-soft);background:var(--bg-elev);box-shadow:var(--shadow-sm);transition:transform .4s var(--ease),box-shadow .4s}
 .ecard:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
 .ecard__media{aspect-ratio:16/9;display:grid;place-items:center;position:relative}
@@ -617,7 +620,12 @@ ul,ol{list-style:none}
   .nav.is-stuck .nav__inner{margin-inline:8px}
   .fab{display:inline-flex}
   .bottomnav{display:flex}
-  body{padding-bottom:64px}
+  body{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+  /* جلوگیری از سرریزِ افقی روی موبایل: قابِ تزئینی و نشان‌های آماری داخل بمانند */
+  .about__art{overflow:hidden;border-radius:var(--r-lg)}
+  .about__girih{inset:-6%;width:112%;height:112%}
+  .stat-chip{inset-inline-start:10px}
+  .stat-chip--2{inset-inline-start:auto;inset-inline-end:10px}
   .hero{min-height:auto;padding-block:120px 40px}
   .hero__meta{gap:14px}
   .section-head{flex-direction:column;align-items:flex-start}

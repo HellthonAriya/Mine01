@@ -16,6 +16,27 @@
     return `linear-gradient(150deg,${a},${b})`;
   };
   const illusUse = (id) => `<svg viewBox="0 0 120 120" class="illus"><use href="#illus-${id}"></use></svg>`;
+  // کپی با fallback؛ navigator.clipboard فقط روی HTTPS کار می‌کند، پس برای IP/HTTP از execCommand استفاده می‌کنیم.
+  const copyText = async (text) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (_) { /* می‌رویم سراغ fallback */ }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:-9999px;left:-9999px;opacity:0";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch (_) { return false; }
+  };
   const tagHTML = (k) => {
     const t = TAG_LABELS[k]; if (!t) return "";
     return `<span class="tag tag--${t.tone}">${t.fa}</span>`;
@@ -368,8 +389,8 @@
     if (!list.length) return;
     const lines = list.map((x) => `• ${byId[x.id].name} ×${fmt(x.qty)}`);
     const text = `🧾 لیستِ سفارشِ من از کافهٔ دمسا\n${lines.join("\n")}\n— جمعِ تقریبی: ${fmt(listTotal())} تومان`;
-    try { await navigator.clipboard.writeText(text); toast("لیست کپی شد ✓"); confetti(); }
-    catch { toast("کپی نشد؛ دستی انتخاب کن", "error"); }
+    if (await copyText(text)) { toast("لیست کپی شد ✓"); confetti(); }
+    else { toast("کپی نشد؛ دستی انتخاب کن", "error"); }
   });
 
   renderBadges();
