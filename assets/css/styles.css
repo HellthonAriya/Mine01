@@ -359,6 +359,16 @@ ul,ol{list-style:none}
   mask-image:linear-gradient(to right,transparent 0,#000 26px,#000 calc(100% - 26px),transparent 100%)}
 .menu__tabs::-webkit-scrollbar{display:none}
 .menu__tabs .chip{display:inline-flex;align-items:center;gap:.4rem;flex:none;scroll-snap-align:center}
+.menu__tabs__track{display:flex;gap:8px}
+/* حالتِ چرخهٔ خودکار: نوار به‌صورتِ پیوسته و بی‌درز حرکت می‌کند.
+   برای حلقهٔ بی‌درز، فاصله را به‌جای gap با margin روی هر چیپ می‌گذاریم تا
+   translateX(-50%) دقیقاً معادلِ یک مجموعهٔ کامل شود. */
+.menu__tabs--marquee{overflow:hidden;scroll-snap-type:none}
+.menu__tabs--marquee .menu__tabs__track{width:max-content;gap:0;animation:tabsmarq 34s linear infinite;will-change:transform}
+.menu__tabs--marquee .menu__tabs__track .chip{margin-inline-end:8px}
+.menu__tabs--marquee:hover .menu__tabs__track,
+.menu__tabs--marquee.is-paused .menu__tabs__track{animation-play-state:paused}
+@keyframes tabsmarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .menu__list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr));gap:14px}
 .mrow{display:flex;align-items:center;gap:14px;padding:14px;border-radius:var(--r);background:var(--bg-elev);border:1px solid var(--line-soft);transition:transform .3s var(--ease),border-color .3s;cursor:pointer}
 .mrow:hover{transform:translateY(-3px);border-color:var(--line)}
@@ -602,7 +612,8 @@ ul,ol{list-style:none}
 .reveal-in{opacity:1;transform:none;transition:opacity .8s var(--ease),transform .8s var(--ease)}
 @media (prefers-reduced-motion:reduce){
   [data-reveal]{opacity:1;transform:none}
-  .hero__cup,.bean,.map-pin,.hero__girih,.about__girih,.marquee__track,.steam i,.loader__steam{animation:none!important}
+  .hero__cup,.bean,.map-pin,.hero__girih,.about__girih,.marquee__track,.steam i,.loader__steam,.menu__tabs__track{animation:none!important}
+  .menu__tabs--marquee{overflow-x:auto}
 }
 
 /* ----------------------------- ریسپانسیو ----------------------------- */

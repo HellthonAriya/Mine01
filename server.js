@@ -142,6 +142,13 @@ const server = http.createServer((req, res) => {
 
   if (url.startsWith("/api/")) return sendJson(res, 404, { error: "not_found" });
 
+  // --- مسیرِ پنلِ مدیریت: /admin → admin.html ---
+  const pathOnly = url.split("?")[0];
+  if (pathOnly === "/admin" || pathOnly === "/admin/") {
+    return fs.readFile(path.join(ROOT, "admin.html"), (e, d) =>
+      e ? send(res, 404, "Not Found") : send(res, 200, d, { "Content-Type": MIME[".html"] }));
+  }
+
   // --- فایل‌های ایستا ---
   if (req.method !== "GET" && req.method !== "HEAD") {
     return send(res, 405, "Method Not Allowed");

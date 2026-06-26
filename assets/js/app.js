@@ -213,8 +213,18 @@
   /* منوی کامل: تب + سرچ */
   let mActive = CATEGORIES[0].id, mQuery = "";
   const catIcon = { cup: "illus-latte", shot: "illus-shot", ice: "illus-coldbrew", leaf: "illus-teacup", egg: "illus-plate", cake: "illus-cheesecake", croissant: "illus-croissant", slice: "illus-slice", sandwich: "illus-sandwich", bowl: "illus-bowl", star: "illus-signature", spark: "illus-signature" };
-  $("#menuTabs").innerHTML = CATEGORIES.map((c, i) =>
+  const chipsHTML = CATEGORIES.map((c, i) =>
     `<button class="chip ${i === 0 ? "is-on" : ""}" data-cat="${c.id}" role="tab">${c.fa}</button>`).join("");
+  // چرخهٔ خودکار: مجموعهٔ چیپ‌ها دوبار تکرار می‌شود تا حلقهٔ بی‌درز بسازد
+  const tabsEl = $("#menuTabs");
+  const dupNeeded = CATEGORIES.length > 3;
+  tabsEl.classList.toggle("menu__tabs--marquee", dupNeeded);
+  tabsEl.innerHTML = `<div class="menu__tabs__track">${chipsHTML}${dupNeeded ? chipsHTML : ""}</div>`;
+  // مکثِ چرخه هنگامِ لمس/هاور تا بشود کلیک کرد
+  const pauseTabs = (ms) => { tabsEl.classList.add("is-paused"); clearTimeout(tabsEl._pt); if (ms) tabsEl._pt = setTimeout(() => tabsEl.classList.remove("is-paused"), ms); };
+  tabsEl.addEventListener("pointerenter", () => pauseTabs(0));
+  tabsEl.addEventListener("pointerleave", () => tabsEl.classList.remove("is-paused"));
+  tabsEl.addEventListener("touchstart", () => pauseTabs(4000), { passive: true });
   const rowHTML = (m) => `
     <article class="mrow" data-quick="${m.id}">
       <div class="mrow__thumb" style="background:${artBG(m.art)}"><svg viewBox="0 0 120 120"><use href="#illus-${m.illus}"></use></svg></div>
@@ -241,8 +251,10 @@
   $("#menuTabs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-cat]"); if (!b) return;
     $("#menuSearch").value = ""; mQuery = "";
-    $$("#menuTabs .chip").forEach((c) => c.classList.remove("is-on"));
-    b.classList.add("is-on"); mActive = b.dataset.cat; renderMenu();
+    mActive = b.dataset.cat;
+    // فعال‌سازی روی هر دو نسخهٔ چیپ (اصلی و تکراریِ چرخه)
+    $$("#menuTabs .chip").forEach((c) => c.classList.toggle("is-on", c.dataset.cat === mActive));
+    renderMenu();
   });
   $("#menuSearch").addEventListener("input", (e) => { mQuery = e.target.value.trim().toLowerCase(); renderMenu(); });
   renderMenu();
