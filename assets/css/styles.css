@@ -373,8 +373,19 @@ ul,ol{list-style:none}
 .mrow{display:flex;align-items:center;gap:14px;padding:14px;border-radius:var(--r);background:var(--bg-elev);border:1px solid var(--line-soft);transition:transform .3s var(--ease),border-color .3s;cursor:pointer;
   min-width:0;max-width:100%;overflow:hidden}
 .mrow:hover{transform:translateY(-3px);border-color:var(--line)}
-.mrow__thumb{flex:none;width:64px;height:64px;border-radius:14px;display:grid;place-items:center}
+.mrow__thumb{flex:none;width:64px;height:64px;border-radius:14px;display:grid;place-items:center;overflow:hidden}
 .mrow__thumb svg{width:60%;height:60%;color:var(--cream);opacity:.9}
+/* رسانهٔ تصویری (عکسِ آپلودشده) با crop حرفه‌ای */
+.media-img{display:block;object-fit:cover;background:var(--bg-elev-2)}
+.mrow__thumb .media-img{width:100%;height:100%;border-radius:inherit}
+.pcard__media .media-img,.pm__media .media-img,.ecard__media .media-img{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.ecard__media.has-img .ecard__type{z-index:2}
+.ecard__media.has-img::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(8,5,3,.34),transparent 45%);pointer-events:none}
+.pcard__media.has-img .pcard__tags,.pcard__media.has-img .fav{z-index:2}
+.pm__media.has-img .pm__tags,.pm__media.has-img .pm__close{z-index:3}
+/* پوششِ ملایم برای خواناییِ برچسب‌ها روی عکس */
+.pcard__media.has-img::after,.pm__media.has-img::after{content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(8,5,3,.34),transparent 38%,transparent 78%,rgba(8,5,3,.30));pointer-events:none}
 .mrow__main{flex:1;min-width:0}
 .mrow__top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
 .mrow__name{font-weight:800;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

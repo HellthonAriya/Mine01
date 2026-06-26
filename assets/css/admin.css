@@ -120,6 +120,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.8}
 .tagpick input{width:auto}
 .addbar{display:flex;gap:10px;margin-top:8px}
 
+/* فیلدِ آپلودِ عکس */
+.imgfield{display:grid;gap:10px}
+.imgfield__preview{width:100%;max-width:260px;aspect-ratio:5/4;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;display:grid;place-items:center;background:var(--panel-2);text-align:center}
+.imgfield__preview img{width:100%;height:100%;object-fit:cover}
+.imgfield__preview span{color:var(--dim);font-size:.82rem;padding:10px}
+.imgfield__btns{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.imgfield__status{font-size:.82rem;color:var(--dim)}
+
 /* توست */
 .toast-wrap{position:fixed;inset-block-end:20px;inset-inline-start:20px;z-index:200;display:flex;flex-direction:column;gap:10px}
 .toast{padding:.8em 1.2em;border-radius:var(--r-sm);background:var(--panel-2);border:1px solid var(--line-2);font-weight:700;font-size:.9rem;box-shadow:0 14px 40px -16px #000;animation:tin .35s var(--ease)}

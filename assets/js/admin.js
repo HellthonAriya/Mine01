@@ -498,6 +498,28 @@
         box.appendChild(l);
       });
       lab.appendChild(box); return lab;
+    } else if (f.type === "image") {
+      const box = el("div", { class: "imgfield" });
+      const prev = el("div", { class: "imgfield__preview" });
+      const setPrev = () => { prev.innerHTML = item[f.k] ? `<img src="${esc(item[f.k])}" alt="">` : "<span>بدونِ عکس — تصویرسازیِ پیش‌فرض نمایش داده می‌شود</span>"; };
+      setPrev();
+      const fileLab = el("label", { class: "btn btn--ghost btn--sm" }, "آپلودِ عکس");
+      const file = el("input", { type: "file", accept: "image/*" }); file.hidden = true; fileLab.appendChild(file);
+      const clear = el("button", { class: "btn btn--ghost btn--sm", type: "button" }, "حذفِ عکس");
+      const status = el("span", { class: "imgfield__status" });
+      const urlIn = el("input", { type: "text", placeholder: "یا آدرسِ URL عکس را بچسبان" }); urlIn.value = item[f.k] || "";
+      file.addEventListener("change", async () => {
+        if (!file.files[0]) return;
+        status.textContent = "در حالِ آپلود…";
+        try { const u = await uploadImage(file.files[0]); item[f.k] = u; urlIn.value = u; setPrev(); status.textContent = "آپلود شد ✓"; onChange(); pushPreviewReload(); }
+        catch (_) { status.textContent = "خطا در آپلود"; toast("آپلودِ عکس ناموفق بود", "err"); }
+        file.value = "";
+      });
+      urlIn.addEventListener("input", () => { const v = urlIn.value.trim(); if (v) item[f.k] = v; else delete item[f.k]; setPrev(); onChange(); pushPreviewReload(); });
+      clear.addEventListener("click", () => { delete item[f.k]; urlIn.value = ""; setPrev(); status.textContent = ""; onChange(); pushPreviewReload(); });
+      const btns = el("div", { class: "imgfield__btns" }); btns.append(fileLab, clear, status);
+      box.append(prev, btns, urlIn);
+      lab.appendChild(box); return lab;
     } else { inp = el("input", { type: f.type === "number" ? "number" : "text" }); inp.value = item[f.k] != null ? item[f.k] : ""; }
     inp.addEventListener("input", () => {
       item[f.k] = f.type === "number" ? (parseFloat(inp.value) || 0) : inp.value;
@@ -523,6 +545,7 @@
   function menuPanel() {
     return listPanel("menu", "منو", "آیتم‌های منو را اضافه، ویرایش یا حذف کن. تغییرِ منو پس از «ذخیره» روی سایت دیده می‌شود.", "menu",
       [
+        { k: "image", label: "عکسِ آیتم", type: "image", full: true },
         { k: "name", label: "نام", full: true },
         { k: "en", label: "نامِ انگلیسی" },
         { k: "price", label: "قیمت (تومان)", type: "number" },
@@ -567,6 +590,7 @@
   function eventsPanel() {
     return listPanel("events", "رویدادها", "رویدادها و کارگاه‌ها.", "events",
       [
+        { k: "image", label: "عکسِ رویداد", type: "image", full: true },
         { k: "title", label: "عنوان", full: true },
         { k: "type", label: "نوع (موسیقی/کارگاه/…)" },
         { k: "date", label: "تاریخ" },
@@ -590,6 +614,22 @@
       ],
       (it) => esc(it.fa || "سطح"), null,
       () => ({ id: "t" + Date.now().toString(36), fa: "سطحِ جدید", pts: "۰ تا ۱۰۰", perk: "", color: "bronze" }));
+  }
+
+  /* آپلودِ عکس: در مرورگر کوچک می‌شود (حداکثر ۱۲۸۰px) بعد به سرور می‌رود */
+  function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }); }
+  async function uploadImage(file) {
+    const dataURL = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+    const img = await loadImg(dataURL);
+    const max = 1280; let w = img.width, h = img.height;
+    if (w > max || h > max) { const s = Math.min(max / w, max / h); w = Math.round(w * s); h = Math.round(h * s); }
+    const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    cv.getContext("2d").drawImage(img, 0, 0, w, h);
+    const type = file.type === "image/png" ? "image/png" : "image/jpeg";
+    const blob = await new Promise((res) => cv.toBlob(res, type, 0.85));
+    const r = await fetch("/api/upload", { method: "POST", headers: { "Content-Type": blob.type, "Authorization": "Bearer " + token }, body: blob });
+    if (!r.ok) throw new Error("upload");
+    return (await r.json()).url;
   }
 
   const fmtPrice = (n) => (Number(n) || 0).toLocaleString("fa-IR");

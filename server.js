@@ -22,7 +22,10 @@ const ROOT = process.env.DAMSA_DIR || __dirname;
 const PORT = parseInt(process.env.DAMSA_PORT || "3000", 10);
 const PASSWORD = process.env.DAMSA_PASSWORD || "damsa-admin";
 const CONTENT_FILE = path.join(ROOT, "content.json");
-const MAX_BODY = 2 * 1024 * 1024; // ۲ مگابایت سقفِ بدنه
+const UPLOAD_DIR = path.join(ROOT, "uploads");
+const MAX_BODY = 2 * 1024 * 1024;     // ۲ مگابایت سقفِ بدنهٔ JSON
+const MAX_UPLOAD = 8 * 1024 * 1024;   // ۸ مگابایت سقفِ آپلودِ عکس
+const IMG_EXT = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif" };
 
 /* ----------------------------- توکن (امضاشده) ----------------------------- */
 const SECRET = crypto.createHash("sha256").update("damsa::" + PASSWORD).digest("hex");
@@ -137,6 +140,25 @@ const server = http.createServer((req, res) => {
       catch (err) { return sendJson(res, 500, { error: "write_failed" }); }
       sendJson(res, 200, { ok: true });
     });
+    return;
+  }
+
+  if (url === "/api/upload" && req.method === "POST") {
+    if (!validToken(bearer(req))) return sendJson(res, 401, { error: "unauthorized" });
+    const ct = (req.headers["content-type"] || "").split(";")[0].trim();
+    const ext = IMG_EXT[ct];
+    if (!ext) return sendJson(res, 400, { error: "unsupported_type" });
+    let size = 0; const chunks = []; let aborted = false;
+    req.on("data", (c) => { size += c.length; if (size > MAX_UPLOAD) { aborted = true; req.destroy(); return; } chunks.push(c); });
+    req.on("end", () => {
+      if (aborted) return;
+      try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (_) {}
+      const name = "img_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + ext;
+      try { fs.writeFileSync(path.join(UPLOAD_DIR, name), Buffer.concat(chunks)); }
+      catch (e) { return sendJson(res, 500, { error: "write_failed" }); }
+      sendJson(res, 200, { url: "/uploads/" + name });
+    });
+    req.on("error", () => { if (!aborted) sendJson(res, 400, { error: "bad_request" }); });
     return;
   }
 

@@ -42,6 +42,15 @@
     const t = TAG_LABELS[k]; if (!t) return "";
     return `<span class="tag tag--${t.tone}">${t.fa}</span>`;
   };
+  const attrEsc = (s) => String(s == null ? "" : s).replace(/"/g, "&quot;");
+  const hasImg = (m) => m && typeof m.image === "string" && m.image.trim() !== "";
+  // رسانهٔ آیتم: اگر عکس داشته باشد عکس (با crop حرفه‌ای)، وگرنه تصویرسازیِ SVG
+  const mediaMarkup = (m, kind) => {
+    if (hasImg(m)) return `<img class="media-img media-img--${kind}" src="${attrEsc(m.image)}" alt="${attrEsc(m.name)}" loading="lazy" decoding="async">`;
+    return kind === "thumb"
+      ? `<svg viewBox="0 0 120 120"><use href="#illus-${m.illus}"></use></svg>`
+      : illusUse(m.illus);
+  };
 
   /* ----------------------------- لودر ----------------------------- */
   setTimeout(() => { const l = $("#loader"); if (l) l.classList.add("is-done"); }, 300);
@@ -159,8 +168,8 @@
 
   const cardHTML = (m) => `
     <article class="pcard" data-quick="${m.id}">
-      <div class="pcard__media" style="background:${artBG(m.art)}">
-        ${illusUse(m.illus)}
+      <div class="pcard__media ${hasImg(m) ? "has-img" : ""}" style="background:${artBG(m.art)}">
+        ${mediaMarkup(m, "card")}
         <div class="pcard__tags">${m.tags.map(tagHTML).join("")}</div>
         <button class="fav ${favs.has(m.id) ? "is-on" : ""}" data-fav="${m.id}" aria-label="افزودن به علاقه‌مندی">
           <svg class="ic"><use href="#i-heart"></use></svg>
@@ -227,7 +236,7 @@
   tabsEl.addEventListener("touchstart", () => pauseTabs(4000), { passive: true });
   const rowHTML = (m) => `
     <article class="mrow" data-quick="${m.id}">
-      <div class="mrow__thumb" style="background:${artBG(m.art)}"><svg viewBox="0 0 120 120"><use href="#illus-${m.illus}"></use></svg></div>
+      <div class="mrow__thumb ${hasImg(m) ? "has-img" : ""}" style="background:${artBG(m.art)}">${mediaMarkup(m, "thumb")}</div>
       <div class="mrow__main">
         <div class="mrow__top"><span class="mrow__name">${m.name}</span><span class="mrow__price">${fmt(m.price)}</span></div>
         <div class="mrow__desc">${m.desc}</div>
@@ -276,8 +285,8 @@
   const productHTML = (m) => {
     const allerg = m.allergens.length ? m.allergens : ["—"];
     return `
-    <div class="pm__media" style="background:${artBG(m.art)}">
-      ${illusUse(m.illus)}
+    <div class="pm__media ${hasImg(m) ? "has-img" : ""}" style="background:${artBG(m.art)}">
+      ${mediaMarkup(m, "modal")}
       <button class="pm__close icon-btn" data-close aria-label="بستن"><svg class="ic"><use href="#i-close"></use></svg></button>
       <div class="pm__tags">${m.tags.map(tagHTML).join("")}</div>
     </div>
@@ -461,8 +470,8 @@
   /* ----------------------------- رویدادها + شمارش معکوس ----------------------------- */
   $("#eventsGrid").innerHTML = EVENTS.map((ev) => `
     <article class="ecard">
-      <div class="ecard__media" style="background:${artBG(ev.art)}">
-        <svg viewBox="0 0 120 120"><use href="#illus-signature"></use></svg>
+      <div class="ecard__media ${hasImg(ev) ? "has-img" : ""}" style="background:${artBG(ev.art)}">
+        ${hasImg(ev) ? `<img class="media-img media-img--card" src="${attrEsc(ev.image)}" alt="${attrEsc(ev.title)}" loading="lazy" decoding="async">` : `<svg viewBox="0 0 120 120"><use href="#illus-signature"></use></svg>`}
         <span class="ecard__type">${ev.type}</span>
       </div>
       <div class="ecard__body">
