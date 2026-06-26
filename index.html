@@ -200,8 +200,8 @@
 <header class="nav" id="nav">
   <div class="nav__inner">
     <a href="#hero" class="brand" aria-label="کافهٔ دمسا">
-      <span class="brand__mark">د</span>
-      <span class="brand__word">دمسا</span>
+      <span class="brand__mark" data-edit="brand.mark">د</span>
+      <span class="brand__word" data-edit="brand.word">دمسا</span>
     </a>
     <nav class="nav__links" aria-label="ناوبری اصلی">
       <a href="#about">دربارهٔ ما</a>
@@ -256,28 +256,28 @@
   <div class="hero__inner">
     <div class="hero__copy">
       <span class="eyebrow" data-reveal>
-        <svg class="ic"><use href="#i-spark"></use></svg> خانهٔ قهوهٔ دست‌ساز · تهران
+        <svg class="ic"><use href="#i-spark"></use></svg> <span data-edit="hero.eyebrow">خانهٔ قهوهٔ دست‌ساز · تهران</span>
       </span>
-      <h1 class="hero__title" data-reveal>
+      <h1 class="hero__title" data-reveal data-edit-html="hero.title">
         فنجانی که<br><em>شب را روشن می‌کند</em>
       </h1>
-      <p class="hero__sub" data-reveal>
+      <p class="hero__sub" data-reveal data-edit="hero.sub">
         قهوهٔ تک‌خاستگاهِ دست‌دم، صبحانهٔ تازه و دسرهای خانگی،
         در فضایی شبانه و گرم. هر فنجان، یک قرارِ آرام.
       </p>
       <div class="hero__cta" data-reveal>
-        <a href="#menu" class="btn btn--primary btn--lg" data-magnetic>مشاهدهٔ منو</a>
-        <a href="#featured" class="btn btn--ghost btn--lg" data-magnetic>منوی ویژه</a>
+        <a href="#menu" class="btn btn--primary btn--lg" data-magnetic data-edit="hero.cta1">مشاهدهٔ منو</a>
+        <a href="#featured" class="btn btn--ghost btn--lg" data-magnetic data-edit="hero.cta2">منوی ویژه</a>
       </div>
       <div class="hero__meta" data-reveal>
         <div class="hero__rating">
           <span class="stars" aria-hidden="true">
             <svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg>
           </span>
-          <b>۴٫۹</b><span>از ۲٬۳۰۰+ نظر</span>
+          <b data-edit="hero.ratingNum">۴٫۹</b><span data-edit="hero.ratingCount">از ۲٬۳۰۰+ نظر</span>
         </div>
-        <div class="hero__hours"><svg class="ic"><use href="#i-clock"></use></svg>۸ صبح تا ۱۲ شب</div>
-        <div class="hero__badge">صبحانه از ۸ صبح</div>
+        <div class="hero__hours"><svg class="ic"><use href="#i-clock"></use></svg><span data-edit="hero.hours">۸ صبح تا ۱۲ شب</span></div>
+        <div class="hero__badge" data-edit="hero.badge">صبحانه از ۸ صبح</div>
       </div>
     </div>
 
@@ -318,22 +318,22 @@
         <svg viewBox="0 0 120 120" class="about__illus"><use href="#illus-pourover"></use></svg>
         <svg class="about__girih" aria-hidden="true"><use href="#girih"></use></svg>
       </div>
-      <div class="stat-chip"><b>۱۴۰۱</b><span>سالِ تأسیس</span></div>
-      <div class="stat-chip stat-chip--2"><b>۳۸</b><span>نوعِ نوشیدنی</span></div>
+      <div class="stat-chip"><b data-edit="about.stat1num">۱۴۰۱</b><span data-edit="about.stat1label">سالِ تأسیس</span></div>
+      <div class="stat-chip stat-chip--2"><b data-edit="about.stat2num">۳۸</b><span data-edit="about.stat2label">نوعِ نوشیدنی</span></div>
     </div>
     <div class="about__copy">
-      <span class="kicker" data-reveal>قصهٔ دمسا</span>
-      <h2 class="h2" data-reveal>از یک دمِ ساده، تا خانه‌ای برای دوست‌داران قهوه</h2>
-      <p data-reveal>
+      <span class="kicker" data-reveal data-edit="about.kicker">قصهٔ دمسا</span>
+      <h2 class="h2" data-reveal data-edit="about.h2">از یک دمِ ساده، تا خانه‌ای برای دوست‌داران قهوه</h2>
+      <p data-reveal data-edit="about.body">
         دمسا از یک عادتِ کوچک شروع شد: دمِ آرامِ قهوه در شب‌های بی‌خوابی.
         امروز همان آرامش را در فنجان‌هایی می‌ریزیم که با وسواس انتخاب،
         رُست و دم می‌شوند. ما به یک چیز باور داریم — قهوهٔ خوب، بهانه‌ای‌ست
         برای کنار هم نشستن.
       </p>
       <ul class="about__values" data-reveal>
-        <li><svg class="ic"><use href="#i-check"></use></svg> دانهٔ تک‌خاستگاه، رُستِ روزانه در محل</li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> دستورهای خانگی، بدون افزودنیِ صنعتی</li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> باریستاهای آموزش‌دیده و منوی فصلی</li>
+        <li><svg class="ic"><use href="#i-check"></use></svg> <span data-edit="about.value1">دانهٔ تک‌خاستگاه، رُستِ روزانه در محل</span></li>
+        <li><svg class="ic"><use href="#i-check"></use></svg> <span data-edit="about.value2">دستورهای خانگی، بدون افزودنیِ صنعتی</span></li>
+        <li><svg class="ic"><use href="#i-check"></use></svg> <span data-edit="about.value3">باریستاهای آموزش‌دیده و منوی فصلی</span></li>
       </ul>
 
       <ol class="timeline" data-reveal>
@@ -351,10 +351,10 @@
   <div class="container">
     <div class="section-head">
       <div>
-        <span class="kicker" data-reveal>منتخبِ امروز</span>
-        <h2 class="h2" data-reveal>چند فنجانِ نشدنی</h2>
+        <span class="kicker" data-reveal data-edit="featured.kicker">منتخبِ امروز</span>
+        <h2 class="h2" data-reveal data-edit="featured.h2">چند فنجانِ نشدنی</h2>
       </div>
-      <p class="section-head__lead" data-reveal>پرطرفدارترین‌ها و پیشنهادِ سرآشپز؛ هر روز تازه در کافه سرو می‌شود.</p>
+      <p class="section-head__lead" data-reveal data-edit="featured.lead">پرطرفدارترین‌ها و پیشنهادِ سرآشپز؛ هر روز تازه در کافه سرو می‌شود.</p>
     </div>
 
     <div class="filterbar" data-reveal>
@@ -374,8 +374,8 @@
   <div class="container">
     <div class="section-head">
       <div>
-        <span class="kicker" data-reveal>منوی کامل</span>
-        <h2 class="h2" data-reveal>هر چیزی که دلت بخواهد</h2>
+        <span class="kicker" data-reveal data-edit="menu.kicker">منوی کامل</span>
+        <h2 class="h2" data-reveal data-edit="menu.h2">هر چیزی که دلت بخواهد</h2>
       </div>
       <label class="searchbox" data-reveal>
         <svg class="ic"><use href="#i-search"></use></svg>
@@ -393,8 +393,8 @@
 <section class="reviews section" id="reviews">
   <div class="container">
     <div class="section-head section-head--center">
-      <span class="kicker" data-reveal>نظرِ مهمان‌ها</span>
-      <h2 class="h2" data-reveal>آن‌چه دربارهٔ ما می‌گویند</h2>
+      <span class="kicker" data-reveal data-edit="reviews.kicker">نظرِ مهمان‌ها</span>
+      <h2 class="h2" data-reveal data-edit="reviews.h2">آن‌چه دربارهٔ ما می‌گویند</h2>
     </div>
     <div class="reviews__viewport">
       <div class="reviews__track" id="reviewsTrack"></div>
@@ -412,10 +412,10 @@
   <div class="container">
     <div class="section-head">
       <div>
-        <span class="kicker" data-reveal>گالری</span>
-        <h2 class="h2" data-reveal>یک نگاه به دمسا</h2>
+        <span class="kicker" data-reveal data-edit="gallery.kicker">گالری</span>
+        <h2 class="h2" data-reveal data-edit="gallery.h2">یک نگاه به دمسا</h2>
       </div>
-      <p class="section-head__lead" data-reveal>فضا، فنجان‌ها و لحظه‌ها. روی هر قاب بزن تا بزرگ‌تر ببینی.</p>
+      <p class="section-head__lead" data-reveal data-edit="gallery.lead">فضا، فنجان‌ها و لحظه‌ها. روی هر قاب بزن تا بزرگ‌تر ببینی.</p>
     </div>
     <div class="masonry" id="masonry"></div>
   </div>
@@ -426,11 +426,11 @@
   <div class="container">
     <div class="section-head">
       <div>
-        <span class="kicker" data-reveal>رویدادها</span>
-        <h2 class="h2" data-reveal>شب‌هایی برای به‌یادسپردن</h2>
+        <span class="kicker" data-reveal data-edit="events.kicker">رویدادها</span>
+        <h2 class="h2" data-reveal data-edit="events.h2">شب‌هایی برای به‌یادسپردن</h2>
       </div>
       <div class="countdown" id="countdown" data-reveal>
-        <span class="countdown__label">تا رویدادِ بعدی</span>
+        <span class="countdown__label" data-edit="events.countdownLabel">تا رویدادِ بعدی</span>
         <div class="countdown__cells">
           <div><b id="cdD">۰۰</b><span>روز</span></div>
           <div><b id="cdH">۰۰</b><span>ساعت</span></div>
@@ -447,19 +447,19 @@
 <section class="loyalty section" id="loyalty">
   <div class="container">
     <div class="section-head section-head--center">
-      <span class="kicker" data-reveal>باشگاه مشتریان دمسا</span>
-      <h2 class="h2" data-reveal>هر فنجان، یک قدم به جلو</h2>
-      <p class="section-head__lead" data-reveal>با هر سفارش امتیاز جمع کن، سطحت را بالا ببر و هدیه بگیر.</p>
+      <span class="kicker" data-reveal data-edit="loyalty.kicker">باشگاه مشتریان دمسا</span>
+      <h2 class="h2" data-reveal data-edit="loyalty.h2">هر فنجان، یک قدم به جلو</h2>
+      <p class="section-head__lead" data-reveal data-edit="loyalty.lead">با هر سفارش امتیاز جمع کن، سطحت را بالا ببر و هدیه بگیر.</p>
     </div>
     <div class="tiers" id="tiers"></div>
     <div class="loyalty__cta" data-reveal>
       <div>
-        <h3>همین حالا عضو شو</h3>
-        <p>ثبت‌نام رایگان است و اولین نوشیدنیِ تولدت مهمانِ ماست.</p>
+        <h3 data-edit="loyalty.ctaTitle">همین حالا عضو شو</h3>
+        <p data-edit="loyalty.ctaText">ثبت‌نام رایگان است و اولین نوشیدنیِ تولدت مهمانِ ماست.</p>
       </div>
       <form class="inline-form" id="joinForm">
         <input type="tel" placeholder="شمارهٔ موبایل" aria-label="شمارهٔ موبایل" required />
-        <button class="btn btn--primary" type="submit">عضویت</button>
+        <button class="btn btn--primary" type="submit" data-edit="loyalty.joinBtn">عضویت</button>
       </form>
     </div>
   </div>
@@ -469,29 +469,29 @@
 <section class="contact section" id="contact">
   <div class="container contact__grid">
     <div class="contact__info">
-      <span class="kicker" data-reveal>تماس و مسیر</span>
-      <h2 class="h2" data-reveal>به دمسا سر بزن</h2>
+      <span class="kicker" data-reveal data-edit="contact.kicker">تماس و مسیر</span>
+      <h2 class="h2" data-reveal data-edit="contact.h2">به دمسا سر بزن</h2>
       <ul class="contact__list" data-reveal>
-        <li><svg class="ic"><use href="#i-pin"></use></svg><div><b>نشانی</b><span>تهران، خیابانِ نمونه، کوچهٔ دمسا، پلاک ۱۲</span></div></li>
-        <li><svg class="ic"><use href="#i-clock"></use></svg><div><b>ساعت کاری</b><span>هر روز، ۸ صبح تا ۱۲ شب</span></div></li>
-        <li><svg class="ic"><use href="#i-phone"></use></svg><div><b>تلفن</b><span>۰۲۱–۰۰۰۰۰۰۰۰</span></div></li>
-        <li><svg class="ic"><use href="#i-pin"></use></svg><div><b>پارکینگ</b><span>پارکینگ عمومی، ۵۰ متر بالاتر</span></div></li>
+        <li><svg class="ic"><use href="#i-pin"></use></svg><div><b data-edit="contact.addrLabel">نشانی</b><span data-edit="contact.address">تهران، خیابانِ نمونه، کوچهٔ دمسا، پلاک ۱۲</span></div></li>
+        <li><svg class="ic"><use href="#i-clock"></use></svg><div><b data-edit="contact.hoursLabel">ساعت کاری</b><span data-edit="contact.hours">هر روز، ۸ صبح تا ۱۲ شب</span></div></li>
+        <li><svg class="ic"><use href="#i-phone"></use></svg><div><b data-edit="contact.phoneLabel">تلفن</b><span data-edit="contact.phone">۰۲۱–۰۰۰۰۰۰۰۰</span></div></li>
+        <li><svg class="ic"><use href="#i-pin"></use></svg><div><b data-edit="contact.extraLabel">پارکینگ</b><span data-edit="contact.extra">پارکینگ عمومی، ۵۰ متر بالاتر</span></div></li>
       </ul>
       <div class="contact__socials" data-reveal>
-        <a href="#" class="icon-btn" aria-label="اینستاگرام"><svg class="ic"><use href="#i-insta"></use></svg></a>
-        <a href="#" class="icon-btn" aria-label="واتساپ"><svg class="ic"><use href="#i-wa"></use></svg></a>
-        <a href="tel:+982100000000" class="icon-btn" aria-label="تماس"><svg class="ic"><use href="#i-phone"></use></svg></a>
+        <a href="#" class="icon-btn" aria-label="اینستاگرام" data-edit-attr="social.instagram|href"><svg class="ic"><use href="#i-insta"></use></svg></a>
+        <a href="#" class="icon-btn" aria-label="واتساپ" data-edit-attr="social.whatsapp|href"><svg class="ic"><use href="#i-wa"></use></svg></a>
+        <a href="tel:+982100000000" class="icon-btn" aria-label="تماس" data-edit-attr="social.tel|href"><svg class="ic"><use href="#i-phone"></use></svg></a>
       </div>
     </div>
     <div class="contact__map" data-reveal aria-label="نقشهٔ موقعیت دمسا">
       <div class="map-grid"></div>
       <span class="map-pin"><svg class="ic"><use href="#i-pin"></use></svg></span>
-      <span class="map-tag">کافهٔ دمسا</span>
+      <span class="map-tag" data-edit="contact.mapTag">کافهٔ دمسا</span>
     </div>
   </div>
 
   <div class="container faq" id="faq">
-    <h3 class="faq__title" data-reveal>پرسش‌های پرتکرار</h3>
+    <h3 class="faq__title" data-reveal data-edit="faq.title">پرسش‌های پرتکرار</h3>
     <div class="faq__list">
       <details class="faq__item" data-reveal><summary>«لیستِ سفارش» چطور کار می‌کند؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>هر آیتمی که دوست داری را به لیست اضافه کن تا یادت بماند. لیست روی همین گوشی ذخیره می‌شود؛ موقعِ حضور در کافه یا تماس، از روی آن سفارشت را بده. این فقط یک یادداشت است و خرید یا پرداختِ آنلاینی در کار نیست.</p></details>
       <details class="faq__item" data-reveal><summary>گزینهٔ گیاهی و بدون گلوتن دارید؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>بله؛ آیتم‌های گیاهی و بدون گلوتن در منو با برچسبِ مخصوص مشخص شده‌اند.</p></details>
@@ -506,12 +506,12 @@
 <footer class="footer">
   <div class="container footer__grid">
     <div class="footer__brand">
-      <a href="#hero" class="brand brand--lg"><span class="brand__mark">د</span><span class="brand__word">دمسا</span></a>
-      <p>خانهٔ قهوهٔ دست‌ساز. هر فنجان، یک قرارِ آرام.</p>
+      <a href="#hero" class="brand brand--lg"><span class="brand__mark" data-edit="brand.mark">د</span><span class="brand__word" data-edit="brand.word">دمسا</span></a>
+      <p data-edit="footer.about">خانهٔ قهوهٔ دست‌ساز. هر فنجان، یک قرارِ آرام.</p>
       <div class="footer__socials">
-        <a href="#" class="icon-btn" aria-label="اینستاگرام"><svg class="ic"><use href="#i-insta"></use></svg></a>
-        <a href="#" class="icon-btn" aria-label="واتساپ"><svg class="ic"><use href="#i-wa"></use></svg></a>
-        <a href="tel:+982100000000" class="icon-btn" aria-label="تماس"><svg class="ic"><use href="#i-phone"></use></svg></a>
+        <a href="#" class="icon-btn" aria-label="اینستاگرام" data-edit-attr="social.instagram|href"><svg class="ic"><use href="#i-insta"></use></svg></a>
+        <a href="#" class="icon-btn" aria-label="واتساپ" data-edit-attr="social.whatsapp|href"><svg class="ic"><use href="#i-wa"></use></svg></a>
+        <a href="tel:+982100000000" class="icon-btn" aria-label="تماس" data-edit-attr="social.tel|href"><svg class="ic"><use href="#i-phone"></use></svg></a>
       </div>
     </div>
     <nav class="footer__col"><h4>کافه</h4><a href="#about">دربارهٔ ما</a><a href="#menu">منو</a><a href="#events">رویدادها</a><a href="#loyalty">باشگاه</a></nav>
@@ -526,8 +526,8 @@
     </div>
   </div>
   <div class="footer__bar">
-    <span>© ۱۴۰۵ کافهٔ دمسا — همهٔ حقوق محفوظ است.</span>
-    <span class="footer__note">طراحی‌شده با عشق به قهوه ☕</span>
+    <span data-edit="footer.copyright">© ۱۴۰۵ کافهٔ دمسا — همهٔ حقوق محفوظ است.</span>
+    <span class="footer__note" data-edit="footer.note">طراحی‌شده با عشق به قهوه ☕</span>
   </div>
 </footer>
 
@@ -580,7 +580,9 @@
 <!-- اسکریپت‌ها -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="assets/js/theme-engine.js"></script>
 <script src="assets/js/menu-data.js"></script>
+<script src="assets/js/content.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

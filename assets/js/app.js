@@ -5,6 +5,7 @@
    =========================================================================== */
 (function () {
   "use strict";
+  function start() {
   const { TOMAN, CATEGORIES, TAG_LABELS, ART, MENU, REVIEWS, EVENTS, TIERS } = window.DAMSA;
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
@@ -43,9 +44,7 @@
   };
 
   /* ----------------------------- لودر ----------------------------- */
-  window.addEventListener("load", () => {
-    setTimeout(() => $("#loader").classList.add("is-done"), 650);
-  });
+  setTimeout(() => { const l = $("#loader"); if (l) l.classList.add("is-done"); }, 300);
 
   /* ----------------------------- تم ----------------------------- */
   const root = document.documentElement;
@@ -537,4 +536,8 @@
     e.preventDefault();
     el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   }));
+  } /* end start() */
+
+  if (window.__DAMSA_READY__) start();
+  else document.addEventListener("damsa:ready", start, { once: true });
 })();
