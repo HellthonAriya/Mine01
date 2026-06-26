@@ -30,6 +30,7 @@ apt-get update -y -qq
 apt-get install -y -qq nginx git
 
 say "دریافت سورس سایت در ${APP_DIR}…"
+git config --global --add safe.directory "${APP_DIR}" 2>/dev/null || true
 if [ -d "${APP_DIR}/.git" ]; then
   git -C "${APP_DIR}" fetch origin "${BRANCH}" --quiet
   git -C "${APP_DIR}" reset --hard "origin/${BRANCH}" --quiet
