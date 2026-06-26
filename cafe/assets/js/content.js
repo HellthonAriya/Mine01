@@ -13,7 +13,7 @@
 
   /* محتوای خام را برمی‌گرداند (یا null) */
   async function fetchContent() {
-    const sources = ["/api/content", "content.json"];
+    const sources = ["api/content", "content.json"];
     for (const url of sources) {
       try {
         const ctrl = new AbortController();

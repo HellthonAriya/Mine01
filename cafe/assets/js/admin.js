@@ -36,7 +36,7 @@
      ورود
      ========================================================================= */
   async function doLogin(pw) {
-    const res = await fetch("/api/login", {
+    const res = await fetch("api/login", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: pw }),
     });
@@ -82,7 +82,7 @@
 
   async function loadContent() {
     try {
-      const res = await fetch("/api/content", { cache: "no-store" });
+      const res = await fetch("api/content", { cache: "no-store" });
       const j = res.ok ? await res.json() : {};
       return skeleton(j);
     } catch (_) { return skeleton({}); }
@@ -117,7 +117,7 @@
       try { iframe.contentWindow.postMessage({ type: "damsa:preview", content: content }, "*"); } catch (_) {}
     }, 90);
   }
-  $("#reloadPreview").addEventListener("click", () => { previewReady = false; iframe.src = "/?preview=1&t=" + Date.now(); });
+  $("#reloadPreview").addEventListener("click", () => { previewReady = false; iframe.src = "./?preview=1&t=" + Date.now(); });
   $$(".apreview__modes [data-vw]").forEach((b) => b.addEventListener("click", () => {
     $$(".apreview__modes [data-vw]").forEach((x) => x.classList.remove("is-on"));
     b.classList.add("is-on");
@@ -627,7 +627,7 @@
     cv.getContext("2d").drawImage(img, 0, 0, w, h);
     const type = file.type === "image/png" ? "image/png" : "image/jpeg";
     const blob = await new Promise((res) => cv.toBlob(res, type, 0.85));
-    const r = await fetch("/api/upload", { method: "POST", headers: { "Content-Type": blob.type, "Authorization": "Bearer " + token }, body: blob });
+    const r = await fetch("api/upload", { method: "POST", headers: { "Content-Type": blob.type, "Authorization": "Bearer " + token }, body: blob });
     if (!r.ok) throw new Error("upload");
     return (await r.json()).url;
   }
@@ -641,7 +641,7 @@
   async function save() {
     const st = $("#saveStatus"); st.textContent = "در حالِ ذخیره…"; st.className = "abar__status busy";
     try {
-      const res = await fetch("/api/content", {
+      const res = await fetch("api/content", {
         method: "PUT", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
         body: JSON.stringify(content),
       });
@@ -649,7 +649,7 @@
       if (!res.ok) throw new Error("save");
       st.textContent = "ذخیره شد ✓"; st.className = "abar__status ok";
       toast("تغییرات منتشر شد ✓", "ok");
-      previewReady = false; iframe.src = "/?preview=1&t=" + Date.now();
+      previewReady = false; iframe.src = "./?preview=1&t=" + Date.now();
       setTimeout(() => { st.textContent = ""; st.className = "abar__status"; }, 2500);
     } catch (_) { st.textContent = ""; toast("ذخیره ناموفق بود", "err"); }
   }

@@ -1,582 +1,161 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-theme="dark">
+<html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>کافهٔ دمسا · خانهٔ قهوهٔ دست‌ساز</title>
-  <meta name="description" content="کافهٔ دمسا؛ قهوهٔ تک‌خاستگاهِ دست‌دم، صبحانهٔ تازه، دسرهای خانگی و فضایی شبانه و دل‌نشین. منو را ببین و آیتم‌های دلخواهت را در لیستِ سفارش نگه دار." />
-  <meta name="theme-color" content="#14100D" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="کافهٔ دمسا · خانهٔ قهوهٔ دست‌ساز" />
-  <meta property="og:description" content="قهوهٔ تک‌خاستگاه، صبحانهٔ تازه و دسرهای خانگی در فضایی شبانه و گرم." />
-  <meta property="og:locale" content="fa_IR" />
-
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <title>دمسا · انتخابِ قالب</title>
+  <meta name="description" content="مجموعهٔ قالب‌های دمسا — یک قالب را برای ورود انتخاب کنید: کافه یا رستوران." />
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    :root{
+      --bg:#0B0A0F; --ink:#F3EFE7; --dim:#A9A2B5;
+      --gold:#E0922B; --gold2:#F0B45C;
+      --wine:#C0392B; --wine2:#E0584A;
+      --line:rgba(243,239,231,.10);
+      --font:"Vazirmatn",system-ui,sans-serif;
+      --ease:cubic-bezier(.22,1,.36,1);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:var(--font);background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+
+    /* پس‌زمینهٔ متحرک */
+    .bgwrap{position:fixed;inset:0;z-index:0;overflow:hidden}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;animation:drift 18s var(--ease) infinite alternate}
+    .orb--1{width:55vw;height:55vw;inset-inline-start:-10vw;inset-block-start:-12vw;background:radial-gradient(circle,var(--gold),transparent 65%)}
+    .orb--2{width:50vw;height:50vw;inset-inline-end:-12vw;inset-block-end:-14vw;background:radial-gradient(circle,var(--wine),transparent 65%);animation-delay:-6s}
+    .orb--3{width:36vw;height:36vw;inset-inline-start:40vw;inset-block-start:35vh;background:radial-gradient(circle,#3E2A86,transparent 65%);animation-delay:-11s;opacity:.4}
+    @keyframes drift{to{transform:translate3d(6vw,5vh,0) scale(1.12)}}
+    .grain{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(var(--ink) .5px,transparent .5px);background-size:4px 4px;mix-blend-mode:overlay}
+
+    .wrap{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;padding:clamp(20px,4vw,46px)}
+    header.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.25rem;letter-spacing:.01em}
+    .brand .mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#15110b;font-weight:900;font-size:1.5rem;
+      background:linear-gradient(135deg,var(--gold),var(--wine));box-shadow:0 10px 30px -10px var(--gold)}
+    .top .hint{font-size:.85rem;color:var(--dim)}
+
+    .center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:clamp(22px,4vw,40px);padding-block:18px}
+    .lead{max-width:760px}
+    .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:700;color:var(--gold2);
+      border:1px solid var(--line);padding:.45em 1em;border-radius:999px;background:rgba(255,255,255,.03);
+      opacity:0;transform:translateY(14px);animation:rise .7s var(--ease) .05s forwards}
+    h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.18;margin-block:.5rem .4rem;
+      opacity:0;transform:translateY(20px);animation:rise .8s var(--ease) .12s forwards}
+    h1 b{background:linear-gradient(120deg,var(--gold),var(--wine2));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead p{color:var(--dim);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:54ch;margin-inline:auto;
+      opacity:0;transform:translateY(20px);animation:rise .8s var(--ease) .2s forwards}
+    @keyframes rise{to{opacity:1;transform:none}}
+
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,26px);width:min(960px,100%)}
+    @media(max-width:680px){.cards{grid-template-columns:1fr}}
+
+    .card{position:relative;display:block;border:1px solid var(--line);border-radius:26px;overflow:hidden;
+      background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+      padding:clamp(22px,3vw,34px);min-height:clamp(220px,30vh,300px);transform-style:preserve-3d;
+      transition:transform .5s var(--ease),border-color .5s,box-shadow .5s;
+      opacity:0;animation:rise .9s var(--ease) forwards}
+    .card--cafe{animation-delay:.3s}
+    .card--rest{animation-delay:.42s}
+    .card::before{content:"";position:absolute;inset:0;z-index:0;opacity:.16;transition:opacity .5s;
+      background:radial-gradient(120% 80% at 80% 0%,var(--ac),transparent 60%)}
+    .card:hover{transform:translateY(-8px);border-color:color-mix(in srgb,var(--ac) 55%,transparent);
+      box-shadow:0 40px 90px -30px color-mix(in srgb,var(--ac) 60%,transparent)}
+    .card:hover::before{opacity:.34}
+    .card--cafe{--ac:var(--gold)}
+    .card--rest{--ac:var(--wine2)}
+    .card__inner{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;gap:.7rem;text-align:right}
+    .card__icon{width:60px;height:60px;border-radius:17px;display:grid;place-items:center;color:#15110b;
+      background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 50%,#fff));margin-bottom:.4rem;
+      transition:transform .5s var(--ease)}
+    .card:hover .card__icon{transform:rotate(-6deg) scale(1.08)}
+    .card__icon svg{width:32px;height:32px}
+    .card__t{font-size:clamp(1.4rem,3.4vw,1.9rem);font-weight:800}
+    .card__en{font-size:.82rem;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+    .card__d{color:var(--dim);font-size:.92rem;line-height:1.7;margin-top:.2rem;flex:1}
+    .card__go{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;color:var(--ac);margin-top:.4rem;
+      transition:gap .3s var(--ease)}
+    .card:hover .card__go{gap:.95rem}
+    .card__go svg{width:1.1rem;height:1.1rem;transform:scaleX(-1)}
+    .card__admin{position:absolute;inset-block-start:18px;inset-inline-start:18px;z-index:3;font-size:.76rem;color:var(--dim);
+      border:1px solid var(--line);padding:.3em .8em;border-radius:999px;background:rgba(0,0,0,.25);transition:color .3s,border-color .3s}
+    .card__admin:hover{color:var(--ink);border-color:color-mix(in srgb,var(--ac) 60%,transparent)}
+
+    footer.bot{text-align:center;color:var(--dim);font-size:.82rem;padding-top:10px}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
 </head>
 <body>
-
-<!-- ============================ پیش‌بار (Loader) ============================ -->
-<div class="loader" id="loader" aria-hidden="true">
-  <div class="loader__mark">
-    <svg viewBox="0 0 120 120" class="loader__cup" aria-hidden="true">
-      <use href="#illus-pourover"></use>
-    </svg>
-    <span class="loader__steam"></span><span class="loader__steam"></span><span class="loader__steam"></span>
-  </div>
-  <p class="loader__word">دمسا</p>
-  <div class="loader__bar"><i></i></div>
-</div>
-
-<!-- ============================ اسپرایت آیکن/تصویر ============================ -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <!-- آیکن‌های خطی -->
-    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></symbol>
-    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.2a1.6 1.6 0 0 0 1.6 1.3h7.8a1.6 1.6 0 0 0 1.6-1.2L21 8H6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="20" r="1.3" fill="currentColor"/><circle cx="17.5" cy="20" r="1.3" fill="currentColor"/></symbol>
-    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.6-9.2-9C1.3 8 2.7 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3.3 0 4.7 3.2 3.2 6.2C19 15.4 12 20 12 20z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></symbol>
-    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.2 1.2 6L12 16.9 6.7 19.5l1.2-6L3.4 9.3l6-.7z" fill="currentColor"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></symbol>
-    <symbol id="i-fire" viewBox="0 0 24 24"><path d="M12 3c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1.5-.6-2.5-1-3 .2 2-1 3-2 3 .6-2.5-1-5.5-3-7zM7 13a5 5 0 0 0 10 0" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></symbol>
-    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19C4 11 9 5 19 5c0 10-6 15-14 14zM9 15c2-3 4-5 7-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></symbol>
-    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M14 5l-7 7 7 7M19 12H7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.5" fill="none"/></symbol>
-    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5V20a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></symbol>
-    <symbol id="i-insta" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3.4" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="17" cy="7" r="1" fill="currentColor"/></symbol>
-    <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.4L4 20z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M9 9c0 4 2 6 6 6 .6 0 1-.6 1-1l-1.4-1-1 .8c-1-.4-1.8-1.2-2.2-2.2l.8-1L11 9c0-.6-.4-1-1-1S9 8.4 9 9z" fill="currentColor"/></symbol>
-    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
-    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
-    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></symbol>
-    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></symbol>
-    <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H5zM19 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></symbol>
-    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 9h16M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6z" fill="currentColor"/></symbol>
-
-    <!-- تصویرسازی‌های نوشیدنی/غذا (هم‌خانوادهٔ برند) -->
-    <symbol id="illus-pourover" viewBox="0 0 120 120">
-      <path d="M40 38h40l-4 8H44z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M48 46h24l-3 30a8 8 0 0 1-8 7h-2a8 8 0 0 1-8-7z" fill="currentColor" opacity=".22"/>
-      <path d="M48 46h24l-3 30a8 8 0 0 1-8 7h-2a8 8 0 0 1-8-7z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M60 60c10 4 6 14 0 18" fill="none" stroke="currentColor" stroke-width="2"/>
-    </symbol>
-    <symbol id="illus-latte" viewBox="0 0 120 120">
-      <path d="M34 50h44v14a18 18 0 0 1-18 18h-8a18 18 0 0 1-18-18z" fill="currentColor" opacity=".2"/>
-      <path d="M34 50h44v14a18 18 0 0 1-18 18h-8a18 18 0 0 1-18-18z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M78 56h6a8 8 0 0 1 0 16h-4" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M56 60c0 6 8 6 8 12" fill="none" stroke="currentColor" stroke-width="2"/>
-      <path d="M52 67c8 0 8 8 16 4" fill="none" stroke="currentColor" stroke-width="2"/>
-    </symbol>
-    <symbol id="illus-shot" viewBox="0 0 120 120">
-      <path d="M42 56h36l-3 20a10 10 0 0 1-10 9h-10a10 10 0 0 1-10-9z" fill="currentColor" opacity=".25"/>
-      <path d="M42 56h36l-3 20a10 10 0 0 1-10 9h-10a10 10 0 0 1-10-9z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M44 48c2-6 8-6 10 0M58 48c2-6 8-6 10 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="illus-cezve" viewBox="0 0 120 120">
-      <path d="M44 52h28l-3 22a9 9 0 0 1-9 8h-4a9 9 0 0 1-9-8z" fill="currentColor" opacity=".22"/>
-      <path d="M44 52h28l-3 22a9 9 0 0 1-9 8h-4a9 9 0 0 1-9-8z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M72 58l16-4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-      <path d="M44 52l32 0" stroke="currentColor" stroke-width="2.5"/>
-    </symbol>
-    <symbol id="illus-coldbrew" viewBox="0 0 120 120">
-      <path d="M46 40h28v40a8 8 0 0 1-8 8h-12a8 8 0 0 1-8-8z" fill="currentColor" opacity=".18"/>
-      <path d="M46 40h28v40a8 8 0 0 1-8 8h-12a8 8 0 0 1-8-8z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M46 58h28" stroke="currentColor" stroke-width="2"/>
-      <rect x="52" y="46" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
-      <rect x="62" y="50" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
-    </symbol>
-    <symbol id="illus-icedlatte" viewBox="0 0 120 120">
-      <path d="M44 42h32l-3 42a7 7 0 0 1-7 6h-12a7 7 0 0 1-7-6z" fill="currentColor" opacity=".18"/>
-      <path d="M44 42h32l-3 42a7 7 0 0 1-7 6h-12a7 7 0 0 1-7-6z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <rect x="50" y="50" width="7" height="7" rx="1.5" fill="currentColor" opacity=".55"/>
-      <rect x="60" y="56" width="7" height="7" rx="1.5" fill="currentColor" opacity=".55"/>
-      <path d="M66 38l4-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="illus-tonic" viewBox="0 0 120 120">
-      <path d="M46 44h28l-2 40a7 7 0 0 1-7 6h-10a7 7 0 0 1-7-6z" fill="currentColor" opacity=".16"/>
-      <path d="M46 44h28l-2 40a7 7 0 0 1-7 6h-10a7 7 0 0 1-7-6z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <circle cx="55" cy="60" r="2" fill="currentColor"/><circle cx="63" cy="68" r="2" fill="currentColor"/><circle cx="58" cy="74" r="2" fill="currentColor"/>
-      <path d="M74 50a8 8 0 0 1 6 8" stroke="currentColor" stroke-width="2" fill="none"/>
-    </symbol>
-    <symbol id="illus-affogato" viewBox="0 0 120 120">
-      <path d="M40 56h40l-4 18a10 10 0 0 1-10 9h-12a10 10 0 0 1-10-9z" fill="currentColor" opacity=".2"/>
-      <path d="M40 56h40l-4 18a10 10 0 0 1-10 9h-12a10 10 0 0 1-10-9z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <circle cx="60" cy="50" r="10" fill="currentColor" opacity=".35"/>
-      <circle cx="60" cy="50" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    </symbol>
-    <symbol id="illus-teacup" viewBox="0 0 120 120">
-      <path d="M38 52h40v12a16 16 0 0 1-16 16h-8a16 16 0 0 1-16-16z" fill="currentColor" opacity=".2"/>
-      <path d="M38 52h40v12a16 16 0 0 1-16 16h-8a16 16 0 0 1-16-16z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M78 56h6a7 7 0 0 1 0 14h-3" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M50 44c-3-4 3-7 0-11M62 44c-3-4 3-7 0-11" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="illus-matcha" viewBox="0 0 120 120">
-      <path d="M36 54h44v10a18 18 0 0 1-18 18h-8a18 18 0 0 1-18-18z" fill="currentColor" opacity=".25"/>
-      <path d="M36 54h44v10a18 18 0 0 1-18 18h-8a18 18 0 0 1-18-18z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M50 64c4-3 16-3 20 0" stroke="currentColor" stroke-width="2" fill="none"/>
-    </symbol>
-    <symbol id="illus-plate" viewBox="0 0 120 120">
-      <ellipse cx="60" cy="66" rx="34" ry="12" fill="currentColor" opacity=".15"/>
-      <ellipse cx="60" cy="64" rx="34" ry="12" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <circle cx="52" cy="60" r="7" fill="currentColor" opacity=".4"/>
-      <circle cx="52" cy="60" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
-      <path d="M66 56h12M66 62h10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="illus-pancake" viewBox="0 0 120 120">
-      <ellipse cx="60" cy="74" rx="26" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <ellipse cx="60" cy="66" rx="26" ry="7" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="2"/>
-      <ellipse cx="60" cy="58" rx="26" ry="7" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="2"/>
-      <path d="M50 52c4-6 16-6 20 0" stroke="currentColor" stroke-width="2" fill="none"/>
-      <path d="M60 48v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="illus-cheesecake" viewBox="0 0 120 120">
-      <path d="M40 78l8-26h24l8 26z" fill="currentColor" opacity=".18"/>
-      <path d="M40 78l8-26h24l8 26z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M46 60h28" stroke="currentColor" stroke-width="2"/>
-      <circle cx="60" cy="49" r="3" fill="currentColor"/>
-    </symbol>
-    <symbol id="illus-tiramisu" viewBox="0 0 120 120">
-      <rect x="42" y="54" width="36" height="26" rx="3" fill="currentColor" opacity=".18"/>
-      <rect x="42" y="54" width="36" height="26" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M42 64h36M42 72h36" stroke="currentColor" stroke-width="1.6"/>
-      <circle cx="50" cy="50" r="2" fill="currentColor"/><circle cx="60" cy="49" r="2" fill="currentColor"/><circle cx="70" cy="50" r="2" fill="currentColor"/>
-    </symbol>
-    <symbol id="illus-brulee" viewBox="0 0 120 120">
-      <path d="M40 60h40v4a16 16 0 0 1-16 16h-8a16 16 0 0 1-16-16z" fill="currentColor" opacity=".2"/>
-      <path d="M40 60h40v4a16 16 0 0 1-16 16h-8a16 16 0 0 1-16-16z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M40 60c8-5 32-5 40 0" stroke="currentColor" stroke-width="2.5" fill="none"/>
-    </symbol>
-    <symbol id="illus-croissant" viewBox="0 0 120 120">
-      <path d="M34 70c6-18 46-18 52 0-8-4-14-2-18 2-4-4-8-6-12-4-4-2-10-2-14 2-3-1-6-1-8 0z" fill="currentColor" opacity=".2"/>
-      <path d="M34 70c6-18 46-18 52 0" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M44 64l-4-8M54 60l-2-9M66 60l2-9M76 64l4-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="illus-cinnamon" viewBox="0 0 120 120">
-      <circle cx="60" cy="64" r="22" fill="currentColor" opacity=".16"/>
-      <circle cx="60" cy="64" r="22" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M60 64m-13 0a13 13 0 1 0 26 0a13 13 0 1 0-26 0M60 64m-5 0a5 5 0 1 0 10 0a5 5 0 1 0-10 0" fill="none" stroke="currentColor" stroke-width="1.8"/>
-    </symbol>
-    <symbol id="illus-slice" viewBox="0 0 120 120">
-      <path d="M40 78l6-30 14-6 14 6 6 30z" fill="currentColor" opacity=".18"/>
-      <path d="M40 78l6-30 14-6 14 6 6 30z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M46 58h28M44 68h32" stroke="currentColor" stroke-width="1.8"/>
-      <circle cx="60" cy="44" r="3" fill="currentColor"/>
-    </symbol>
-    <symbol id="illus-sandwich" viewBox="0 0 120 120">
-      <path d="M36 56c10-10 38-10 48 0z" fill="currentColor" opacity=".2"/>
-      <path d="M36 56c10-10 38-10 48 0" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M36 56h48M34 64h52M40 72h40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="illus-bowl" viewBox="0 0 120 120">
-      <path d="M36 58h48a24 24 0 0 1-24 24 24 24 0 0 1-24-24z" fill="currentColor" opacity=".18"/>
-      <path d="M36 58h48a24 24 0 0 1-24 24 24 24 0 0 1-24-24z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <circle cx="50" cy="64" r="3" fill="currentColor"/><circle cx="60" cy="62" r="3" fill="currentColor"/><circle cx="70" cy="64" r="3" fill="currentColor"/>
-    </symbol>
-    <symbol id="illus-signature" viewBox="0 0 120 120">
-      <path d="M42 50h36l-3 26a10 10 0 0 1-10 9h-10a10 10 0 0 1-10-9z" fill="currentColor" opacity=".22"/>
-      <path d="M42 50h36l-3 26a10 10 0 0 1-10 9h-10a10 10 0 0 1-10-9z" fill="none" stroke="currentColor" stroke-width="2.5"/>
-      <path d="M60 33l2.4 5 5.4.6-4 3.6 1 5.3-4.8-2.6-4.8 2.6 1-5.3-4-3.6 5.4-.6z" fill="currentColor"/>
-    </symbol>
-
-    <!-- نقشِ گره‌چینی (girih) برای امضای بصری -->
-    <symbol id="girih" viewBox="0 0 100 100">
-      <g fill="none" stroke="currentColor" stroke-width="1.2">
-        <path d="M50 4l46 46-46 46L4 50z"/>
-        <path d="M50 22l28 28-28 28-28-28z"/>
-        <path d="M50 4v92M4 50h92M18 18l64 64M82 18L18 82"/>
-      </g>
-    </symbol>
-  </defs>
-</svg>
-
-<!-- ============================ هدر / ناوبری ============================ -->
-<header class="nav" id="nav">
-  <div class="nav__inner">
-    <a href="#hero" class="brand" aria-label="کافهٔ دمسا">
-      <span class="brand__mark" data-edit="brand.mark">د</span>
-      <span class="brand__word" data-edit="brand.word">دمسا</span>
-    </a>
-    <nav class="nav__links" aria-label="ناوبری اصلی">
-      <a href="#about">دربارهٔ ما</a>
-      <a href="#featured">منوی ویژه</a>
-      <a href="#menu">منوی کامل</a>
-      <a href="#events">رویدادها</a>
-      <a href="#loyalty">باشگاه</a>
-      <a href="#contact">تماس</a>
-    </nav>
-    <div class="nav__actions">
-      <button class="icon-btn" id="themeToggle" aria-label="تغییر حالت روشن/تاریک">
-        <svg class="ic ic--sun"><use href="#i-sun"></use></svg>
-        <svg class="ic ic--moon"><use href="#i-moon"></use></svg>
-      </button>
-      <button class="icon-btn nav__list" id="navList" aria-label="لیستِ سفارش" data-open-list>
-        <svg class="ic"><use href="#i-cart"></use></svg>
-        <span class="count-badge" data-count hidden>۰</span>
-      </button>
-      <button class="icon-btn nav__burger" id="burger" aria-label="منو" aria-expanded="false">
-        <svg class="ic"><use href="#i-menu"></use></svg>
-      </button>
-    </div>
-  </div>
-</header>
-
-<!-- منوی تمام‌صفحهٔ موبایل -->
-<div class="mobilemenu" id="mobilemenu" aria-hidden="true">
-  <button class="mobilemenu__close icon-btn" id="mmClose" aria-label="بستن"><svg class="ic"><use href="#i-close"></use></svg></button>
-  <nav class="mobilemenu__nav">
-    <a href="#about"><span>۰۱</span>دربارهٔ ما</a>
-    <a href="#featured"><span>۰۲</span>منوی ویژه</a>
-    <a href="#menu"><span>۰۳</span>منوی کامل</a>
-    <a href="#gallery"><span>۰۴</span>گالری</a>
-    <a href="#events"><span>۰۵</span>رویدادها</a>
-    <a href="#loyalty"><span>۰۶</span>باشگاه مشتریان</a>
-    <a href="#contact"><span>۰۷</span>تماس</a>
-    <a href="#" data-open-list><span>۰۸</span>لیستِ سفارش</a>
-  </nav>
-  <div class="mobilemenu__foot">
-    <a href="tel:+982100000000"><svg class="ic"><use href="#i-phone"></use></svg>۰۲۱–۰۰۰۰۰۰۰۰</a>
-    <span>هر روز ۸ صبح تا ۱۲ شب</span>
-  </div>
-</div>
-
-<main>
-<!-- ============================ هیرو ============================ -->
-<section class="hero" id="hero">
-  <canvas class="hero__particles" id="particles" aria-hidden="true"></canvas>
-  <div class="hero__glow" aria-hidden="true"></div>
-  <svg class="hero__girih" aria-hidden="true"><use href="#girih"></use></svg>
-
-  <div class="hero__inner">
-    <div class="hero__copy">
-      <span class="eyebrow" data-reveal>
-        <svg class="ic"><use href="#i-spark"></use></svg> <span data-edit="hero.eyebrow">خانهٔ قهوهٔ دست‌ساز · تهران</span>
-      </span>
-      <h1 class="hero__title" data-reveal data-edit-html="hero.title">
-        فنجانی که<br><em>شب را روشن می‌کند</em>
-      </h1>
-      <p class="hero__sub" data-reveal data-edit="hero.sub">
-        قهوهٔ تک‌خاستگاهِ دست‌دم، صبحانهٔ تازه و دسرهای خانگی،
-        در فضایی شبانه و گرم. هر فنجان، یک قرارِ آرام.
-      </p>
-      <div class="hero__cta" data-reveal>
-        <a href="#menu" class="btn btn--primary btn--lg" data-magnetic data-edit="hero.cta1">مشاهدهٔ منو</a>
-        <a href="#featured" class="btn btn--ghost btn--lg" data-magnetic data-edit="hero.cta2">منوی ویژه</a>
-      </div>
-      <div class="hero__meta" data-reveal>
-        <div class="hero__rating">
-          <span class="stars" aria-hidden="true">
-            <svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg>
-          </span>
-          <b data-edit="hero.ratingNum">۴٫۹</b><span data-edit="hero.ratingCount">از ۲٬۳۰۰+ نظر</span>
-        </div>
-        <div class="hero__hours"><svg class="ic"><use href="#i-clock"></use></svg><span data-edit="hero.hours">۸ صبح تا ۱۲ شب</span></div>
-        <div class="hero__badge" data-edit="hero.badge">صبحانه از ۸ صبح</div>
-      </div>
-    </div>
-
-    <div class="hero__stage" aria-hidden="true">
-      <div class="hero__cupwrap" data-tilt>
-        <span class="steam"><i></i><i></i><i></i></span>
-        <div class="hero__cup">
-          <svg viewBox="0 0 120 120"><use href="#illus-latte"></use></svg>
-        </div>
-        <div class="hero__plate"></div>
-        <span class="bean bean--1"></span>
-        <span class="bean bean--2"></span>
-        <span class="bean bean--3"></span>
-      </div>
-    </div>
+  <div class="bgwrap" aria-hidden="true">
+    <span class="orb orb--1"></span><span class="orb orb--2"></span><span class="orb orb--3"></span>
+    <span class="grain"></span>
   </div>
 
-  <a href="#about" class="hero__scroll" aria-label="پیمایش به پایین">
-    <span></span>پیمایش
-  </a>
-</section>
-
-<!-- نوار اعتماد متحرک -->
-<div class="marquee" aria-hidden="true">
-  <div class="marquee__track">
-    <span>دانهٔ تک‌خاستگاه</span><i>✦</i><span>رُست روزانه</span><i>✦</i><span>صبحانهٔ تازه</span><i>✦</i>
-    <span>دسر خانگی</span><i>✦</i><span>باریستای حرفه‌ای</span><i>✦</i><span>فضای شبانه</span><i>✦</i>
-    <span>دانهٔ تک‌خاستگاه</span><i>✦</i><span>رُست روزانه</span><i>✦</i><span>صبحانهٔ تازه</span><i>✦</i>
-    <span>دسر خانگی</span><i>✦</i><span>باریستای حرفه‌ای</span><i>✦</i><span>فضای شبانه</span><i>✦</i>
-  </div>
-</div>
-
-<!-- ============================ دربارهٔ ما ============================ -->
-<section class="about section" id="about">
-  <div class="container about__grid">
-    <div class="about__art" data-reveal>
-      <div class="about__frame">
-        <svg viewBox="0 0 120 120" class="about__illus"><use href="#illus-pourover"></use></svg>
-        <svg class="about__girih" aria-hidden="true"><use href="#girih"></use></svg>
-      </div>
-      <div class="stat-chip"><b data-edit="about.stat1num">۱۴۰۱</b><span data-edit="about.stat1label">سالِ تأسیس</span></div>
-      <div class="stat-chip stat-chip--2"><b data-edit="about.stat2num">۳۸</b><span data-edit="about.stat2label">نوعِ نوشیدنی</span></div>
-    </div>
-    <div class="about__copy">
-      <span class="kicker" data-reveal data-edit="about.kicker">قصهٔ دمسا</span>
-      <h2 class="h2" data-reveal data-edit="about.h2">از یک دمِ ساده، تا خانه‌ای برای دوست‌داران قهوه</h2>
-      <p data-reveal data-edit="about.body">
-        دمسا از یک عادتِ کوچک شروع شد: دمِ آرامِ قهوه در شب‌های بی‌خوابی.
-        امروز همان آرامش را در فنجان‌هایی می‌ریزیم که با وسواس انتخاب،
-        رُست و دم می‌شوند. ما به یک چیز باور داریم — قهوهٔ خوب، بهانه‌ای‌ست
-        برای کنار هم نشستن.
-      </p>
-      <ul class="about__values" data-reveal>
-        <li><svg class="ic"><use href="#i-check"></use></svg> <span data-edit="about.value1">دانهٔ تک‌خاستگاه، رُستِ روزانه در محل</span></li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> <span data-edit="about.value2">دستورهای خانگی، بدون افزودنیِ صنعتی</span></li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> <span data-edit="about.value3">باریستاهای آموزش‌دیده و منوی فصلی</span></li>
-      </ul>
-
-      <ol class="timeline" data-reveal>
-        <li><span class="timeline__y">۱۴۰۱</span><p>اولین فنجان، در یک مغازهٔ کوچک.</p></li>
-        <li><span class="timeline__y">۱۴۰۲</span><p>افتتاح رُستریِ اختصاصی دمسا.</p></li>
-        <li><span class="timeline__y">۱۴۰۳</span><p>راه‌اندازی باشگاه مشتریان و سفارش آنلاین.</p></li>
-        <li><span class="timeline__y">۱۴۰۵</span><p>منوی فصلی و شب‌های موسیقیِ زنده.</p></li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ منوی ویژه ============================ -->
-<section class="featured section" id="featured">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker" data-reveal data-edit="featured.kicker">منتخبِ امروز</span>
-        <h2 class="h2" data-reveal data-edit="featured.h2">چند فنجانِ نشدنی</h2>
-      </div>
-      <p class="section-head__lead" data-reveal data-edit="featured.lead">پرطرفدارترین‌ها و پیشنهادِ سرآشپز؛ هر روز تازه در کافه سرو می‌شود.</p>
-    </div>
-
-    <div class="filterbar" data-reveal>
-      <div class="filterbar__chips" id="featuredFilters" role="tablist" aria-label="فیلتر منوی ویژه"></div>
-      <label class="searchbox">
-        <svg class="ic"><use href="#i-search"></use></svg>
-        <input type="search" id="featuredSearch" placeholder="جست‌وجو در منوی ویژه…" aria-label="جست‌وجو" />
-      </label>
-    </div>
-
-    <div class="card-grid" id="featuredGrid"></div>
-  </div>
-</section>
-
-<!-- ============================ منوی کامل ============================ -->
-<section class="menu section" id="menu">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker" data-reveal data-edit="menu.kicker">منوی کامل</span>
-        <h2 class="h2" data-reveal data-edit="menu.h2">هر چیزی که دلت بخواهد</h2>
-      </div>
-      <label class="searchbox" data-reveal>
-        <svg class="ic"><use href="#i-search"></use></svg>
-        <input type="search" id="menuSearch" placeholder="جست‌وجوی نام، طعم یا دسته…" aria-label="جست‌وجوی منو" />
-      </label>
-    </div>
-
-    <div class="menu__tabs" id="menuTabs" role="tablist" aria-label="دسته‌های منو"></div>
-    <div class="menu__list" id="menuList"></div>
-    <p class="menu__empty" id="menuEmpty" hidden>چیزی پیدا نشد. جست‌وجوی دیگری را امتحان کن.</p>
-  </div>
-</section>
-
-<!-- ============================ نظرات ============================ -->
-<section class="reviews section" id="reviews">
-  <div class="container">
-    <div class="section-head section-head--center">
-      <span class="kicker" data-reveal data-edit="reviews.kicker">نظرِ مهمان‌ها</span>
-      <h2 class="h2" data-reveal data-edit="reviews.h2">آن‌چه دربارهٔ ما می‌گویند</h2>
-    </div>
-    <div class="reviews__viewport">
-      <div class="reviews__track" id="reviewsTrack"></div>
-    </div>
-    <div class="reviews__nav">
-      <button class="icon-btn" id="revPrev" aria-label="قبلی"><svg class="ic"><use href="#i-arrow"></use></svg></button>
-      <div class="reviews__dots" id="reviewsDots"></div>
-      <button class="icon-btn rotate" id="revNext" aria-label="بعدی"><svg class="ic"><use href="#i-arrow"></use></svg></button>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ گالری ============================ -->
-<section class="gallery section" id="gallery">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker" data-reveal data-edit="gallery.kicker">گالری</span>
-        <h2 class="h2" data-reveal data-edit="gallery.h2">یک نگاه به دمسا</h2>
-      </div>
-      <p class="section-head__lead" data-reveal data-edit="gallery.lead">فضا، فنجان‌ها و لحظه‌ها. روی هر قاب بزن تا بزرگ‌تر ببینی.</p>
-    </div>
-    <div class="masonry" id="masonry"></div>
-  </div>
-</section>
-
-<!-- ============================ رویدادها ============================ -->
-<section class="events section" id="events">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker" data-reveal data-edit="events.kicker">رویدادها</span>
-        <h2 class="h2" data-reveal data-edit="events.h2">شب‌هایی برای به‌یادسپردن</h2>
-      </div>
-      <div class="countdown" id="countdown" data-reveal>
-        <span class="countdown__label" data-edit="events.countdownLabel">تا رویدادِ بعدی</span>
-        <div class="countdown__cells">
-          <div><b id="cdD">۰۰</b><span>روز</span></div>
-          <div><b id="cdH">۰۰</b><span>ساعت</span></div>
-          <div><b id="cdM">۰۰</b><span>دقیقه</span></div>
-          <div><b id="cdS">۰۰</b><span>ثانیه</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="events__grid" id="eventsGrid"></div>
-  </div>
-</section>
-
-<!-- ============================ باشگاه مشتریان ============================ -->
-<section class="loyalty section" id="loyalty">
-  <div class="container">
-    <div class="section-head section-head--center">
-      <span class="kicker" data-reveal data-edit="loyalty.kicker">باشگاه مشتریان دمسا</span>
-      <h2 class="h2" data-reveal data-edit="loyalty.h2">هر فنجان، یک قدم به جلو</h2>
-      <p class="section-head__lead" data-reveal data-edit="loyalty.lead">با هر سفارش امتیاز جمع کن، سطحت را بالا ببر و هدیه بگیر.</p>
-    </div>
-    <div class="tiers" id="tiers"></div>
-    <div class="loyalty__cta" data-reveal>
-      <div>
-        <h3 data-edit="loyalty.ctaTitle">همین حالا عضو شو</h3>
-        <p data-edit="loyalty.ctaText">ثبت‌نام رایگان است و اولین نوشیدنیِ تولدت مهمانِ ماست.</p>
-      </div>
-      <form class="inline-form" id="joinForm">
-        <input type="tel" placeholder="شمارهٔ موبایل" aria-label="شمارهٔ موبایل" required />
-        <button class="btn btn--primary" type="submit" data-edit="loyalty.joinBtn">عضویت</button>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ تماس ============================ -->
-<section class="contact section" id="contact">
-  <div class="container contact__grid">
-    <div class="contact__info">
-      <span class="kicker" data-reveal data-edit="contact.kicker">تماس و مسیر</span>
-      <h2 class="h2" data-reveal data-edit="contact.h2">به دمسا سر بزن</h2>
-      <ul class="contact__list" data-reveal>
-        <li><svg class="ic"><use href="#i-pin"></use></svg><div><b data-edit="contact.addrLabel">نشانی</b><span data-edit="contact.address">تهران، خیابانِ نمونه، کوچهٔ دمسا، پلاک ۱۲</span></div></li>
-        <li><svg class="ic"><use href="#i-clock"></use></svg><div><b data-edit="contact.hoursLabel">ساعت کاری</b><span data-edit="contact.hours">هر روز، ۸ صبح تا ۱۲ شب</span></div></li>
-        <li><svg class="ic"><use href="#i-phone"></use></svg><div><b data-edit="contact.phoneLabel">تلفن</b><span data-edit="contact.phone">۰۲۱–۰۰۰۰۰۰۰۰</span></div></li>
-        <li><svg class="ic"><use href="#i-pin"></use></svg><div><b data-edit="contact.extraLabel">پارکینگ</b><span data-edit="contact.extra">پارکینگ عمومی، ۵۰ متر بالاتر</span></div></li>
-      </ul>
-      <div class="contact__socials" data-reveal>
-        <a href="#" class="icon-btn" aria-label="اینستاگرام" data-edit-attr="social.instagram|href"><svg class="ic"><use href="#i-insta"></use></svg></a>
-        <a href="#" class="icon-btn" aria-label="واتساپ" data-edit-attr="social.whatsapp|href"><svg class="ic"><use href="#i-wa"></use></svg></a>
-        <a href="tel:+982100000000" class="icon-btn" aria-label="تماس" data-edit-attr="social.tel|href"><svg class="ic"><use href="#i-phone"></use></svg></a>
-      </div>
-    </div>
-    <div class="contact__map" data-reveal aria-label="نقشهٔ موقعیت دمسا">
-      <div class="map-grid"></div>
-      <span class="map-pin"><svg class="ic"><use href="#i-pin"></use></svg></span>
-      <span class="map-tag" data-edit="contact.mapTag">کافهٔ دمسا</span>
-    </div>
-  </div>
-
-  <div class="container faq" id="faq">
-    <h3 class="faq__title" data-reveal data-edit="faq.title">پرسش‌های پرتکرار</h3>
-    <div class="faq__list">
-      <details class="faq__item" data-reveal><summary>«لیستِ سفارش» چطور کار می‌کند؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>هر آیتمی که دوست داری را به لیست اضافه کن تا یادت بماند. لیست روی همین گوشی ذخیره می‌شود؛ موقعِ حضور در کافه یا تماس، از روی آن سفارشت را بده. این فقط یک یادداشت است و خرید یا پرداختِ آنلاینی در کار نیست.</p></details>
-      <details class="faq__item" data-reveal><summary>گزینهٔ گیاهی و بدون گلوتن دارید؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>بله؛ آیتم‌های گیاهی و بدون گلوتن در منو با برچسبِ مخصوص مشخص شده‌اند.</p></details>
-      <details class="faq__item" data-reveal><summary>می‌توانم لیستم را برایتان بفرستم؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>بله. در پایینِ لیست، دکمهٔ «کپیِ لیست» را بزن تا متنِ سفارشت کپی شود؛ بعد می‌توانی آن را در واتساپ یا تماس برایمان بفرستی.</p></details>
-      <details class="faq__item" data-reveal><summary>امتیازهای باشگاه چطور استفاده می‌شوند؟<svg class="ic"><use href="#i-plus"></use></svg></summary><p>هر ۱۰۰ امتیاز معادلِ یک نوشیدنیِ هدیه است که هنگامِ حضور در کافه قابلِ استفاده است.</p></details>
-    </div>
-  </div>
-</section>
-</main>
-
-<!-- ============================ فوتر ============================ -->
-<footer class="footer">
-  <div class="container footer__grid">
-    <div class="footer__brand">
-      <a href="#hero" class="brand brand--lg"><span class="brand__mark" data-edit="brand.mark">د</span><span class="brand__word" data-edit="brand.word">دمسا</span></a>
-      <p data-edit="footer.about">خانهٔ قهوهٔ دست‌ساز. هر فنجان، یک قرارِ آرام.</p>
-      <div class="footer__socials">
-        <a href="#" class="icon-btn" aria-label="اینستاگرام" data-edit-attr="social.instagram|href"><svg class="ic"><use href="#i-insta"></use></svg></a>
-        <a href="#" class="icon-btn" aria-label="واتساپ" data-edit-attr="social.whatsapp|href"><svg class="ic"><use href="#i-wa"></use></svg></a>
-        <a href="tel:+982100000000" class="icon-btn" aria-label="تماس" data-edit-attr="social.tel|href"><svg class="ic"><use href="#i-phone"></use></svg></a>
-      </div>
-    </div>
-    <nav class="footer__col"><h4>کافه</h4><a href="#about">دربارهٔ ما</a><a href="#menu">منو</a><a href="#events">رویدادها</a><a href="#loyalty">باشگاه</a></nav>
-    <nav class="footer__col"><h4>خدمات</h4><a href="#" data-open-list>لیستِ سفارش</a><a href="#gallery">گالری</a><a href="#contact">تماس</a><a href="#faq">سؤالات</a></nav>
-    <div class="footer__news">
-      <h4>خبرنامه</h4>
-      <p>از منوی فصلی و رویدادها زودتر باخبر شو.</p>
-      <form class="inline-form" id="newsForm">
-        <input type="email" placeholder="ایمیل شما" aria-label="ایمیل" required />
-        <button class="btn btn--primary" type="submit">عضویت</button>
-      </form>
-    </div>
-  </div>
-  <div class="footer__bar">
-    <span data-edit="footer.copyright">© ۱۴۰۵ کافهٔ دمسا — همهٔ حقوق محفوظ است.</span>
-    <span class="footer__note" data-edit="footer.note">طراحی‌شده با عشق به قهوه ☕</span>
-  </div>
-</footer>
-
-<!-- ============================ ناوبریِ پایینِ موبایل ============================ -->
-<nav class="bottomnav" aria-label="ناوبری موبایل">
-  <a href="#hero" class="is-active"><svg class="ic"><use href="#i-home"></use></svg><span>خانه</span></a>
-  <a href="#menu"><svg class="ic"><use href="#i-book"></use></svg><span>منو</span></a>
-  <button type="button" data-open-list><svg class="ic"><use href="#i-cart"></use></svg><span>لیست</span><span class="count-badge count-badge--nav" data-count hidden>۰</span></button>
-  <a href="#contact"><svg class="ic"><use href="#i-phone"></use></svg><span>تماس</span></a>
-</nav>
-
-<!-- ============================ کشوی لیستِ سفارش ============================ -->
-<aside class="drawer" id="drawer" aria-hidden="true" aria-label="لیستِ سفارش">
-  <div class="drawer__scrim" data-close-list></div>
-  <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-    <header class="drawer__head">
-      <div>
-        <h2 id="drawerTitle" class="drawer__title">لیستِ سفارشِ من</h2>
-        <p class="drawer__sub">یادداشتِ آیتم‌هایی که دوست داری — بدونِ خرید یا پرداخت.</p>
-      </div>
-      <button class="icon-btn" data-close-list aria-label="بستن"><svg class="ic"><use href="#i-close"></use></svg></button>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand"><span class="mark">د</span> دمسا</div>
+      <span class="hint">مجموعهٔ قالب‌ها</span>
     </header>
-    <div class="drawer__body" id="drawerBody"></div>
-    <footer class="drawer__foot" id="drawerFoot" hidden>
-      <div class="drawer__total"><span>جمعِ تقریبی</span><b id="drawerTotal">۰ تومان</b></div>
-      <p class="drawer__hint"><svg class="ic"><use href="#i-spark"></use></svg> این فقط یک یادداشت است. موقعِ سفارش در کافه یا تماس از روی آن استفاده کن.</p>
-      <div class="drawer__actions">
-        <button class="btn btn--primary btn--lg" id="copyList"><svg class="ic"><use href="#i-check"></use></svg>کپیِ لیست</button>
-        <button class="btn btn--ghost" id="clearList">خالی‌کردنِ لیست</button>
+
+    <main class="center">
+      <div class="lead">
+        <span class="eyebrow">✦ یک قالب را انتخاب کن</span>
+        <h1>کدام تجربه را می‌خواهی <b>بسازی؟</b></h1>
+        <p>دو قالبِ مستقل با طراحی، چیدمان و پنلِ مدیریتِ جداگانه. هرکدام را جداگانه شخصی‌سازی کن.</p>
       </div>
-    </footer>
+
+      <nav class="cards">
+        <a class="card card--cafe" href="/cafe/">
+          <span class="card__admin" role="link" tabindex="0" onclick="event.preventDefault();event.stopPropagation();location.href='/cafe/admin'">پنل مدیریت ↗</span>
+          <div class="card__inner">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 8h11v5a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5z"/><path d="M16 9h2.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3c-.6 1 .6 2 0 3M11.5 3c-.6 1 .6 2 0 3"/>
+              </svg>
+            </span>
+            <div class="card__t">کافه دمسا</div>
+            <div class="card__en">Café · Template 1</div>
+            <div class="card__d">قهوهٔ دست‌ساز، صبحانه و دسر — تجربه‌ای سینمایی و تک‌صفحه‌ای با حرکتِ روان و منوی کامل.</div>
+            <span class="card__go">ورود به سایت
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a class="card card--rest" href="/restaurant/">
+          <span class="card__admin" role="link" tabindex="0" onclick="event.preventDefault();event.stopPropagation();location.href='/restaurant/admin'">پنل مدیریت ↗</span>
+          <div class="card__inner">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 3v8a2 2 0 0 0 4 0V3M9 3v18M17 3c-1.5 1-2 3-2 6s.5 4 2 4v8"/>
+              </svg>
+            </span>
+            <div class="card__t">رستوران دمسا</div>
+            <div class="card__en">Restaurant · Template 2</div>
+            <div class="card__d">فاین‌داینینگِ مدرن — چیدمانِ منو‌محور، حرکت‌های لایه‌ای و فضای تیره و لوکس. کاملاً متفاوت با قالبِ کافه.</div>
+            <span class="card__go">ورود به سایت
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
+      </nav>
+    </main>
+
+    <footer class="bot">طراحی‌شده با عشق ☕🍷 — دمسا</footer>
   </div>
-</aside>
 
-<!-- ============================ مودالِ جزئیات محصول ============================ -->
-<div class="modal" id="productModal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="modal__scrim" data-close></div>
-  <div class="modal__panel" id="productPanel"></div>
-</div>
-
-<!-- ============================ ناحیهٔ نوتیفیکیشن ============================ -->
-<div class="toast-wrap" id="toasts" aria-live="polite"></div>
-
-<!-- اسکریپت‌ها -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<script src="assets/js/theme-engine.js"></script>
-<script src="assets/js/menu-data.js"></script>
-<script src="assets/js/content.js"></script>
-<script src="assets/js/app.js"></script>
+  <script>
+    if (matchMedia("(pointer:fine)").matches && !matchMedia("(prefers-reduced-motion:reduce)").matches) {
+      document.querySelectorAll(".card").forEach((c) => {
+        c.addEventListener("mousemove", (e) => {
+          const r = c.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+          c.style.transform = `translateY(-8px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+        });
+        c.addEventListener("mouseleave", () => { c.style.transform = ""; });
+      });
+    }
+  </script>
 </body>
 </html>
