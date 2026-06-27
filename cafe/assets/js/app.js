@@ -162,6 +162,95 @@
     $$("[data-reveal]").forEach((el) => el.classList.add("reveal-in"));
   }
 
+  /* ----------------------------- پس‌زمینهٔ سینماییِ اخگر/تابش ----------------------------- */
+  (function atmos() {
+    const cv = $("#embersCanvas");
+    if (!cv || reduce) return;
+    const ctx = cv.getContext("2d", { alpha: true });
+    let W = 0, H = 0;
+    const DPR = Math.min(devicePixelRatio || 1, 2);
+
+    // رنگِ واقعیِ نقش‌ها را از روی محاسبهٔ مرورگر می‌گیریم تا با تمِ هوشمند هم هماهنگ شود
+    const probe = document.createElement("span");
+    probe.style.cssText = "position:absolute;left:-9999px;top:-9999px;opacity:0";
+    document.body.appendChild(probe);
+    const resolve = (v, fb) => { probe.style.color = fb; probe.style.color = `var(${v})`; const c = getComputedStyle(probe).color; return /^rgb/.test(c) ? c.match(/\d+/g) : null; };
+    let warm = resolve("--saffron-soft", "#F0B45C") || [240, 180, 92];
+    let hot  = resolve("--accent", "#E0922B") || [224, 146, 43];
+    new MutationObserver(() => {
+      warm = resolve("--saffron-soft", "#F0B45C") || warm;
+      hot  = resolve("--accent", "#E0922B") || hot;
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const N = innerWidth < 680 ? 34 : 68;
+    const parts = [];
+    const spawn = (init) => ({
+      x: Math.random(),                          // افقی نسبی
+      y: init ? Math.random() : rnd(1.02, 1.18), // عمودی نسبی (۱+ یعنی زیرِ صفحه، تازه متولد)
+      r: rnd(0.7, 2.6),
+      sway: rnd(0.5, 1.6),
+      freq: rnd(0.5, 1.2),
+      phase: rnd(0, Math.PI * 2),
+      vy: rnd(0.02, 0.055),                      // سرعتِ پایهٔ صعود
+      drift: rnd(-0.03, 0.03),                   // رانشِ افقیِ آرام
+      life: rnd(0.55, 1),
+      hot: Math.random() < 0.42,
+    });
+    for (let i = 0; i < N; i++) parts.push(spawn(true));
+
+    const resize = () => {
+      W = cv.clientWidth; H = cv.clientHeight;
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    };
+    addEventListener("resize", resize); resize();
+
+    // سرعتِ اسکرول → حسِ «جلو رفتن/عقب آمدنِ صحنه مثلِ فیلم»
+    let sV = 0, lastSY = scrollY;
+    addEventListener("scroll", () => { const y = scrollY; sV += y - lastSY; lastSY = y; }, { passive: true });
+
+    let t = 0;
+    const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+    function frame() {
+      t += 1;
+      sV *= 0.9;
+      const boost = Math.max(-0.55, Math.min(1.5, sV * 0.011)); // اسکرول رو به پایین: اخگرها تندتر بالا می‌روند
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+      for (const p of parts) {
+        p.y -= p.vy * (1 + boost) * 0.018;
+        p.phase += 0.012 * p.freq;
+        p.x += p.drift * 0.0016;
+        const px = (p.x + Math.sin(p.phase) * 0.045 * p.sway) * W;
+        const py = p.y * H;
+        const edge = p.y < 0.14 ? p.y / 0.14 : (p.y > 0.92 ? Math.max(0, (1.02 - p.y) / 0.12) : 1);
+        const a = Math.max(0, Math.min(1, edge)) * p.life * (0.55 + 0.35 * (0.5 + 0.5 * Math.sin(p.phase * 1.6)));
+        const R = p.r * 6;
+        const g = ctx.createRadialGradient(px, py, 0, px, py, R);
+        const col = p.hot ? hot : warm;
+        g.addColorStop(0, rgba(col, a));
+        g.addColorStop(0.4, rgba(col, a * 0.35));
+        g.addColorStop(1, rgba(col, 0));
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(px, py, R, 0, Math.PI * 2); ctx.fill();
+        if (p.y < -0.06) Object.assign(p, spawn(false));
+      }
+      ctx.globalCompositeOperation = "source-over";
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // پارالاکسِ نرمِ تابش‌ها با اسکرول (GSAP اگر در دسترس باشد)
+    if (window.gsap && window.ScrollTrigger) {
+      const endH = () => Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      const st = (scrub) => ({ trigger: document.body, start: 0, end: endH, scrub, invalidateOnRefresh: true });
+      gsap.to(".atmos__glow--1", { yPercent: 16, xPercent: 7, ease: "none", scrollTrigger: st(1) });
+      gsap.to(".atmos__glow--2", { yPercent: -20, xPercent: -9, ease: "none", scrollTrigger: st(1.3) });
+      gsap.to(".atmos__glow--3", { yPercent: 28, xPercent: 4, ease: "none", scrollTrigger: st(0.8) });
+    }
+  })();
+
   /* ----------------------------- کارت محصول ----------------------------- */
   const favs = new Set(JSON.parse(localStorage.getItem("damsa-favs") || "[]"));
   const saveFavs = () => localStorage.setItem("damsa-favs", JSON.stringify([...favs]));

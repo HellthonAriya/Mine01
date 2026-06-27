@@ -68,6 +68,19 @@ body{
   transition:background .5s var(--ease),color .5s var(--ease);
 }
 body.is-locked{overflow:hidden}
+
+/* ----------------------------- پس‌زمینهٔ سینماییِ اخگر/تابش ----------------------------- */
+.atmos{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.atmos__glow{position:absolute;border-radius:50%;filter:blur(64px);mix-blend-mode:screen;will-change:transform,opacity}
+.atmos__glow--1{width:62vmax;height:62vmax;inset-inline-start:-16vmax;inset-block-start:-14vmax;opacity:.42;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent) 85%,transparent),transparent 64%)}
+.atmos__glow--2{width:54vmax;height:54vmax;inset-inline-end:-14vmax;inset-block-end:-12vmax;opacity:.36;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent-2) 75%,transparent),transparent 64%)}
+.atmos__glow--3{width:48vmax;height:48vmax;inset-inline-start:32vw;inset-block-start:44vh;opacity:.3;
+  background:radial-gradient(circle,color-mix(in srgb,var(--saffron-soft) 80%,transparent),transparent 60%)}
+.atmos__embers{position:absolute;inset:0;width:100%;height:100%}
+[data-theme="light"] .atmos__glow{mix-blend-mode:multiply;opacity:.2}
+@media (prefers-reduced-motion:reduce){.atmos__embers{display:none}.atmos__glow{filter:blur(64px)}}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
 input,textarea{font:inherit;color:inherit}
