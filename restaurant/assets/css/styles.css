@@ -22,6 +22,15 @@ html{-webkit-text-size-adjust:100%}
 body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.75;
   -webkit-font-smoothing:antialiased;overflow:hidden;transition:background .5s var(--ease),color .5s var(--ease)}
 body.is-locked{overflow:hidden}
+
+/* پس‌زمینهٔ واکنشی به جهتِ اسکرول */
+.rbg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.rbg__wash{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;will-change:opacity;transition:opacity .45s var(--ease)}
+.rbg__wash--down{background:radial-gradient(130% 85% at 50% -5%,color-mix(in srgb,var(--accent-2) 55%,transparent),transparent 60%)}
+.rbg__wash--up{background:radial-gradient(130% 85% at 50% 105%,color-mix(in srgb,var(--accent) 62%,transparent),transparent 60%)}
+.rbg__motes{position:absolute;inset:0;width:100%;height:100%}
+@media (prefers-reduced-motion:reduce){.rbg__motes{display:none}.rbg__wash{transition:none}}
+
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
 input,textarea,select{font:inherit;color:inherit}

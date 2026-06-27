@@ -205,6 +205,80 @@
       track.style.transform = `translateX(${ti * 100}%)`; // RTL: مثبت به‌سمتِ بعدی
     }, 4500);
 
+    /* ---------- پس‌زمینهٔ واکنشی به جهتِ اسکرول ---------- */
+    (function rbg() {
+      const cv = $("#rbgMotes"), washDown = $(".rbg__wash--down"), washUp = $(".rbg__wash--up");
+      if (!cv || reduce) return;
+      const ctx = cv.getContext("2d", { alpha: true });
+      const DPR = Math.min(devicePixelRatio || 1, 2);
+      let W = 0, H = 0;
+
+      // رنگِ واقعیِ تم (با تمِ هوشمند هماهنگ می‌ماند)
+      const probe = document.createElement("span");
+      probe.style.cssText = "position:absolute;left:-9999px;top:-9999px;opacity:0";
+      document.body.appendChild(probe);
+      const col = (v, fb) => { probe.style.color = fb; probe.style.color = `var(${v})`; const c = getComputedStyle(probe).color; return /^rgb/.test(c) ? c.match(/\d+/g).map(Number) : null; };
+      let gold = col("--accent-2", "#C99A3B") || [201, 154, 59];
+      let wine = col("--accent", "#9E2B25") || [158, 43, 37];
+      new MutationObserver(() => { gold = col("--accent-2", "#C99A3B") || gold; wine = col("--accent", "#9E2B25") || wine; })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+      const rnd = (a, b) => a + Math.random() * (b - a);
+      const N = innerWidth < 680 ? 30 : 56;
+      const motes = [];
+      for (let i = 0; i < N; i++) motes.push({ x: Math.random(), y: Math.random(), r: rnd(0.6, 2.4), depth: rnd(0.4, 1.4) });
+
+      const resize = () => { W = cv.clientWidth; H = cv.clientHeight; cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); };
+      addEventListener("resize", resize); resize();
+
+      // سرعتِ اسکرول از سه منبع: wheel، اسکرولِ داخلیِ صحنه‌ها، و لمس
+      let vel = 0, flow = 0, dir = 0;
+      const push = (d) => { vel += d; };
+      addEventListener("wheel", (e) => push(e.deltaY * 0.6), { passive: true });
+      const tops = new WeakMap();
+      addEventListener("scroll", (e) => {
+        const s = e.target; if (!s || !s.classList || !s.classList.contains("scene")) return;
+        const prev = tops.get(s) || 0; push((s.scrollTop - prev) * 1.1); tops.set(s, s.scrollTop);
+      }, true);
+      let ty = 0;
+      addEventListener("touchstart", (e) => { ty = e.touches[0].clientY; }, { passive: true });
+      addEventListener("touchmove", (e) => { const y = e.touches[0].clientY; push((ty - y) * 0.9); ty = y; }, { passive: true });
+
+      const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+      function frame() {
+        vel *= 0.88;                                   // با توقفِ اسکرول آرام می‌گیرد
+        if (Math.abs(vel) < 0.02) vel = 0;
+        flow += vel * 0.0006;                          // فقط با اسکرول جابجا می‌شود (در سکون ساکن)
+        const target = vel > 0 ? 1 : vel < 0 ? -1 : dir;
+        dir += (target - dir) * 0.12;                  // جهتِ نرم‌شده؛ پس از توقف، رنگِ جهتِ آخر می‌ماند
+        const mag = Math.min(1, Math.abs(vel) / 60);
+
+        washDown.style.opacity = (vel > 0 ? mag * 0.6 : 0).toFixed(3);  // پایین → طلایی از بالا
+        washUp.style.opacity   = (vel < 0 ? mag * 0.6 : 0).toFixed(3);  // بالا → شرابی از پایین
+
+        const blend = (dir + 1) / 2; // 0=شرابی .. 1=طلایی
+        const c = [
+          Math.round(wine[0] + (gold[0] - wine[0]) * blend),
+          Math.round(wine[1] + (gold[1] - wine[1]) * blend),
+          Math.round(wine[2] + (gold[2] - wine[2]) * blend),
+        ];
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter";
+        for (const m of motes) {
+          let y = (m.y + flow * m.depth) % 1; if (y < 0) y += 1;
+          const px = m.x * W, py = y * H, R = m.r * 5;
+          const a = 0.1 + 0.55 * mag * m.depth;        // در سکون کم‌رنگ، با اسکرول روشن‌تر
+          const g = ctx.createRadialGradient(px, py, 0, px, py, R);
+          g.addColorStop(0, rgba(c, a));
+          g.addColorStop(1, rgba(c, 0));
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, R, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+
     /* راه‌اندازیِ اولیه از روی هش */
     go((location.hash || "#home").replace("#", ""));
     runCounters();
