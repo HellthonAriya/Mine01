@@ -183,7 +183,7 @@
     }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
     const rnd = (a, b) => a + Math.random() * (b - a);
-    const N = innerWidth < 680 ? 34 : 68;
+    const N = innerWidth < 680 ? 16 : 32;
     const parts = [];
     const spawn = (init) => ({
       x: Math.random(),                          // افقی نسبی
@@ -192,7 +192,7 @@
       sway: rnd(0.5, 1.6),
       freq: rnd(0.5, 1.2),
       phase: rnd(0, Math.PI * 2),
-      vy: rnd(0.02, 0.055),                      // سرعتِ پایهٔ صعود
+      vy: rnd(0.008, 0.022),                     // سرعتِ پایهٔ صعود
       drift: rnd(-0.03, 0.03),                   // رانشِ افقیِ آرام
       life: rnd(0.55, 1),
       hot: Math.random() < 0.42,
@@ -214,8 +214,8 @@
     const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
     function frame() {
       t += 1;
-      sV *= 0.9;
-      const boost = Math.max(-0.55, Math.min(1.5, sV * 0.011)); // اسکرول رو به پایین: اخگرها تندتر بالا می‌روند
+      sV *= 0.85;
+      const boost = Math.max(-0.3, Math.min(0.8, sV * 0.005));
       ctx.clearRect(0, 0, W, H);
       ctx.globalCompositeOperation = "lighter";
       for (const p of parts) {

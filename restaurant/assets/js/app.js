@@ -234,27 +234,24 @@
       // سرعتِ اسکرول از سه منبع: wheel، اسکرولِ داخلیِ صحنه‌ها، و لمس
       let vel = 0, flow = 0, dir = 0;
       const push = (d) => { vel += d; };
-      addEventListener("wheel", (e) => push(e.deltaY * 0.6), { passive: true });
+      addEventListener("wheel", (e) => push(e.deltaY * 0.25), { passive: true });
       const tops = new WeakMap();
       addEventListener("scroll", (e) => {
         const s = e.target; if (!s || !s.classList || !s.classList.contains("scene")) return;
-        const prev = tops.get(s) || 0; push((s.scrollTop - prev) * 1.1); tops.set(s, s.scrollTop);
+        const prev = tops.get(s) || 0; push((s.scrollTop - prev) * 0.45); tops.set(s, s.scrollTop);
       }, true);
-      let ty = 0;
-      addEventListener("touchstart", (e) => { ty = e.touches[0].clientY; }, { passive: true });
-      addEventListener("touchmove", (e) => { const y = e.touches[0].clientY; push((ty - y) * 0.9); ty = y; }, { passive: true });
 
       const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
       function frame() {
-        vel *= 0.88;                                   // با توقفِ اسکرول آرام می‌گیرد
-        if (Math.abs(vel) < 0.02) vel = 0;
-        flow += vel * 0.0006;                          // فقط با اسکرول جابجا می‌شود (در سکون ساکن)
+        vel *= 0.82;                                   // با توقفِ اسکرول آرام می‌گیرد
+        if (Math.abs(vel) < 0.01) vel = 0;
+        flow += vel * 0.0003;
         const target = vel > 0 ? 1 : vel < 0 ? -1 : dir;
-        dir += (target - dir) * 0.12;                  // جهتِ نرم‌شده؛ پس از توقف، رنگِ جهتِ آخر می‌ماند
-        const mag = Math.min(1, Math.abs(vel) / 60);
+        dir += (target - dir) * 0.08;
+        const mag = Math.min(1, Math.abs(vel) / 40);
 
-        washDown.style.opacity = (vel > 0 ? mag * 0.6 : 0).toFixed(3);  // پایین → طلایی از بالا
-        washUp.style.opacity   = (vel < 0 ? mag * 0.6 : 0).toFixed(3);  // بالا → شرابی از پایین
+        washDown.style.opacity = (vel > 0 ? mag * 0.32 : 0).toFixed(3);
+        washUp.style.opacity   = (vel < 0 ? mag * 0.32 : 0).toFixed(3);
 
         const blend = (dir + 1) / 2; // 0=شرابی .. 1=طلایی
         const c = [
