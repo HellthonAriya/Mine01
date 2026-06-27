@@ -156,9 +156,9 @@ ul{list-style:none}
 
 /* دیسک: نیم‌دایره، محور (مرکز) دقیقاً روی لبهٔ راستِ صفحه؛ بدونِ پس‌زمینهٔ تاریک و بدونِ سوراخِ مرکز */
 .wheel{position:absolute;top:calc(var(--disc)*-0.85);right:calc(var(--pad)*-1);width:var(--wheelw);height:var(--disc);
-  overflow:hidden;z-index:7;touch-action:none;cursor:grab}
+  overflow:visible;z-index:7;touch-action:none;cursor:grab}
 .wheel:active{cursor:grabbing}
-.wheel__disc{position:absolute;top:0;left:auto;right:0;width:var(--disc);height:var(--disc);border-radius:50%;
+.wheel__disc{position:absolute;top:0;left:auto;right:calc(var(--disc)*-0.5);width:var(--disc);height:var(--disc);border-radius:50%;
   background:var(--sectors,transparent);border:1px solid var(--line-soft);will-change:transform}
 .wheel__disc::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
   background:
