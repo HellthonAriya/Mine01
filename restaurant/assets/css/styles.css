@@ -181,13 +181,13 @@ ul{list-style:none}
     inset 0 0 0 1px color-mix(in srgb,var(--accent-2) 10%,transparent),
     0 12px 44px -14px color-mix(in srgb,var(--accent) 32%,transparent);
   will-change:transform}
-/* شیارهای طلاییِ صفحهٔ گرامافون */
+/* شیارهای ظریفِ طلاییِ صفحهٔ گرامافون */
 .wheel__disc::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
   background:
-    radial-gradient(circle at 50% 50%,transparent 30%,color-mix(in srgb,var(--accent-2) 34%,transparent) 30.3% 30.7%,transparent 31.1%),
-    radial-gradient(circle at 50% 50%,transparent 44%,color-mix(in srgb,var(--accent-2) 27%,transparent) 44.3% 44.7%,transparent 45.1%),
-    radial-gradient(circle at 50% 50%,transparent 58%,color-mix(in srgb,var(--accent-2) 21%,transparent) 58.3% 58.7%,transparent 59.1%),
-    radial-gradient(circle at 50% 50%,transparent 71%,color-mix(in srgb,var(--accent-2) 16%,transparent) 71.3% 71.7%,transparent 72.1%)}
+    radial-gradient(circle at 50% 50%,transparent 30%,color-mix(in srgb,var(--accent-2) 20%,transparent) 30.4% 30.7%,transparent 31%),
+    radial-gradient(circle at 50% 50%,transparent 44%,color-mix(in srgb,var(--accent-2) 16%,transparent) 44.4% 44.7%,transparent 45%),
+    radial-gradient(circle at 50% 50%,transparent 58%,color-mix(in srgb,var(--accent-2) 13%,transparent) 58.4% 58.7%,transparent 59%),
+    radial-gradient(circle at 50% 50%,transparent 71%,color-mix(in srgb,var(--accent-2) 10%,transparent) 71.4% 71.7%,transparent 72%)}
 /* مدالِ مرکزی (لیبلِ صفحه) */
 .wheel__disc::after{content:"";position:absolute;left:50%;top:50%;width:17%;height:17%;transform:translate(-50%,-50%);
   border-radius:50%;pointer-events:none;

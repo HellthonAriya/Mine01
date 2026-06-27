@@ -323,18 +323,29 @@
   tabsEl.addEventListener("pointerenter", () => pauseTabs(0));
   tabsEl.addEventListener("pointerleave", () => tabsEl.classList.remove("is-paused"));
   tabsEl.addEventListener("touchstart", () => pauseTabs(4000), { passive: true });
-  // لوپِ بی‌نهایتِ نرم با JS (سازگار با RTL): با ردشدنِ یک مجموعه، از همان‌جا ادامه می‌یابد
+  // لوپِ بی‌نهایتِ نرم با JS (سازگار با RTL): با خروجِ یک چیپ از یک‌سو، از سویِ دیگر بازمی‌گردد
   if (dupNeeded && !reduce) {
     const track = tabsEl.querySelector(".menu__tabs__track");
-    track.style.animation = "none";        // به‌جای انیمیشنِ CSS، حلقهٔ rAF
-    let half = 0, x = 0;
-    const measure = () => { half = track.scrollWidth / 2; };
-    requestAnimationFrame(() => { measure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure); });
-    addEventListener("resize", measure);
+    track.style.animation = "none";                 // به‌جای انیمیشنِ CSS، حلقهٔ rAF
+    const oneSet = CATEGORIES.length;               // تعدادِ چیپ در یک مجموعهٔ کامل
+    let setW = 0, x = 0;
+    const widthOf = (el) => el.getBoundingClientRect().width + (parseFloat(getComputedStyle(el).marginInlineEnd) || 0);
+    const ensure = () => {
+      const set = [...track.children].slice(0, oneSet);
+      setW = set.reduce((s, el) => s + widthOf(el), 0);
+      if (!setW) return;
+      // آن‌قدر کلون بساز که پنجره همیشه پر بماند و wrap بی‌درز شود (یک‌ست + عرضِ کانتینر)
+      let guard = 0;
+      while (track.scrollWidth < tabsEl.clientWidth + setW + 4 && guard++ < 20) {
+        set.forEach((el) => track.appendChild(el.cloneNode(true)));
+      }
+    };
+    requestAnimationFrame(() => { ensure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(ensure); });
+    addEventListener("resize", ensure);
     const step = () => {
-      if (half && !tabsEl.classList.contains("is-paused") && !tabsEl.matches(":hover")) {
-        x -= 0.45;                          // سرعتِ آرام
-        if (x <= -half) x += half;          // wrap بی‌درز روی عرضِ یک مجموعه
+      if (setW && !tabsEl.classList.contains("is-paused") && !tabsEl.matches(":hover")) {
+        x -= 0.45;                                   // سرعتِ آرام
+        if (x <= -setW) x += setW;                   // wrap روی عرضِ دقیقِ یک مجموعه → بی‌درز
         track.style.transform = `translateX(${x}px)`;
       }
       requestAnimationFrame(step);

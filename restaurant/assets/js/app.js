@@ -83,15 +83,33 @@
     const wheel = $("#wheel"), disc = $("#wheelDisc");
     const N = COURSES.length, SEG = N ? 360 / N : 0;
     const rad = (d) => d * Math.PI / 180;
-    // پالتِ هم‌خوان با تم: تناوبِ طلایی/شرابی (زنده از روی تم خوانده می‌شود)
+    // حلقهٔ رنگیِ پیوسته‌ی هم‌خوان با تم: طلایی↔شرابی↔طلایی (حلقهٔ بسته؛ مستقل از زوج/فرد، بدونِ هم‌رنگیِ مجاور)
     const cssv = (v, fb) => (getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fb);
-    const cc = (i) => (i % 2 === 0 ? cssv("--accent-2", "#C99A3B") : cssv("--accent", "#9E2B25"));
+    const toRGB = (s, fb) => {
+      s = (s || "").trim();
+      let m = s.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+      if (m) { let h = m[1]; if (h.length === 3) h = h.split("").map((c) => c + c).join(""); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+      m = s.match(/\d+(\.\d+)?/g);
+      return (m && m.length >= 3) ? [+m[0], +m[1], +m[2]] : fb;
+    };
+    const mixRGB = (a, b, t) => [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)];
+    const ringColor = (frac) => {
+      const g = toRGB(cssv("--accent-2", "#C99A3B"), [201, 154, 59]);
+      const w = toRGB(cssv("--accent", "#9E2B25"), [158, 43, 37]);
+      const t = (1 - Math.cos(2 * Math.PI * frac)) / 2; // 0=طلایی · 0.5=شرابی · 1=طلایی
+      const c = mixRGB(g, w, t);
+      return `rgb(${c[0]},${c[1]},${c[2]})`;
+    };
+    const cc = (i) => ringColor(N ? (i + 0.5) / N : 0); // رنگِ برچسب = جایگاهش روی حلقه
     let rot = 0, selIdx = 0, dragging = false, hover = false, moved = false;
-    // سکتورهای بسیار کم‌رنگِ متناوب روی دیسک (هم‌تراز با برچسب‌ها)
+    // تابشِ نرمِ سکتورها روی دیسک — گرادیانتِ پیوسته (بدونِ گُوِه‌های تیز)
     function paintSectors() {
       if (!N) return;
-      const stops = COURSES.map((c, i) => `color-mix(in srgb, ${cc(i)} 13%, transparent) ${i * SEG}deg ${(i + 1) * SEG}deg`).join(",");
-      disc.style.setProperty("--sectors", `conic-gradient(from 0deg, ${stops})`);
+      const tint = (frac) => `color-mix(in srgb, ${ringColor(frac)} 13%, transparent)`;
+      const stops = [`${tint(0)} 0deg`];
+      COURSES.forEach((c, i) => stops.push(`${tint((i + 0.5) / N)} ${((i + 0.5) * SEG).toFixed(2)}deg`));
+      stops.push(`${tint(1)} 360deg`); // tint(1)===tint(0) → درزِ بی‌نقص
+      disc.style.setProperty("--sectors", `conic-gradient(from 0deg, ${stops.join(",")})`);
     }
     paintSectors();
     disc.innerHTML = COURSES.map((c, i) =>
