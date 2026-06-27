@@ -137,7 +137,7 @@ ul{list-style:none}
 @keyframes marq{to{transform:translateX(-50%)}}
 
 /* ----------------------------- صحنهٔ منو (گریدِ عکس‌محور + چرخِ انتخاب) ----------------------------- */
-:root{--disc:clamp(200px,32vw,320px);--wheelw:var(--disc)}
+:root{--disc:clamp(240px,38.4vw,384px);--wheelw:var(--disc)}
 .scene--menu{padding-block:0;scroll-behavior:smooth}
 .menu__sticky{position:sticky;inset-block-start:0;z-index:6;min-height:var(--disc);
   padding-block:18px;padding-right:calc(var(--wheelw) + 30px)}
@@ -155,7 +155,7 @@ ul{list-style:none}
 @keyframes roIn{from{opacity:0;transform:translateY(10px)}}
 
 /* دیسک: نیم‌دایره، محور (مرکز) دقیقاً روی لبهٔ راستِ صفحه؛ بدونِ پس‌زمینهٔ تاریک و بدونِ سوراخِ مرکز */
-.wheel{position:absolute;top:calc(var(--disc)*-0.85);right:calc(var(--pad)*-1);width:var(--wheelw);height:var(--disc);
+.wheel{position:absolute;top:calc(var(--disc)*-0.85);right:calc(var(--pad)*-1 + var(--disc)*0.2);width:var(--wheelw);height:var(--disc);
   overflow:visible;z-index:7;touch-action:none;cursor:grab}
 .wheel:active{cursor:grabbing}
 .wheel__disc{position:absolute;top:0;left:auto;right:calc(var(--disc)*-0.5);width:var(--disc);height:var(--disc);border-radius:50%;
