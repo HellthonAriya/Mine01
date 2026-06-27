@@ -89,7 +89,7 @@
     // سکتورهای خیلی کم‌رنگ روی خودِ دیسک (هم‌تراز با برچسب‌ها)
     if (N) {
       const stops = COURSES.map((c, i) => `color-mix(in srgb, ${cc(i)} 17%, transparent) ${i * SEG}deg ${(i + 1) * SEG}deg`).join(",");
-      disc.style.setProperty("--sectors", `conic-gradient(from -90deg, ${stops})`);
+      disc.style.setProperty("--sectors", `conic-gradient(from 0deg, ${stops})`);
     }
     disc.innerHTML = COURSES.map((c, i) =>
       `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button" style="--cc:${cc(i)}"><span>${c.fa}</span></button>`).join("");
