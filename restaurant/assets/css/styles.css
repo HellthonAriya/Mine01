@@ -173,7 +173,7 @@ ul{list-style:none}
 
 .dishes{max-width:1140px;margin-inline:auto;width:100%;
   display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:clamp(16px,2.4vw,26px);
-  padding-block:clamp(30px,4vw,52px) 16vh;transition:opacity .22s var(--ease)}
+  padding-block:clamp(8px,1.5vw,14px) 16vh;transition:opacity .22s var(--ease)}
 .dishes.is-switching{opacity:0;transform:translateY(8px)}
 
 .dtag{font-size:.7rem;font-weight:700;padding:.26em .75em;border-radius:999px}
