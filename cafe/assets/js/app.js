@@ -323,6 +323,24 @@
   tabsEl.addEventListener("pointerenter", () => pauseTabs(0));
   tabsEl.addEventListener("pointerleave", () => tabsEl.classList.remove("is-paused"));
   tabsEl.addEventListener("touchstart", () => pauseTabs(4000), { passive: true });
+  // لوپِ بی‌نهایتِ نرم با JS (سازگار با RTL): با ردشدنِ یک مجموعه، از همان‌جا ادامه می‌یابد
+  if (dupNeeded && !reduce) {
+    const track = tabsEl.querySelector(".menu__tabs__track");
+    track.style.animation = "none";        // به‌جای انیمیشنِ CSS، حلقهٔ rAF
+    let half = 0, x = 0;
+    const measure = () => { half = track.scrollWidth / 2; };
+    requestAnimationFrame(() => { measure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure); });
+    addEventListener("resize", measure);
+    const step = () => {
+      if (half && !tabsEl.classList.contains("is-paused") && !tabsEl.matches(":hover")) {
+        x -= 0.45;                          // سرعتِ آرام
+        if (x <= -half) x += half;          // wrap بی‌درز روی عرضِ یک مجموعه
+        track.style.transform = `translateX(${x}px)`;
+      }
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
   const rowHTML = (m) => `
     <article class="mrow" data-quick="${m.id}">
       <div class="mrow__thumb ${hasImg(m) ? "has-img" : ""}" style="background:${artBG(m.art)}">${mediaMarkup(m, "thumb")}</div>

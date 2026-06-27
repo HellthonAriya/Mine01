@@ -83,17 +83,26 @@
     const wheel = $("#wheel"), disc = $("#wheelDisc");
     const N = COURSES.length, SEG = N ? 360 / N : 0;
     const rad = (d) => d * Math.PI / 180;
-    const CCOLORS = ["#C0392B", "#C99A3B", "#3F9B6D", "#2F8F86", "#9B59B6", "#E67E22", "#1ABC9C"];
-    const cc = (i) => CCOLORS[i % CCOLORS.length];
+    // پالتِ هم‌خوان با تم: تناوبِ طلایی/شرابی (زنده از روی تم خوانده می‌شود)
+    const cssv = (v, fb) => (getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fb);
+    const cc = (i) => (i % 2 === 0 ? cssv("--accent-2", "#C99A3B") : cssv("--accent", "#9E2B25"));
     let rot = 0, selIdx = 0, dragging = false, hover = false, moved = false;
-    // سکتورهای خیلی کم‌رنگ روی خودِ دیسک (هم‌تراز با برچسب‌ها)
-    if (N) {
-      const stops = COURSES.map((c, i) => `color-mix(in srgb, ${cc(i)} 17%, transparent) ${i * SEG}deg ${(i + 1) * SEG}deg`).join(",");
+    // سکتورهای بسیار کم‌رنگِ متناوب روی دیسک (هم‌تراز با برچسب‌ها)
+    function paintSectors() {
+      if (!N) return;
+      const stops = COURSES.map((c, i) => `color-mix(in srgb, ${cc(i)} 13%, transparent) ${i * SEG}deg ${(i + 1) * SEG}deg`).join(",");
       disc.style.setProperty("--sectors", `conic-gradient(from 0deg, ${stops})`);
     }
+    paintSectors();
     disc.innerHTML = COURSES.map((c, i) =>
       `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button" style="--cc:${cc(i)}"><span>${c.fa}</span></button>`).join("");
     const items = $$(".wheel__item", disc);
+    // هم‌خوان‌سازیِ رنگِ دیسک هنگامِ تغییرِ تم
+    new MutationObserver(() => {
+      paintSectors();
+      items.forEach((el, i) => el.style.setProperty("--cc", cc(i)));
+      const fa = $("#wheelFa"); if (fa && COURSES[selIdx]) fa.style.color = cc(selIdx);
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     function itemAngle(i) { return -90 + i * SEG + SEG / 2; } // مرکزِ سکتور
     function layoutWheel() {
       const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.3;
