@@ -146,7 +146,7 @@ ul{list-style:none}
   background:linear-gradient(180deg,var(--bg) 30%,color-mix(in srgb,var(--bg) 60%,transparent) 62%,transparent);
   backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
   -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent);mask-image:linear-gradient(180deg,#000 60%,transparent)}
-.menu__title{position:absolute;left:0;top:16px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;transform:translateY(20%)}
+.menu__title{position:absolute;left:0;top:16px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;transform:translateY(40%)}
 .menu__eyebrow{font-family:var(--display);font-weight:700;font-size:clamp(1rem,2.2vw,1.3rem);color:var(--text-dim);line-height:1.1}
 .menu__active{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
 .menu__active-fa{font-family:var(--display);font-size:clamp(1.9rem,5vw,3rem);color:var(--accent-2);line-height:1.05;
@@ -155,7 +155,7 @@ ul{list-style:none}
 @keyframes roIn{from{opacity:0;transform:translateY(10px)}}
 
 /* دیسک: نیم‌دایره، محور (مرکز) دقیقاً روی لبهٔ راستِ صفحه؛ بدونِ پس‌زمینهٔ تاریک و بدونِ سوراخِ مرکز */
-.wheel{position:absolute;top:calc(var(--disc)*-0.3);right:calc(var(--pad)*-1);width:var(--wheelw);height:var(--disc);
+.wheel{position:absolute;top:calc(var(--disc)*-0.6);right:calc(var(--pad)*-1);width:var(--wheelw);height:var(--disc);
   overflow:hidden;z-index:7;touch-action:none;cursor:grab}
 .wheel:active{cursor:grabbing}
 .wheel__disc{position:absolute;top:0;left:auto;right:calc(var(--disc)*-0.5);width:var(--disc);height:var(--disc);border-radius:50%;
