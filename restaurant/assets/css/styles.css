@@ -291,8 +291,8 @@ ul{list-style:none}
 .story__values .ic{color:var(--accent-2)}
 .story__quote{font-family:var(--display);font-size:1.3rem;color:var(--text);border-inline-start:3px solid var(--accent-2);padding-inline-start:16px}
 .testi{margin-top:clamp(28px,4vw,48px);overflow:hidden;max-width:1080px;margin-inline:auto;width:100%}
-.testi__track{display:flex;gap:18px;transition:transform .6s var(--ease)}
-.tcard{flex:0 0 100%;background:var(--bg-elev);border:1px solid var(--line-soft);border-radius:20px;padding:24px}
+.testi__track{display:flex;gap:18px;transition:transform .6s var(--ease);width:100%}
+.tcard{flex:0 0 100%;min-width:0;max-width:100%;background:var(--bg-elev);border:1px solid var(--line-soft);border-radius:20px;padding:24px;box-sizing:border-box}
 .tcard__stars{color:var(--accent-2);display:flex;gap:2px;margin-bottom:.6rem}
 .tcard__stars .ic{width:1rem;height:1rem;fill:currentColor;stroke:none}
 .tcard__text{font-size:1.05rem;margin-bottom:1rem}

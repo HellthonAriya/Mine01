@@ -229,7 +229,7 @@
     let ti = 0;
     if (TESTIMONIALS.length > 1) setInterval(() => {
       ti = (ti + 1) % TESTIMONIALS.length;
-      track.style.transform = `translateX(${ti * 100}%)`; // RTL: مثبت به‌سمتِ بعدی
+      track.style.transform = `translateX(calc(${ti} * (100% + 18px)))`; // RTL: مثبت به‌سمتِ بعدی
     }, 4500);
 
     /* ---------- پس‌زمینهٔ واکنشی به جهتِ اسکرول ---------- */
