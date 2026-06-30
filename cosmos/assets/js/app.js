@@ -112,8 +112,10 @@
       // به لحظه‌ای پیمایش کن که سیاره و آیتم‌هایش در نمایان‌ترین حالت‌اند (raw ≈ 0.5).
       let top = base;
       if (t.classList.contains("bay--system") && !reduce) {
-        // ابتدای ناحیهٔ توقف: raw ≈ 0.20 → سیاره کاملاً واضح، همه‌چیز ساکن
-        top = base + t.offsetHeight * 0.20;
+        // مرکزِ ناحیهٔ توقف: q ≈ 0.45 → سیاره کاملاً واضح، همه‌چیز ساکن.
+        // q=(vh-rect.top)/(total+vh) ⇒ scrollY = base - vh + q*(total+vh)
+        const vh = innerHeight;
+        top = base - vh + 0.45 * (t.offsetHeight + vh);
       }
       scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
     }
@@ -299,16 +301,19 @@
         // سیارهٔ بعدی بلافاصله می‌آید (فاصلهٔ خالیِ بینِ سیاره‌ها به‌حداقل می‌رسد).
         const total = sec.offsetHeight;
         if (total > 60) {
-          // صحنهٔ چسبان → پروازِ عمقی (هم دسکتاپ هم موبایل)
-          const raw = clamp(-rect.top / total, 0, 1);
-          sec.style.setProperty("--p", raw.toFixed(3));
+          // q: پیشرفتِ کاملِ زیستِ صحنه (ورود از پایین + توقفِ چسبان + خروج از بالا).
+          // برخلافِ raw=clamp(-rect.top/total) که فازِ ورود را به ۰ قیچی می‌کرد و باعث
+          // می‌شد سیارهٔ بعدی فقط بعد از رفتنِ کاملِ قبلی نمایان شود، q در فازِ ورود هم
+          // مقدار می‌گیرد؛ پس سیارهٔ بعدی همان‌وقتی که قبلی در حالِ خروج است شروع به
+          // آمدن می‌کند و لحظه‌ای هر دو با هم دیده می‌شوند (فاصلهٔ خالی حذف می‌شود).
+          const q = clamp((vh - rect.top) / (total + vh), 0, 1);
+          sec.style.setProperty("--p", q.toFixed(3));
 
-          // ناحیهٔ توقف (dwell): raw بین D_START و D_END همهٔ متغیرهای انیمیشن
-          // (zoom/rotY/cz) قفل می‌شوند تا محتوا بی‌حرکت بماند؛ فقط sprite سیاره
-          // با اسکرول می‌چرخد (چون به scrollY مطلق وابسته است، نه raw).
-          const D_S = 0.20, D_E = 0.65;
-          const anim = raw < D_S ? raw / D_S * 0.5
-                     : raw > D_E ? 0.5 + (raw - D_E) / (1 - D_E) * 0.5
+          // ناحیهٔ توقف (dwell): بینِ D_S و D_E همهٔ متغیرهای انیمیشن (zoom/rotY/cz)
+          // قفل می‌شوند تا محتوا بی‌حرکت بماند؛ فقط sprite سیاره با اسکرول می‌چرخد.
+          const D_S = 0.30, D_E = 0.66;
+          const anim = q < D_S ? q / D_S * 0.5
+                     : q > D_E ? 0.5 + (q - D_E) / (1 - D_E) * 0.5
                      : 0.5;
 
           sec.style.setProperty("--pz",   (-560 + anim * 900).toFixed(0) + "px");
@@ -317,10 +322,11 @@
           sec.style.setProperty("--rotX", "0deg");
           sec.style.setProperty("--pscale", "1");
 
-          // opacity: raw مستقیم — پنجرهٔ دید عریض است تا فاصلهٔ خالی بین سیاره‌ها کم باشد
-          sec.style.setProperty("--pvis", (ss(0.02, 0.10, raw) * (1 - ss(0.84, 0.97, raw))).toFixed(3));
-          sec.style.setProperty("--hud",  (ss(0.04, 0.14, raw) * (1 - ss(0.80, 0.95, raw))).toFixed(3));
-          sec.style.setProperty("--orb",  (ss(0.06, 0.18, raw) * (1 - ss(0.82, 0.97, raw))).toFixed(3));
+          // شفافیت بر مبنای q: ورودِ زود + خروجِ دیر تا با همسایه‌ها هم‌پوشانیِ کوتاه
+          // داشته باشد. دیدِ کاملِ محتوا (q ≈ 0.24..0.76) ناحیهٔ توقف را در بر می‌گیرد.
+          sec.style.setProperty("--pvis", (ss(0.10, 0.24, q) * (1 - ss(0.76, 0.92, q))).toFixed(3));
+          sec.style.setProperty("--hud",  (ss(0.16, 0.30, q) * (1 - ss(0.70, 0.86, q))).toFixed(3));
+          sec.style.setProperty("--orb",  (ss(0.18, 0.32, q) * (1 - ss(0.72, 0.88, q))).toFixed(3));
         } else {
           // صحنهٔ کوتاه (نادر): حالتِ خنثی
           sec.style.cssText += ";--p:.5;--pz:0px;--pvis:1;--hud:1;--orb:1;--cz:0px;--rotY:0deg;--rotX:0deg;--pscale:1";
@@ -372,15 +378,22 @@
         sp.body.style.backgroundImage = `url('${sp.src}')`;
       };
       if ("IntersectionObserver" in window) {
+        // هر بخشِ سیاره به sprite خودش نگاشت می‌شود. وقتی به بخشی نزدیک می‌شویم،
+        // هم sprite همان بخش و هم sprite بخشِ بعدی بارگذاری می‌شود؛ یعنی وقتی روی
+        // سیارهٔ قبلی هستیم، همه‌چیزِ سیارهٔ بعدی از پیش آماده شده است.
+        const spriteByBay = new Map();
+        spritePlanets.forEach((sp) => spriteByBay.set(sp.el.closest(".bay--system"), sp));
+        const loadForBay = (bay) => { const sp = bay && spriteByBay.get(bay); if (sp) loadSprite(sp); };
         const spIO = new IntersectionObserver((ents) => {
           ents.forEach((en) => {
-            if (en.isIntersecting) {
-              const sp = spritePlanets.find((s) => s.el.closest(".bay--system") === en.target);
-              if (sp) { loadSprite(sp); spIO.unobserve(en.target); }
-            }
+            if (!en.isIntersecting) return;
+            const i = systemSecs.indexOf(en.target);
+            loadForBay(en.target);                 // sprite همین بخش
+            if (i >= 0) loadForBay(systemSecs[i + 1]);  // و پیش‌بارگذاریِ بخشِ بعدی
+            spIO.unobserve(en.target);
           });
-        }, { rootMargin: "400px 0px" });   // کمی زودتر از ورود، تا بدونِ تأخیر آماده باشد
-        spritePlanets.forEach((sp) => spIO.observe(sp.el.closest(".bay--system")));
+        }, { rootMargin: `${Math.round(innerHeight * 1.2)}px 0px` });
+        systemSecs.forEach((b) => spIO.observe(b));   // همهٔ بخش‌ها را رصد کن (نه فقط sprite‌دارها)
       } else {
         spritePlanets.forEach(loadSprite);  // فالبک: مرورگرِ قدیمی → همه را بارگذاری کن
       }
