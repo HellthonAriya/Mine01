@@ -12,6 +12,10 @@ Thumbs.db
 node_modules/
 .cache/
 
+# کشِ پایتون (تولیدشده هنگامِ اجرای اسکیل‌ها)
+__pycache__/
+*.pyc
+
 # محتوای ویرایش‌شده توسطِ ادمین (هر قالب جداگانه؛ روی سرور تولید می‌شود)
 content.json
 content.json.tmp
