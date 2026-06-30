@@ -210,21 +210,26 @@ systemctl restart nginx
 
 if [ -n "${DOMAIN}" ]; then
   say "نصبِ Certbot و گرفتنِ گواهیِ SSL برای ${DOMAIN}…"
-  apt-get install -y -qq certbot python3-certbot-nginx
-  EMAIL_ARG="--register-unsafely-without-email"
-  [ -n "${EMAIL}" ] && EMAIL_ARG="--email ${EMAIL}"
-  SSL_NAMES="${DOMAIN}"
-  if certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" \
-       --non-interactive --agree-tos ${EMAIL_ARG} 2>/dev/null; then
-    SSL_NAMES="${DOMAIN} www.${DOMAIN}"
-  elif certbot certonly --nginx -d "${DOMAIN}" \
-       --non-interactive --agree-tos ${EMAIL_ARG}; then
+  apt-get install -y -qq certbot python3-certbot-nginx || true
+  CERT_PATH="/etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
+  if [ ! -f "${CERT_PATH}" ]; then
+    EMAIL_ARG="--register-unsafely-without-email"
+    [ -n "${EMAIL}" ] && EMAIL_ARG="--email ${EMAIL}"
     SSL_NAMES="${DOMAIN}"
-    say "گواهیِ www گرفته نشد (DNSِ www تنظیم نیست)؛ فقط ${DOMAIN} روی SSL رفت."
+    if certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" \
+         --non-interactive --agree-tos ${EMAIL_ARG} 2>/dev/null; then
+      SSL_NAMES="${DOMAIN} www.${DOMAIN}"
+    elif certbot certonly --nginx -d "${DOMAIN}" \
+         --non-interactive --agree-tos ${EMAIL_ARG} 2>/dev/null; then
+      say "گواهیِ www گرفته نشد (DNSِ www تنظیم نیست)؛ فقط ${DOMAIN} روی SSL رفت."
+    else
+      say "هشدار: SSL گرفته نشد. مطمئن شو رکورد A دامنه به IP این سرور اشاره می‌کند، سپس دوباره اجرا کن."
+    fi
   else
-    say "هشدار: SSL گرفته نشد. مطمئن شو رکورد A دامنه به IP این سرور اشاره می‌کند، سپس دوباره اجرا کن."
+    say "گواهیِ SSL موجود است — certbot دوباره اجرا نمی‌شود."
+    SSL_NAMES="${DOMAIN}"
   fi
-  if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
+  if [ -f "${CERT_PATH}" ]; then
     say "نوشتنِ پیکربندیِ نهاییِ HTTPS…"
     write_https "${SSL_NAMES}"
     nginx -t && systemctl restart nginx
