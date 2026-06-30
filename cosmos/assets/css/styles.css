@@ -229,6 +229,10 @@ img{max-width:100%}
 .holo__icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;margin-bottom:.6rem;color:var(--accent2,#FFD98A);
   background:color-mix(in srgb,var(--accent,#F4A93C) 18%,rgba(255,255,255,.04));border:1px solid color-mix(in srgb,var(--accent,#F4A93C) 30%,transparent)}
 .holo__icon .ic{width:1.4rem;height:1.4rem}
+/* عکسِ محصول در کارت (جای آیکن، وقتی dish.img باشد) — نسبتِ ثابت، بدونِ پرشِ چیدمان */
+.holo__media{position:relative;width:100%;aspect-ratio:16/10;border-radius:13px;overflow:hidden;margin-bottom:.7rem;
+  border:1px solid color-mix(in srgb,var(--accent,#F4A93C) 28%,rgba(255,255,255,.08));background:rgba(255,255,255,.03)}
+.holo__media img{width:100%;height:100%;object-fit:cover;display:block}
 .holo__name{font-size:1.06rem;font-weight:700;margin:0 0 .25rem;line-height:1.4}
 .holo__en{font-size:.74rem;letter-spacing:.06em;color:var(--text-dim,#9d9ac9);margin:0 0 .5rem;text-transform:uppercase}
 .holo__desc{font-size:.86rem;color:var(--text-dim,#c2bfe6);line-height:1.6;margin:0 0 .7rem;
@@ -296,6 +300,11 @@ img{max-width:100%}
   background:color-mix(in srgb,var(--accent,#F4A93C) 18%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--accent,#F4A93C) 35%,transparent);
   box-shadow:0 0 30px -8px color-mix(in srgb,var(--accent,#F4A93C) 80%,transparent)}
 .modal__badge .ic{width:2rem;height:2rem}
+/* عکسِ بزرگِ محصول در مودال (جای نشانِ آیکنی، وقتی dish.img باشد) */
+.modal__media{width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;margin:0 auto 1.1rem;
+  border:1px solid color-mix(in srgb,var(--accent,#7C5CFF) 30%,rgba(255,255,255,.1));
+  box-shadow:0 18px 44px -22px #000,0 0 30px -14px color-mix(in srgb,var(--accent,#7C5CFF) 70%,transparent)}
+.modal__media img{width:100%;height:100%;object-fit:cover;display:block}
 .modal__code{font-size:.74rem;letter-spacing:.22em;color:var(--accent2,#FFD98A)}
 .modal__name{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;margin:.4rem 0 .2rem}
 .modal__en{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim,#9d9ac9);margin:0 0 1rem}

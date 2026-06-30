@@ -44,7 +44,7 @@
             <div class="system__scene">
               <div class="planet${sp ? " planet--sprite" : ""}" aria-hidden="true"${sp ? ` style="--frames:${frames}"` : ""}>
                 <span class="planet__halo"></span>
-                <span class="planet__body"${sp ? ` style="background-image:url('${esc(sp.src)}')"` : ""}></span>
+                <span class="planet__body"${sp ? ` data-sprite="${esc(sp.src)}"` : ""}></span>
                 ${p.ring ? '<span class="planet__ring"></span>' : ""}
                 <span class="planet__moon"></span>
               </div>
@@ -59,7 +59,9 @@
                   <article class="holo" data-dish="${esc(d.id)}" tabindex="0" role="button" style="--i:${i}" aria-label="${esc(d.name)}">
                     <span class="holo__glow"></span>
                     <button class="holo__add" data-add="${esc(d.id)}" type="button" aria-label="افزودن «${esc(d.name)}» به یادداشت"><svg class="ic"><use href="#i-plus"/></svg></button>
-                    <div class="holo__icon">${glyph(d.glyph || p.glyph)}</div>
+                    ${d.img
+                      ? `<div class="holo__media"><img src="${esc(d.img)}" alt="${esc(d.name)}" loading="lazy" decoding="async"></div>`
+                      : `<div class="holo__icon">${glyph(d.glyph || p.glyph)}</div>`}
                     <h3 class="holo__name">${esc(d.name)}</h3>
                     ${d.en ? `<p class="holo__en">${esc(d.en)}</p>` : ""}
                     <p class="holo__desc">${esc(d.desc || "")}</p>
@@ -78,7 +80,7 @@
           </div>
         </div>`;
       systems.appendChild(sec);
-      if (sp) spritePlanets.push({ el: $(".planet", sec), frames, cur: -1 });
+      if (sp) spritePlanets.push({ el: $(".planet", sec), body: $(".planet__body", sec), frames, src: sp.src, cur: -1, loaded: false });
     });
 
     /* ===================================================================
@@ -137,18 +139,24 @@
       addEventListener("keydown", (e) => { if (e.key === "Escape") closeNav(); });
     }
 
-    /* پیمایشِ عرضیِ آیتم‌ها با دکمه (موبایل) — کارتِ بعدی/قبلی را وسط می‌آورد */
-    function orbStep(orbits, dir) {
+    /* پیمایشِ عرضیِ آیتم‌ها با دکمه (موبایل) — بر اساسِ موقعیتِ دیداریِ واقعیِ کارت‌ها
+       روی صفحه کار می‌کند (نه ترتیبِ DOM)، تا در چیدمانِ RTL هم چپ/راست درست باشد.
+       vdir = -1 یعنی «کارتِ سمتِ چپ» ، vdir = +1 یعنی «کارتِ سمتِ راست». */
+    function orbStep(orbits, vdir) {
       const cards = $$(".holo", orbits); if (!cards.length) return;
       const mid = orbits.getBoundingClientRect().left + orbits.clientWidth / 2;
-      let idx = 0, best = Infinity;
-      cards.forEach((c, i) => {
-        const r = c.getBoundingClientRect();
-        const d = Math.abs(r.left + r.width / 2 - mid);
-        if (d < best) { best = d; idx = i; }
+      const cx = cards.map((c) => { const r = c.getBoundingClientRect(); return r.left + r.width / 2; });
+      // کارتِ فعلیِ وسط
+      let cur = 0, best = Infinity;
+      cx.forEach((x, i) => { const d = Math.abs(x - mid); if (d < best) { best = d; cur = i; } });
+      // نزدیک‌ترین کارت در جهتِ دیداریِ خواسته‌شده
+      let target = -1, gapBest = Infinity;
+      cx.forEach((x, i) => {
+        const gap = (x - cx[cur]) * vdir;            // > 0 یعنی در جهتِ درخواستی
+        if (gap > 6 && gap < gapBest) { gapBest = gap; target = i; }
       });
-      const ni = clamp(idx + dir, 0, cards.length - 1);
-      cards[ni].scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest", inline: "center" });
+      if (target < 0) return;
+      cards[target].scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest", inline: "center" });
     }
     document.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-orbnav]"); if (!btn) return;
@@ -157,60 +165,59 @@
     });
 
     /* ===================================================================
-       ۳) استارفیلدِ کانواس (سه لایهٔ عمق + پارالاکس)
+       ۳) استارفیلدِ کانواس — سبک: فقط ستاره‌های نقطه‌ایِ سوسوزن (بدونِ خط‌های warp)
+       تعدادِ کم، توقف هنگام مخفی‌بودنِ تب و کاهشِ نرخِ فریم برای سبکیِ بیشتر.
        =================================================================== */
     (function starfield() {
       const cv = $("#starfield"); if (!cv) return;
       const ctx = cv.getContext("2d", { alpha: true });
-      const DPR = Math.min(devicePixelRatio || 1, 2);
+      const DPR = Math.min(devicePixelRatio || 1, 1.5);   // سقفِ پایین‌ترِ DPR = پرکردنِ کمترِ پیکسل
       let W = 0, H = 0, stars = [];
       function resize() {
         W = cv.width = Math.floor(innerWidth * DPR);
         H = cv.height = Math.floor(innerHeight * DPR);
         cv.style.width = innerWidth + "px"; cv.style.height = innerHeight + "px";
-        const n = innerWidth < 680 ? 90 : 170;
+        const n = innerWidth < 680 ? 42 : 80;             // تعدادِ بسیار کمتر از قبل (۹۰/۱۷۰)
         stars = Array.from({ length: n }, () => {
-          const depth = Math.random();                 // 0 دور … 1 نزدیک
+          const depth = Math.random();                    // 0 دور … 1 نزدیک
           return {
             x: Math.random(), y: Math.random(), depth,
-            r: (0.5 + depth * 1.7) * DPR,
+            r: (0.5 + depth * 1.4) * DPR,
             tw: Math.random() * Math.PI * 2,
-            tws: 0.6 + Math.random() * 1.6,
-            hue: Math.random() < 0.18 ? (Math.random() < 0.5 ? "#bcd0ff" : "#ffd9a8") : "#ffffff",
+            tws: 0.5 + Math.random() * 1.2,
+            glow: depth > 0.86,                           // فقط معدودی ستاره هاله دارند
+            hue: Math.random() < 0.16 ? (Math.random() < 0.5 ? "#bcd0ff" : "#ffd9a8") : "#ffffff",
           };
         });
       }
       resize(); addEventListener("resize", resize, { passive: true });
-      let t = 0;
-      function frame() {
-        t += 0.016;
-        warpV *= 0.9;                                   // فروکشِ نرمِ شتابِ warp
+
+      let t = 0, raf = 0, last = 0;
+      const FRAME_MS = 1000 / 30;                          // ۳۰fps کافی است (سوسوی نرم)
+      function frame(now) {
+        raf = requestAnimationFrame(frame);
+        if (now - last < FRAME_MS) return;                 // throttle به ~۳۰fps
+        last = now;
+        t += 0.05;
         ctx.clearRect(0, 0, W, H);
-        const sx = camX * 26 * DPR, sy = camY * 26 * DPR, scr = scrollProg * 140 * DPR;
-        const warping = warpV > 0.06;
-        ctx.lineCap = "round";
+        const sx = camX * 22 * DPR, sy = camY * 22 * DPR, scr = scrollProg * 120 * DPR;
         for (const s of stars) {
           const px = ((s.x * W + sx * (0.3 + s.depth)) % W + W) % W;
           const py = ((s.y * H + sy * (0.3 + s.depth) + scr * (0.2 + s.depth)) % H + H) % H;
-          const a = reduce ? 0.7 : 0.35 + 0.45 * (0.5 + 0.5 * Math.sin(t * s.tws + s.tw)) * (0.4 + s.depth);
-          if (warping) {                                // استریکِ سرعت (warp) هنگامِ اسکرول
-            const len = warpV * (8 + s.depth * 52) * DPR;
-            ctx.globalAlpha = Math.min(1, a * 1.1);
-            ctx.strokeStyle = s.hue; ctx.lineWidth = s.r * 1.3;
-            ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py - warpDir * len); ctx.stroke();
-          } else {
-            ctx.globalAlpha = a; ctx.fillStyle = s.hue;
-            ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2); ctx.fill();
-            if (s.depth > 0.8) {                        // درخششِ ستاره‌های نزدیک
-              ctx.globalAlpha = a * 0.4;
-              ctx.beginPath(); ctx.arc(px, py, s.r * 3, 0, Math.PI * 2); ctx.fill();
-            }
-          }
+          const a = 0.4 + 0.4 * (0.5 + 0.5 * Math.sin(t * s.tws + s.tw)) * (0.5 + s.depth);
+          ctx.globalAlpha = a; ctx.fillStyle = s.hue;
+          ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2); ctx.fill();
+          if (s.glow) { ctx.globalAlpha = a * 0.35; ctx.beginPath(); ctx.arc(px, py, s.r * 2.6, 0, Math.PI * 2); ctx.fill(); }
         }
         ctx.globalAlpha = 1;
-        if (!reduce) requestAnimationFrame(frame);
       }
-      requestAnimationFrame(frame);
+      function play() { if (!raf) { last = 0; raf = requestAnimationFrame(frame); } }
+      function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+      if (reduce) { frame(performance.now()); }            // یک‌بار رسم، بدونِ انیمیشن
+      else {
+        play();
+        document.addEventListener("visibilitychange", () => (document.hidden ? stop() : play()));
+      }
     })();
 
     /* ===================================================================
@@ -283,7 +290,6 @@
     const navLinks = $$("#hudNav a"), dotBtns = $$("#dots button");
     const allBays = () => $$(".bay, #launchpad, #dock");
     let scrollProg = 0, camX = 0, camY = 0, tcamX = 0, tcamY = 0;
-    let warpV = 0, warpDir = 1, lastScrollY = scrollY;        // سرعتِ اسکرول برای استریکِ warp
     const systemSecs = $$(".bay--system");
     const root = document.documentElement;
     const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
@@ -294,10 +300,6 @@
       scrollProg = docH > 0 ? clamp(y / docH, 0, 1) : 0;
       warpFill.style.width = (scrollProg * 100).toFixed(2) + "%";
       hud.classList.toggle("is-stuck", y > 40);
-
-      // سرعتِ اسکرول → شتابِ warp
-      const dv = y - lastScrollY; lastScrollY = y;
-      if (!reduce) { if (dv) warpDir = Math.sign(dv); warpV = Math.max(warpV, Math.min(2.6, Math.abs(dv) / 42)); }
 
       // چرخشِ سطحِ سیاره‌ها با اسکرول (حسِ چرخشِ کره)
       root.style.setProperty("--spin", (reduce ? 0 : y * 0.6).toFixed(1));
@@ -364,16 +366,40 @@
     /* چرخشِ مدلِ سه‌بعدیِ سیاره (sprite-sheet): فقط با اسکرول جلو/عقب می‌رود؛
        هیچ چرخشِ خودکارِ زمانی‌ای ندارد. اسکرول به پایین → فریم‌ها جلو، اسکرول به
        بالا → فریم‌ها عقب. فقط وقتی سیاره‌ای واقعاً مدل دارد فعال می‌شود. */
-    if (spritePlanets.length && !reduce) {
-      const updateSprites = () => {
-        const turn = ((scrollY * 0.0012) % 1 + 1) % 1;  // 0..1 دور — فقط تابعِ موقعیتِ اسکرول
-        spritePlanets.forEach((sp) => {
-          const idx = Math.round(turn * sp.frames) % sp.frames;
-          if (sp.cur !== idx) { sp.cur = idx; sp.el.style.setProperty("--frame", idx); }
-        });
+    if (spritePlanets.length) {
+      // بارگذاریِ تنبل: تصویرِ نوارِ فریم‌ها فقط وقتی سیارهٔ مربوطه به دید نزدیک می‌شود
+      // دانلود/دیکُد می‌شود (نه همهٔ سیاره‌ها در ابتدا) تا صفحه سبک بماند.
+      const loadSprite = (sp) => {
+        if (sp.loaded) return;
+        sp.loaded = true;
+        sp.body.style.backgroundImage = `url('${sp.src}')`;
       };
-      addEventListener("scroll", updateSprites, { passive: true });
-      updateSprites();
+      if ("IntersectionObserver" in window) {
+        const spIO = new IntersectionObserver((ents) => {
+          ents.forEach((en) => {
+            if (en.isIntersecting) {
+              const sp = spritePlanets.find((s) => s.el.closest(".bay--system") === en.target);
+              if (sp) { loadSprite(sp); spIO.unobserve(en.target); }
+            }
+          });
+        }, { rootMargin: "400px 0px" });   // کمی زودتر از ورود، تا بدونِ تأخیر آماده باشد
+        spritePlanets.forEach((sp) => spIO.observe(sp.el.closest(".bay--system")));
+      } else {
+        spritePlanets.forEach(loadSprite);  // فالبک: مرورگرِ قدیمی → همه را بارگذاری کن
+      }
+
+      if (!reduce) {
+        const updateSprites = () => {
+          const turn = ((scrollY * 0.0012) % 1 + 1) % 1;  // 0..1 دور — فقط تابعِ موقعیتِ اسکرول
+          spritePlanets.forEach((sp) => {
+            if (!sp.loaded) return;
+            const idx = Math.round(turn * sp.frames) % sp.frames;
+            if (sp.cur !== idx) { sp.cur = idx; sp.el.style.setProperty("--frame", idx); }
+          });
+        };
+        addEventListener("scroll", updateSprites, { passive: true });
+        updateSprites();
+      }
     }
 
     /* ===================================================================
@@ -386,7 +412,15 @@
       currentDish = id;
       const p = PLANETS.find((x) => x.id === d.planet) || {};
       $("#modal .modal__panel").style.cssText = `--accent:${p.accent || "#7C5CFF"};--accent2:${p.accent2 || "#28E0C8"}`;
-      $("#modalBadge").innerHTML = glyph(d.glyph || p.glyph);
+      // عکسِ محصول اگر باشد، جای نشانِ آیکنی نمایش داده می‌شود
+      const mMedia = $("#modalMedia"), mImg = $("#modalImg"), mBadge = $("#modalBadge");
+      if (d.img && mMedia && mImg) {
+        mImg.src = d.img; mImg.alt = d.name || "";
+        mMedia.hidden = false; mBadge.hidden = true;
+      } else {
+        if (mMedia) mMedia.hidden = true;
+        mBadge.hidden = false; mBadge.innerHTML = glyph(d.glyph || p.glyph);
+      }
       $("#modalCode").textContent = (p.code || "") + " · " + (p.fa || "");
       $("#modalName").textContent = d.name;
       $("#modalEn").textContent = d.en || "";
