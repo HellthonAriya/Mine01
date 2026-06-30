@@ -26,7 +26,7 @@ const MAX_BODY = 2 * 1024 * 1024;     // ۲MB سقفِ JSON
 const MAX_UPLOAD = 8 * 1024 * 1024;   // ۸MB سقفِ آپلودِ عکس
 const IMG_EXT = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif" };
 
-const SITES = { cafe: path.join(ROOT, "cafe"), restaurant: path.join(ROOT, "restaurant") };
+const SITES = { cafe: path.join(ROOT, "cafe"), restaurant: path.join(ROOT, "restaurant"), cosmos: path.join(ROOT, "cosmos") };
 
 /* ----------------------------- توکن (امضاشده) ----------------------------- */
 const SECRET = crypto.createHash("sha256").update("damsa::" + PASSWORD).digest("hex");

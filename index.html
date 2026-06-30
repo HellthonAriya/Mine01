@@ -11,6 +11,7 @@
       --bg:#0B0A0F; --ink:#F3EFE7; --dim:#A9A2B5;
       --gold:#E0922B; --gold2:#F0B45C;
       --wine:#C0392B; --wine2:#E0584A;
+      --cosmos:#7C5CFF; --cosmos2:#28E0C8;
       --line:rgba(243,239,231,.10);
       --font:"Vazirmatn",system-ui,sans-serif;
       --ease:cubic-bezier(.22,1,.36,1);
@@ -48,7 +49,8 @@
       opacity:0;transform:translateY(20px);animation:rise .8s var(--ease) .2s forwards}
     @keyframes rise{to{opacity:1;transform:none}}
 
-    .cards{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,26px);width:min(960px,100%)}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,3vw,26px);width:min(1180px,100%)}
+    @media(max-width:980px){.cards{grid-template-columns:1fr 1fr}}
     @media(max-width:680px){.cards{grid-template-columns:1fr}}
 
     .card{position:relative;display:block;border:1px solid var(--line);border-radius:26px;overflow:hidden;
@@ -58,6 +60,7 @@
       opacity:0;animation:rise .9s var(--ease) forwards}
     .card--cafe{animation-delay:.3s}
     .card--rest{animation-delay:.42s}
+    .card--cosmos{animation-delay:.54s}
     .card::before{content:"";position:absolute;inset:0;z-index:0;opacity:.16;transition:opacity .5s;
       background:radial-gradient(120% 80% at 80% 0%,var(--ac),transparent 60%)}
     .card:hover{transform:translateY(-8px);border-color:color-mix(in srgb,var(--ac) 55%,transparent);
@@ -65,6 +68,7 @@
     .card:hover::before{opacity:.34}
     .card--cafe{--ac:var(--gold)}
     .card--rest{--ac:var(--wine2)}
+    .card--cosmos{--ac:var(--cosmos)}
     .card__inner{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;gap:.7rem;text-align:right}
     .card__icon{width:60px;height:60px;border-radius:17px;display:grid;place-items:center;color:#15110b;
       background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 50%,#fff));margin-bottom:.4rem;
@@ -102,7 +106,7 @@
       <div class="lead">
         <span class="eyebrow">✦ یک قالب را انتخاب کن</span>
         <h1>کدام تجربه را می‌خواهی <b>بسازی؟</b></h1>
-        <p>دو قالبِ مستقل با طراحی، چیدمان و پنلِ مدیریتِ جداگانه. هرکدام را جداگانه شخصی‌سازی کن.</p>
+        <p>سه قالبِ مستقل با طراحی، چیدمان و پنلِ مدیریتِ جداگانه. هرکدام را جداگانه شخصی‌سازی کن.</p>
       </div>
 
       <nav class="cards">
@@ -134,6 +138,23 @@
             <div class="card__t">رستوران دمسا</div>
             <div class="card__en">Restaurant · Template 2</div>
             <div class="card__d">فاین‌داینینگِ مدرن — چیدمانِ منو‌محور، حرکت‌های لایه‌ای و فضای تیره و لوکس. کاملاً متفاوت با قالبِ کافه.</div>
+            <span class="card__go">ورود به سایت
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a class="card card--cosmos" href="/cosmos/">
+          <span class="card__admin" role="link" tabindex="0" onclick="event.preventDefault();event.stopPropagation();location.href='/cosmos/admin'">پنل مدیریت ↗</span>
+          <div class="card__inner">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(28 12 12)"/>
+              </svg>
+            </span>
+            <div class="card__t">ایستگاهِ کیهانی دمسا</div>
+            <div class="card__en">Cosmos · Template 3</div>
+            <div class="card__d">کافه‌رستورانی فضایی — منو یک منظومه است؛ با اسکرول بینِ سیاره‌ها سفر می‌کنی و سه‌بعدی واردِ هر دسته می‌شوی.</div>
             <span class="card__go">ورود به سایت
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </span>
