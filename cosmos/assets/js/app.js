@@ -112,7 +112,8 @@
       // به لحظه‌ای پیمایش کن که سیاره و آیتم‌هایش در نمایان‌ترین حالت‌اند (raw ≈ 0.5).
       let top = base;
       if (t.classList.contains("bay--system") && !reduce) {
-        top = base + Math.max(0, t.offsetHeight - innerHeight) * 0.5;
+        // لحظهٔ واضح (پینِ تمام‌صفحه که آیتم‌ها کاملاً پیدا هستند) ~ raw 0.28
+        top = base + t.offsetHeight * 0.28;
       }
       scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
     }
@@ -123,6 +124,15 @@
     navWrap.addEventListener("click", (e) => {
       const a = e.target.closest("a[data-target]"); if (!a) return;
       e.preventDefault(); scrollToId(a.dataset.target); closeNav();
+    });
+
+    /* هر لینکِ داخلیِ #... (دکمهٔ «شروع سفر»، فلشِ اسکرول، لوگو) هم به‌جای پرشِ خام،
+       به لحظهٔ نمایانِ همان بخش پیمایش کند (نه ابتدای صحنه که سیاره هنوز دیده نمی‌شود). */
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a || a.closest("#hudNav")) return;
+      const id = a.getAttribute("href").slice(1);
+      if (id && document.getElementById(id)) { e.preventDefault(); scrollToId(id); }
     });
 
     /* منوی کشویی سیاره‌ها در موبایل (تا همهٔ کتگوری‌ها در دسترس باشند) */
@@ -284,15 +294,23 @@
           sec.style.cssText += ";--p:1;--pz:0px;--pvis:1;--hud:1;--orb:1;--cz:0px;--rotY:0deg;--rotX:0deg;--pscale:1";
           return;
         }
-        const total = sec.offsetHeight - vh;
+        // raw روی کلِ ارتفاعِ بخش نگاشت می‌شود (نه offsetHeight - vh) تا «دنبالهٔ خالیِ»
+        // ۱۰۰vh بعد از پروازِ سیاره حذف شود؛ سیاره تا لحظهٔ خروجِ صحنه نمایان می‌ماند و
+        // سیارهٔ بعدی بلافاصله می‌آید (فاصلهٔ خالیِ بینِ سیاره‌ها به‌حداقل می‌رسد).
+        const total = sec.offsetHeight;
         if (total > 60) {
           // صحنهٔ چسبان → پروازِ عمقی (هم دسکتاپ هم موبایل)
           const raw = clamp(-rect.top / total, 0, 1);
           sec.style.setProperty("--p", raw.toFixed(3));
           sec.style.setProperty("--pz", (-560 + raw * 900).toFixed(0) + "px");
-          sec.style.setProperty("--pvis", (ss(0.03, 0.18, raw) * (1 - ss(0.74, 0.99, raw))).toFixed(3));
-          sec.style.setProperty("--hud", (ss(0.14, 0.34, raw) * (1 - ss(0.6, 0.82, raw))).toFixed(3));
-          sec.style.setProperty("--orb", (ss(0.16, 0.4, raw) * (1 - ss(0.66, 0.93, raw))).toFixed(3));
+          // سیاره در لحظهٔ پین (صحنهٔ تمام‌صفحه) کاملاً واضح است و هنگامِ اسکرول به‌سمتِ
+          // بالا از کنارِ بیننده «پرواز» می‌کند و می‌رود؛ بلافاصله سیارهٔ بعدی می‌آید.
+          // اجزا زود نمایان می‌شوند و چون آیتم‌ها در پایینِ صحنه‌اند، هنگامِ اسکرول
+          // تقریباً تا انتهای بخش روی صفحه می‌مانند؛ پس دیر (نزدیکِ raw=1) محو می‌شوند
+          // تا فاصلهٔ خالیِ بینِ سیاره‌ها به‌حداقل برسد.
+          sec.style.setProperty("--pvis", (ss(0.02, 0.10, raw) * (1 - ss(0.86, 0.99, raw))).toFixed(3));
+          sec.style.setProperty("--hud", (ss(0.05, 0.15, raw) * (1 - ss(0.80, 0.95, raw))).toFixed(3));
+          sec.style.setProperty("--orb", (ss(0.07, 0.20, raw) * (1 - ss(0.84, 0.98, raw))).toFixed(3));
           sec.style.setProperty("--cz", ((raw - 0.5) * 180).toFixed(0) + "px");
           sec.style.setProperty("--rotY", ((raw - 0.5) * 26).toFixed(1) + "deg");
           sec.style.setProperty("--rotX", "0deg");
