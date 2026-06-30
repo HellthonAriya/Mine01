@@ -32,6 +32,17 @@ chown -R www-data:www-data "${APP_DIR}"
 say "ری‌استارتِ سرویسِ سایت…"
 if systemctl list-unit-files 2>/dev/null | grep -q '^damsa\.service'; then
   systemctl restart damsa || say "هشدار: ری‌استارتِ damsa ناموفق بود؛ لاگ: journalctl -u damsa"
+  # بررسی سلامت: مطمئن شو Node دوباره بالا آمد
+  PORT="$(grep -oE 'DAMSA_PORT=[0-9]+' /etc/damsa.env 2>/dev/null | cut -d= -f2)"; PORT="${PORT:-3000}"
+  HEALTHY=0
+  for _ in $(seq 1 15); do
+    if (exec 3<>/dev/tcp/127.0.0.1/${PORT}) 2>/dev/null; then exec 3>&- 3<&- 2>/dev/null || true; HEALTHY=1; break; fi
+    sleep 1
+  done
+  if [ "${HEALTHY}" -ne 1 ]; then
+    say "هشدار: سرویس روی پورت ${PORT} پاسخ نداد. آخرین لاگ‌ها:"
+    journalctl -u damsa -n 30 --no-pager 2>/dev/null || true
+  fi
   say "بارگذاری مجدد Nginx…"
   nginx -t && systemctl reload nginx
   say "آپدیت شد ✓"

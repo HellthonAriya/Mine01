@@ -96,8 +96,23 @@ EOF
 systemctl daemon-reload
 systemctl enable damsa >/dev/null 2>&1 || true
 systemctl restart damsa
-sleep 1
-systemctl --no-pager --lines=0 status damsa >/dev/null 2>&1 || say "هشدار: سرویسِ damsa بالا نیامد؛ لاگ: journalctl -u damsa"
+
+# --- بررسی سلامتِ سرویس پیش از دست‌زدن به Nginx ----------------------------
+# تا اگر Node بالا نیامد، Nginx دست‌نخورده بماند و سایتِ فعلی پایین نیاید (502).
+say "بررسی سلامتِ سرویس روی 127.0.0.1:${PORT}…"
+HEALTHY=0
+for _ in $(seq 1 20); do
+  if (exec 3<>/dev/tcp/127.0.0.1/${PORT}) 2>/dev/null; then exec 3>&- 3<&- 2>/dev/null || true; HEALTHY=1; break; fi
+  sleep 1
+done
+if [ "${HEALTHY}" -ne 1 ]; then
+  say "خطا: سرویسِ damsa روی پورت ${PORT} پاسخ نداد؛ Nginx تغییر نکرد تا سایت پایین نیاید."
+  echo "   ── ۳۰ خطِ آخرِ لاگ ──"
+  journalctl -u damsa -n 30 --no-pager 2>/dev/null || true
+  echo "   پس از رفعِ مشکل، دوباره اجرا کن:  sudo bash ${APP_DIR}/scripts/deploy.sh"
+  exit 1
+fi
+say "سرویس سالم است ✓"
 
 # --- بدنهٔ مشترکِ Nginx (reverse-proxy به Node) -----------------------------
 read -r -d '' SITE_BODY <<EOF || true
