@@ -361,18 +361,19 @@
       })();
     }
 
-    /* چرخشِ مدلِ سه‌بعدیِ سیاره (sprite-sheet): فریم‌ها با اسکرول جلو می‌روند
-       و یک چرخشِ آرامِ بی‌کاری هم دارند تا حسِ کرهٔ زندهٔ سه‌بعدی بدهند.
-       فقط وقتی سیاره‌ای واقعاً مدل دارد فعال می‌شود (وگرنه کرهٔ CSS نمایش داده می‌شود). */
+    /* چرخشِ مدلِ سه‌بعدیِ سیاره (sprite-sheet): فقط با اسکرول جلو/عقب می‌رود؛
+       هیچ چرخشِ خودکارِ زمانی‌ای ندارد. اسکرول به پایین → فریم‌ها جلو، اسکرول به
+       بالا → فریم‌ها عقب. فقط وقتی سیاره‌ای واقعاً مدل دارد فعال می‌شود. */
     if (spritePlanets.length && !reduce) {
-      (function spinSprites(now) {
-        const turn = (((scrollY * 0.0012) + (now * 0.00003)) % 1 + 1) % 1;  // 0..1 دور
+      const updateSprites = () => {
+        const turn = ((scrollY * 0.0012) % 1 + 1) % 1;  // 0..1 دور — فقط تابعِ موقعیتِ اسکرول
         spritePlanets.forEach((sp) => {
           const idx = Math.round(turn * sp.frames) % sp.frames;
           if (sp.cur !== idx) { sp.cur = idx; sp.el.style.setProperty("--frame", idx); }
         });
-        requestAnimationFrame(spinSprites);
-      })(performance.now());
+      };
+      addEventListener("scroll", updateSprites, { passive: true });
+      updateSprites();
     }
 
     /* ===================================================================
