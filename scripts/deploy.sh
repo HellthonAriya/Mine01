@@ -26,6 +26,16 @@ DOMAIN="${1:-}"
 EMAIL="${2:-}"
 PASS_ARG="${3:-}"
 
+# اگر دامنه پاس داده نشده (مثلاً اجرای خودکار/self-heal از طریقِ update.sh)،
+# اگر قبلاً برای یک دامنه گواهیِ SSL گرفته شده، همان را نگه دار تا با اجرای
+# بدونِ‌دامنه‌ی این اسکریپت، تنظیماتِ HTTPSِ موجود پاک/بازنویسی نشود.
+if [ -z "${DOMAIN}" ]; then
+  EXISTING_DOMAIN="$(find /etc/letsencrypt/live -mindepth 1 -maxdepth 1 -type d ! -name 'README' -printf '%f\n' 2>/dev/null | head -n1)"
+  if [ -n "${EXISTING_DOMAIN}" ]; then
+    DOMAIN="${EXISTING_DOMAIN}"
+  fi
+fi
+
 say() { printf "\033[1;33m▸ %s\033[0m\n" "$*"; }
 
 if [ "$(id -u)" -ne 0 ]; then
