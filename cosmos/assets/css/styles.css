@@ -138,7 +138,7 @@ img{max-width:100%}
 @keyframes bob{50%{transform:translateY(7px);opacity:.6}}
 
 /* ===================== سیستمِ سیاره (صحنهٔ ۳بعدی) ===================== */
-.bay--system{min-height:200vh}                 /* ارتفاعِ اسکرول برای سفرِ عمقی */
+.bay--system{min-height:150vh}                 /* ارتفاعِ اسکرول برای سفرِ عمقی (کمتر = فاصلهٔ کمترِ سیاره‌ها) */
 .system{position:sticky;inset-block-start:0;height:100svh;display:grid;place-items:center;overflow:hidden}
 .system__view{position:relative;width:100%;height:100%;perspective:1100px;perspective-origin:50% 45%}
 .system__scene{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;
@@ -383,6 +383,21 @@ img{max-width:100%}
 .orbnav__btn--prev .ic{transform:scaleX(-1)}   /* RTL: «قبلی» به سمتِ راست */
 .orbnav__btn--next{inset-inline-start:8px}
 
+/* ===== چیدمانِ یکسانِ آیتم‌ها در همهٔ عرض‌ها: سیاره وسط، آیتم‌ها اسلایدرِ افقیِ
+   چپ/راست در پایینِ صحنه، و فلش‌ها هم‌راهِ آیتم‌ها محو/پدیدار می‌شوند (--orb).
+   (دسکتاپ هم مثلِ موبایل؛ سایزها در مدیا-کوئریِ موبایل کوچک‌تر می‌شوند) ===== */
+.planet{inset-inline-end:auto;left:0;right:0;margin-inline:auto;inset-block-start:30%;width:clamp(190px,24vw,300px)}
+.hudcard{inset-block-start:47%;inset-inline-start:clamp(16px,6vw,48px);inset-inline-end:clamp(16px,6vw,48px);max-width:none;text-align:center;z-index:6}
+.hudcard__count{justify-content:center}
+.orbits{inset:auto 0 0 0;display:flex;gap:14px;overflow-x:auto;overflow-y:visible;
+  padding:16px max(64px,var(--pad)) calc(20px + env(safe-area-inset-bottom));scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;transform-style:flat}
+.orbits::-webkit-scrollbar{display:none}
+.holo{position:relative!important;inset:auto!important;left:auto!important;top:auto!important;
+  flex:0 0 clamp(280px,30vw,330px);max-width:340px;scroll-snap-align:center;transform:none!important;--in:1;padding:16px}
+.orbnav{display:block;opacity:var(--orb,1);transition:opacity .3s}
+.orbnav__btn{inset-block-end:calc(env(safe-area-inset-bottom) + 18px + 128px)}
+
 /* ===================== توست ===================== */
 .toast-wrap{position:fixed;inset-block-end:22px;inset-inline:0;z-index:95;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
 .toast{background:rgba(20,20,40,.92);border:1px solid rgba(255,255,255,.15);color:#fff;padding:.7rem 1.2rem;border-radius:999px;font-size:.9rem;
@@ -390,9 +405,6 @@ img{max-width:100%}
 @keyframes toastIn{from{opacity:0;transform:translateY(10px)}}
 
 /* ===================== واکنش‌گرایی ===================== */
-@media (max-width:1100px){
-  .planet{inset-inline-end:clamp(4%,8vw,12%)}
-}
 /* موبایل/تبلت: همان سفرِ عمقیِ چسبانِ دسکتاپ — سیاره و نام پین می‌شوند و در عمق
    پرواز می‌کنند؛ آیتم‌ها نوارِ افقیِ قابلِ سوایپ در پایینِ صحنه‌اند (خوانا). */
 @media (max-width:900px){

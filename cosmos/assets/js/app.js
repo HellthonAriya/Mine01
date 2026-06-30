@@ -225,36 +225,9 @@
        =================================================================== */
     function layoutOrbits() {
       desktop = matchMedia("(min-width:901px)").matches;
-      $$(".bay--system").forEach((sec) => {
-        const scene = $(".system__scene", sec);
-        const planet = $(".planet", sec);
-        const holos = $$(".holo", sec);
-        if (reduce) { holos.forEach((h) => { h.style.left = h.style.top = ""; h.style.removeProperty("--z"); }); return; }
-        const cx = planet.offsetLeft + planet.offsetWidth / 2;
-        const cy = planet.offsetTop;                    // مرکزِ دیداری (top:50% + translateY(-50%))
-        const sceneW = scene.offsetWidth, sceneH = scene.offsetHeight;
-        const n = holos.length;
-        const narrow = sceneW < 760;
-        if (narrow) {
-          // موبایل: کارت‌ها نوارِ افقیِ قابلِ سوایپ در پایینِ صحنه‌اند (CSS می‌چیند)
-          holos.forEach((h) => { h.style.left = h.style.top = ""; h.style.removeProperty("--z"); });
-          return;
-        }
-        // دسکتاپ: بادبزنِ کارت‌ها در نیمهٔ راستِ سیاره؛ ربعِ راستِ صفحه برای HUD
-        const R = clamp(planet.offsetWidth * 0.58 + 20, 150, 270);
-        const maxLeft = sceneW * 0.60;
-        holos.forEach((h, i) => {
-          const w = h.offsetWidth, hh = h.offsetHeight;
-          const a = (n === 1 ? 0 : (-1 + (2 * i) / (n - 1)) * 0.9) * (Math.PI / 2.6);
-          const dx = Math.cos(a) * R * 0.72 + 24;
-          const dy = Math.sin(a) * R * 0.92;
-          const z = (i % 2 === 0 ? 140 : -40);
-          let left = clamp(cx + dx - w / 2, 12, Math.max(12, maxLeft - w / 2));
-          let top = clamp(cy + dy - hh / 2, 104, sceneH - hh - 24);
-          h.style.left = left + "px"; h.style.top = top + "px";
-          h.style.setProperty("--z", z + "px");
-        });
-      });
+      // آیتم‌ها در همهٔ عرض‌ها اسلایدرِ افقیِ چپ/راست‌اند (CSS می‌چیند)؛ اینجا فقط
+      // موقعیت‌های مطلقِ قدیمیِ بادبزن (اگر مانده باشند) پاک می‌شوند.
+      $$(".holo").forEach((h) => { h.style.left = h.style.top = ""; h.style.removeProperty("--z"); });
     }
 
     /* تعاملِ کارت: کجیِ سه‌بعدی بر اساسِ اشاره‌گر */
