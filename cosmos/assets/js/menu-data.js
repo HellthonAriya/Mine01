@@ -19,6 +19,7 @@ const PLANETS = [
     surf1: "#7A4A12", surf2: "#23130A", ring: false,
     tagline: "ستاره‌ای گرم که با هر فنجان بیدارت می‌کند.",
     glyph: "cup",
+    sprite: { src: "assets/img/planet_brew.webp", frames: 48 },
   },
   {
     id: "dawn", fa: "صبحانه", en: "Sunrise", code: "KP-02",
