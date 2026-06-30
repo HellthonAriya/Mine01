@@ -76,6 +76,15 @@ img{max-width:100%}
 .hud__cta{margin-inline-start:6px;padding:.6rem 1.1rem;border-radius:999px;font-weight:700;font-size:.88rem;white-space:nowrap;color:#06060f;
   background:linear-gradient(135deg,var(--accent,#7C5CFF),var(--accent-2,#28E0C8));box-shadow:0 8px 24px -10px var(--accent,#7C5CFF);transition:transform .2s,filter .2s}
 .hud__cta:hover{transform:translateY(-2px);filter:brightness(1.08)}
+/* دکمهٔ منوی موبایل (فقط در عرضِ کم دیده می‌شود) */
+.hud__menu{display:none;width:42px;height:42px;border-radius:12px;align-items:center;justify-content:center;cursor:pointer;
+  border:1px solid var(--line-soft,rgba(255,255,255,.12));background:rgba(255,255,255,.05);color:var(--text,#EDEBFF);transition:all .25s var(--ease)}
+.hud__menu:hover{border-color:var(--accent-2,#28E0C8)}
+.hud__menu .ic{width:1.3rem;height:1.3rem}
+.hud__menu .ic--close{display:none}
+.hud.is-navopen .hud__menu{background:color-mix(in srgb,var(--accent,#7C5CFF) 26%,transparent);border-color:var(--accent,#7C5CFF)}
+.hud.is-navopen .hud__menu .ic--menu{display:none}
+.hud.is-navopen .hud__menu .ic--close{display:block}
 
 /* نوارِ پیشرفتِ پرواز */
 .warp{position:fixed;inset-block-start:0;inset-inline:0;height:3px;z-index:calc(var(--z-hud) + 1);background:rgba(255,255,255,.06)}
@@ -159,12 +168,15 @@ img{max-width:100%}
 /* نورپردازیِ ثابت: های‌لایتِ براق + مرزِ تاریکی (حجمِ کره) */
 .planet__body::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   background:
-    radial-gradient(circle at 27% 23%,rgba(255,255,255,.55),rgba(255,255,255,.1) 18%,transparent 44%),
-    radial-gradient(circle at 76% 80%,rgba(0,0,0,.66),transparent 58%);
-  box-shadow:inset -18px -16px 46px rgba(0,0,0,.55)}
-.planet__halo{position:absolute;inset:-12%;border-radius:50%;
-  background:radial-gradient(circle,transparent 56%,color-mix(in srgb,var(--accent,#F4A93C) 28%,transparent) 60%,transparent 72%);
-  filter:blur(2px)}
+    radial-gradient(circle at 27% 23%,rgba(255,255,255,.6),rgba(255,255,255,.12) 18%,transparent 44%),
+    radial-gradient(circle at 76% 80%,rgba(0,0,0,.7),transparent 58%);
+  box-shadow:
+    inset -18px -16px 48px rgba(0,0,0,.58),
+    inset 12px 12px 34px -12px color-mix(in srgb,var(--accent2,#fff) 45%,transparent),
+    inset 0 0 0 1px color-mix(in srgb,var(--accent,#F4A93C) 28%,transparent)}
+.planet__halo{position:absolute;inset:-16%;border-radius:50%;
+  background:radial-gradient(circle,transparent 50%,color-mix(in srgb,var(--accent,#F4A93C) 32%,transparent) 57%,color-mix(in srgb,var(--accent2,#fff) 12%,transparent) 63%,transparent 75%);
+  filter:blur(3px)}
 .planet__ring{position:absolute;inset-block-start:50%;inset-inline-start:50%;width:160%;height:42%;
   transform:translate(-50%,-50%) rotateX(74deg) rotateZ(-18deg);border-radius:50%;
   border:clamp(6px,1.4vw,12px) solid color-mix(in srgb,var(--accent2,#FFD98A) 55%,transparent);
@@ -173,6 +185,17 @@ img{max-width:100%}
 .planet__moon{position:absolute;width:13%;aspect-ratio:1;border-radius:50%;inset-block-start:6%;inset-inline-start:2%;
   background:radial-gradient(circle at 35% 30%,#fff,#9aa 60%,#445);box-shadow:0 0 18px -4px #fff8;animation:moon 14s linear infinite}
 @keyframes moon{from{transform:rotate(0) translateX(140px) rotate(0)}to{transform:rotate(360deg) translateX(140px) rotate(-360deg)}}
+
+/* --- سیاره با مدلِ سه‌بعدیِ واقعی (sprite-sheet افقیِ N فریم) ---
+   نورپردازی و حجم در خودِ تصویر pre-render شده‌اند، پس لایه‌های شبیه‌سازِ CSS
+   خاموش می‌شوند و فقط فریمِ درست نمایش داده می‌شود (--frame از app.js). */
+.planet--sprite .planet__body{
+  background-repeat:no-repeat;
+  background-size:calc(var(--frames,48) * 100%) 100%;
+  background-position:calc(var(--frame,0) / (var(--frames,48) - 1) * 100%) center;
+  box-shadow:0 0 90px -10px color-mix(in srgb,var(--accent,#F4A93C) 55%,transparent)}
+.planet--sprite .planet__body::before,
+.planet--sprite .planet__body::after{display:none}
 
 /* --- کارتِ HUD سیاره --- */
 .hudcard{position:absolute;inset-block-start:50%;inset-inline-start:clamp(4%,5vw,8%);transform:translateY(-50%);max-width:min(34vw,380px);z-index:5;pointer-events:none;
@@ -338,6 +361,19 @@ img{max-width:100%}
 .holo__add .ic{width:1.1rem;height:1.1rem}
 @media (max-width:900px){.holo__add{opacity:1}}
 
+/* دکمه‌های پیمایشِ عرضیِ آیتم‌ها (فقط موبایل) */
+.orbnav{display:none}
+.orbnav__btn{position:absolute;width:42px;height:42px;border-radius:50%;z-index:7;
+  display:grid;place-items:center;cursor:pointer;color:var(--accent2,#FFD98A);
+  border:1px solid color-mix(in srgb,var(--accent,#7C5CFF) 50%,rgba(255,255,255,.16));
+  background:linear-gradient(160deg,rgba(20,20,46,.82),rgba(10,10,26,.7));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 12px 30px -14px #000,0 0 22px -10px color-mix(in srgb,var(--accent,#7C5CFF) 80%,transparent);transition:transform .2s,border-color .2s,background .2s}
+.orbnav__btn:hover,.orbnav__btn:active{border-color:var(--accent,#7C5CFF);transform:scale(1.06)}
+.orbnav__btn .ic{width:1.3rem;height:1.3rem}
+.orbnav__btn--prev{inset-inline-end:8px}
+.orbnav__btn--prev .ic{transform:scaleX(-1)}   /* RTL: «قبلی» به سمتِ راست */
+.orbnav__btn--next{inset-inline-start:8px}
+
 /* ===================== توست ===================== */
 .toast-wrap{position:fixed;inset-block-end:22px;inset-inline:0;z-index:95;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
 .toast{background:rgba(20,20,40,.92);border:1px solid rgba(255,255,255,.15);color:#fff;padding:.7rem 1.2rem;border-radius:999px;font-size:.9rem;
@@ -352,25 +388,41 @@ img{max-width:100%}
    پرواز می‌کنند؛ آیتم‌ها نوارِ افقیِ قابلِ سوایپ در پایینِ صحنه‌اند (خوانا). */
 @media (max-width:900px){
   .system__view{perspective:780px}
+  /* --- HUD موبایل: منوی کشویی تا همهٔ کتگوری‌ها در دسترس باشند --- */
+  .hud__menu{display:flex}
+  .hud__cta{margin-inline-start:auto;order:2}
+  .hud__menu{order:3}
+  .hud__nav{order:4;position:absolute;inset-block-start:calc(100% - 4px);inset-inline:10px;margin:0;
+    flex-direction:column;align-items:stretch;gap:4px;max-width:none;
+    background:linear-gradient(180deg,rgba(10,10,24,.96),rgba(10,10,24,.9));
+    border:1px solid var(--line-soft,rgba(255,255,255,.12));border-radius:18px;
+    box-shadow:0 30px 60px -30px #000;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    max-height:0;padding:0 8px;opacity:0;overflow:hidden;pointer-events:none;
+    transition:max-height .38s var(--ease),opacity .3s,padding .38s var(--ease)}
+  .hud.is-navopen .hud__nav{max-height:min(72vh,560px);overflow:auto;opacity:1;pointer-events:auto;padding:8px}
+  .hud__nav a{justify-content:flex-start;padding:.78rem .95rem;font-size:.98rem;border-radius:12px}
+  .hud__nav a .ic{width:1.15rem;height:1.15rem}
   /* سیاره وسط-بالا */
-  .planet{inset-inline-end:auto;left:0;right:0;margin-inline:auto;inset-block-start:31%;width:clamp(150px,44vw,210px)}
+  .planet{inset-inline-end:auto;left:0;right:0;margin-inline:auto;inset-block-start:28%;width:clamp(150px,44vw,210px)}
   /* نامِ سیاره زیرِ آن، وسط‌چین */
-  .hudcard{inset-block-start:51%;inset-inline-start:14px;inset-inline-end:14px;max-width:none;text-align:center;z-index:6}
+  .hudcard{inset-block-start:47%;inset-inline-start:14px;inset-inline-end:14px;max-width:none;text-align:center;z-index:6}
   .hudcard__name{font-size:clamp(1.5rem,6.6vw,2.1rem);margin:.1rem 0 .3rem}
   .hudcard__tag{font-size:.9rem;margin-bottom:.2rem}
   .hudcard__count{justify-content:center}
   /* نوارِ افقیِ آیتم‌ها در پایین */
   .orbits{inset:auto 0 0 0;display:flex;gap:12px;overflow-x:auto;overflow-y:visible;
-    padding:14px max(14px,var(--pad)) calc(14px + env(safe-area-inset-bottom));scroll-snap-type:x mandatory;
+    padding:14px max(58px,var(--pad)) calc(14px + env(safe-area-inset-bottom));scroll-snap-type:x mandatory;
     -webkit-overflow-scrolling:touch;scrollbar-width:none;transform-style:flat}
   .orbits::-webkit-scrollbar{display:none}
   .holo{position:relative!important;inset:auto!important;left:auto!important;top:auto!important;
-    flex:0 0 78vw;max-width:300px;scroll-snap-align:center;transform:none!important;--in:1;padding:15px}
+    flex:0 0 76vw;max-width:300px;scroll-snap-align:center;transform:none!important;--in:1;padding:15px}
   .holo__desc{-webkit-line-clamp:2}
+  /* دکمه‌های پیمایشِ آیتم‌ها — کنارِ نوار، هم‌ترازِ مرکزِ کارت‌ها */
+  .orbnav{display:block}
+  .orbnav__btn{inset-block-end:calc(env(safe-area-inset-bottom) + 14px + 104px)}
   .dots{display:none}
 }
 @media (max-width:560px){
-  .hud__nav{max-width:none;flex:1}
   .hero__stats{gap:18px}
 }
 
@@ -387,6 +439,7 @@ img{max-width:100%}
   .hudcard{position:relative;inset:auto;transform:none;max-width:none;text-align:center;margin-bottom:1.4rem;opacity:1!important;translate:none!important}
   .orbits{position:relative;inset:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:14px;opacity:1!important;pointer-events:auto}
   .holo{position:relative!important;inset:auto!important;left:auto!important;top:auto!important;width:auto!important;--in:1;transform:none!important;transition:none}
+  .orbnav{display:none!important}
   .warp__fill{transition:none}
 }
 

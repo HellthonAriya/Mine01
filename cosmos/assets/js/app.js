@@ -26,10 +26,13 @@
        ۱) ساختِ سیستمِ سیاره‌ها
        =================================================================== */
     const systems = $("#systems");
+    const spritePlanets = [];                 // سیاره‌هایی که مدلِ سه‌بعدی (sprite-sheet) دارند
     PLANETS.forEach((p, idx) => {
       const ds = dishesOf(p.id);
       const surf1 = p.surf1 || (p.surface && p.surface[0]) || "#444";
       const surf2 = p.surf2 || (p.surface && p.surface[1]) || "#111";
+      const sp = p.sprite && p.sprite.src ? p.sprite : null;   // {src, frames}
+      const frames = sp ? Math.max(2, parseInt(sp.frames, 10) || 48) : 0;
       const sec = document.createElement("section");
       sec.className = "bay bay--system";
       sec.id = "sys-" + p.id;
@@ -39,9 +42,9 @@
         <div class="system">
           <div class="system__view">
             <div class="system__scene">
-              <div class="planet" aria-hidden="true">
+              <div class="planet${sp ? " planet--sprite" : ""}" aria-hidden="true"${sp ? ` style="--frames:${frames}"` : ""}>
                 <span class="planet__halo"></span>
-                <span class="planet__body"></span>
+                <span class="planet__body"${sp ? ` style="background-image:url('${esc(sp.src)}')"` : ""}></span>
                 ${p.ring ? '<span class="planet__ring"></span>' : ""}
                 <span class="planet__moon"></span>
               </div>
@@ -68,9 +71,14 @@
                   </article>`).join("")}
               </div>
             </div>
+            <div class="orbnav" aria-hidden="true">
+              <button class="orbnav__btn orbnav__btn--prev" type="button" data-orbnav="-1" aria-label="آیتمِ قبلی"><svg class="ic"><use href="#i-chevron"/></svg></button>
+              <button class="orbnav__btn orbnav__btn--next" type="button" data-orbnav="1" aria-label="آیتمِ بعدی"><svg class="ic"><use href="#i-chevron"/></svg></button>
+            </div>
           </div>
         </div>`;
       systems.appendChild(sec);
+      if (sp) spritePlanets.push({ el: $(".planet", sec), frames, cur: -1 });
     });
 
     /* ===================================================================
@@ -96,11 +104,56 @@
     });
     function scrollToId(id) {
       const t = document.getElementById(id);
-      if (t) t.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      if (!t) return;
+      const base = t.getBoundingClientRect().top + scrollY;
+      // برای صحنه‌های سیاره: به‌جای ابتدای صحنه (که سیاره هنوز از دور نامرئی است)،
+      // به لحظه‌ای پیمایش کن که سیاره و آیتم‌هایش در نمایان‌ترین حالت‌اند (raw ≈ 0.5).
+      let top = base;
+      if (t.classList.contains("bay--system") && !reduce) {
+        top = base + Math.max(0, t.offsetHeight - innerHeight) * 0.5;
+      }
+      scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
+    }
+    function closeNav() {
+      hud.classList.remove("is-navopen");
+      if (menuBtn) menuBtn.setAttribute("aria-expanded", "false");
     }
     navWrap.addEventListener("click", (e) => {
       const a = e.target.closest("a[data-target]"); if (!a) return;
-      e.preventDefault(); scrollToId(a.dataset.target);
+      e.preventDefault(); scrollToId(a.dataset.target); closeNav();
+    });
+
+    /* منوی کشویی سیاره‌ها در موبایل (تا همهٔ کتگوری‌ها در دسترس باشند) */
+    const menuBtn = $("#hudMenu");
+    if (menuBtn) {
+      menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const open = hud.classList.toggle("is-navopen");
+        menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      document.addEventListener("click", (e) => {
+        if (hud.classList.contains("is-navopen") && !e.target.closest("#hud")) closeNav();
+      });
+      addEventListener("keydown", (e) => { if (e.key === "Escape") closeNav(); });
+    }
+
+    /* پیمایشِ عرضیِ آیتم‌ها با دکمه (موبایل) — کارتِ بعدی/قبلی را وسط می‌آورد */
+    function orbStep(orbits, dir) {
+      const cards = $$(".holo", orbits); if (!cards.length) return;
+      const mid = orbits.getBoundingClientRect().left + orbits.clientWidth / 2;
+      let idx = 0, best = Infinity;
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        const d = Math.abs(r.left + r.width / 2 - mid);
+        if (d < best) { best = d; idx = i; }
+      });
+      const ni = clamp(idx + dir, 0, cards.length - 1);
+      cards[ni].scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest", inline: "center" });
+    }
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-orbnav]"); if (!btn) return;
+      const orbits = $(".orbits", btn.closest(".system__view"));
+      if (orbits) orbStep(orbits, parseInt(btn.dataset.orbnav, 10));
     });
 
     /* ===================================================================
@@ -306,6 +359,20 @@
         if (grid) grid.style.transform = `translate3d(${camX * -10}px,${camY * -8}px,0)`;
         requestAnimationFrame(cam);
       })();
+    }
+
+    /* چرخشِ مدلِ سه‌بعدیِ سیاره (sprite-sheet): فریم‌ها با اسکرول جلو می‌روند
+       و یک چرخشِ آرامِ بی‌کاری هم دارند تا حسِ کرهٔ زندهٔ سه‌بعدی بدهند.
+       فقط وقتی سیاره‌ای واقعاً مدل دارد فعال می‌شود (وگرنه کرهٔ CSS نمایش داده می‌شود). */
+    if (spritePlanets.length && !reduce) {
+      (function spinSprites(now) {
+        const turn = (((scrollY * 0.0012) + (now * 0.00003)) % 1 + 1) % 1;  // 0..1 دور
+        spritePlanets.forEach((sp) => {
+          const idx = Math.round(turn * sp.frames) % sp.frames;
+          if (sp.cur !== idx) { sp.cur = idx; sp.el.style.setProperty("--frame", idx); }
+        });
+        requestAnimationFrame(spinSprites);
+      })(performance.now());
     }
 
     /* ===================================================================

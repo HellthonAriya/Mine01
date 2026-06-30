@@ -35,6 +35,8 @@
     <symbol id="i-note" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v5h5M9 13h6M9 17h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 15V5.5A1.5 1.5 0 0 1 6.5 4H15" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
     <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   </defs>
 </svg>
 
@@ -63,6 +65,9 @@
   <nav class="hud__nav" id="hudNav" aria-label="ناوبریِ سیاره‌ها"></nav>
   <button class="hud__cta" type="button" data-open-list aria-label="یادداشتِ من">
     <svg class="ic"><use href="#i-note"/></svg><span data-edit="nav.note">یادداشت</span><span class="hud__badge" data-count hidden>۰</span>
+  </button>
+  <button class="hud__menu" id="hudMenu" type="button" aria-label="فهرستِ سیاره‌ها" aria-expanded="false" aria-controls="hudNav">
+    <svg class="ic ic--menu"><use href="#i-menu"/></svg><svg class="ic ic--close"><use href="#i-x"/></svg>
   </button>
 </header>
 
