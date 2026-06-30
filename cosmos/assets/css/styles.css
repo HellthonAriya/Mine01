@@ -133,29 +133,35 @@ img{max-width:100%}
 .system{position:sticky;inset-block-start:0;height:100svh;display:grid;place-items:center;overflow:hidden}
 .system__view{position:relative;width:100%;height:100%;perspective:1100px;perspective-origin:50% 45%}
 .system__scene{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;
-  /* --p: پیشرفتِ صحنه (0..1) ، --mx/--my: پارالاکسِ اشاره‌گر */
-  transform:translateZ(calc(var(--p,0) * 120px - 60px)) rotateX(calc(var(--my,0) * -5deg)) rotateY(calc(var(--mx,0) * 6deg))}
+  /* --cz: دالیِ عمقیِ دوربین ، --mx/--my: پارالاکسِ اشاره‌گر */
+  transform:translateZ(var(--cz,0px)) rotateX(calc(var(--my,0) * -5deg)) rotateY(calc(var(--mx,0) * 6deg))}
 
-/* --- سیاره --- */
+/* --- سیاره (کرهٔ سه‌بعدیِ سبک با سطحِ چرخان) --- */
 .planet{position:absolute;inset-block-start:50%;inset-inline-end:clamp(6%,12vw,18%);
   width:clamp(220px,34vw,440px);aspect-ratio:1;transform-style:preserve-3d;
-  /* ورود از عمق: کوچک و دور → بزرگ و نزدیک */
-  transform:translateY(-50%) translateZ(calc(var(--p,0) * 260px - 130px)) scale(calc(.7 + var(--p,0) * .45));
-  will-change:transform}
-.planet__body{position:absolute;inset:0;border-radius:50%;
+  /* --pz: عمقِ پرواز ، --rotY/--rotX: چرخشِ محوری ، --pscale: مقیاس ، --pvis: نمایانی */
+  transform:translateY(-50%) translateZ(var(--pz,0px)) rotateY(var(--rotY,0deg)) rotateX(var(--rotX,0deg)) scale(var(--pscale,1));
+  opacity:var(--pvis,1);will-change:transform,opacity}
+/* پایهٔ کره: سایه‌پردازیِ کروی */
+.planet__body{position:absolute;inset:0;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 30% 26%,color-mix(in srgb,var(--accent2,#FFD98A) 62%,#fff) 0%,var(--surf1,#7A4A12) 34%,var(--surf2,#23130A) 88%);
+  box-shadow:0 0 90px -10px color-mix(in srgb,var(--accent,#F4A93C) 55%,transparent)}
+/* سطحِ چرخان: با اسکرول جابه‌جا می‌شود (--spin) → حسِ چرخشِ کره */
+.planet__body::before{content:"";position:absolute;inset:-6%;border-radius:inherit;
+  background-image:
+    repeating-linear-gradient(96deg,transparent 0 5%,color-mix(in srgb,var(--surf2,#000) 65%,transparent) 5% 8.5%,transparent 8.5%,transparent 14%),
+    radial-gradient(42% 26% at 26% 40%,color-mix(in srgb,var(--accent,#F4A93C) 55%,transparent),transparent 72%),
+    radial-gradient(34% 22% at 70% 66%,color-mix(in srgb,var(--surf2,#000) 75%,transparent),transparent 72%),
+    radial-gradient(26% 18% at 52% 22%,color-mix(in srgb,var(--accent2,#fff) 32%,transparent),transparent 72%);
+  background-size:200% 100%;background-repeat:repeat-x;
+  background-position:calc(var(--spin,0) * 1px) center;
+  mix-blend-mode:soft-light;opacity:.9}
+/* نورپردازیِ ثابت: های‌لایتِ براق + مرزِ تاریکی (حجمِ کره) */
+.planet__body::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   background:
-    radial-gradient(circle at 32% 28%,color-mix(in srgb,var(--accent2,#FFD98A) 70%,#fff) 0%,var(--surf1,#7A4A12) 30%,var(--surf2,#23130A) 78%);
-  box-shadow:
-    inset -26px -22px 60px rgba(0,0,0,.75),
-    inset 16px 14px 40px color-mix(in srgb,var(--accent2,#FFD98A) 35%,transparent),
-    0 0 90px -10px color-mix(in srgb,var(--accent,#F4A93C) 60%,transparent);
-  overflow:hidden}
-/* بافتِ سطحی که آرام می‌چرخد */
-.planet__body::after{content:"";position:absolute;inset:-30% -10%;border-radius:50%;
-  background:repeating-radial-gradient(circle at 30% 30%,transparent 0 14px,rgba(0,0,0,.16) 14px 28px),
-    radial-gradient(circle at 70% 60%,color-mix(in srgb,var(--accent,#F4A93C) 30%,transparent),transparent 45%);
-  mix-blend-mode:overlay;animation:surf 26s linear infinite}
-@keyframes surf{to{transform:translateX(-18%) rotate(8deg)}}
+    radial-gradient(circle at 27% 23%,rgba(255,255,255,.55),rgba(255,255,255,.1) 18%,transparent 44%),
+    radial-gradient(circle at 76% 80%,rgba(0,0,0,.66),transparent 58%);
+  box-shadow:inset -18px -16px 46px rgba(0,0,0,.55)}
 .planet__halo{position:absolute;inset:-12%;border-radius:50%;
   background:radial-gradient(circle,transparent 56%,color-mix(in srgb,var(--accent,#F4A93C) 28%,transparent) 60%,transparent 72%);
   filter:blur(2px)}
@@ -170,7 +176,7 @@ img{max-width:100%}
 
 /* --- کارتِ HUD سیاره --- */
 .hudcard{position:absolute;inset-block-start:50%;inset-inline-start:clamp(4%,5vw,8%);transform:translateY(-50%);max-width:min(34vw,380px);z-index:5;pointer-events:none;
-  opacity:calc(min(1, var(--p,0) * 2.4));translate:0 calc((1 - var(--p,0)) * 26px);transition:opacity .2s linear}
+  opacity:var(--hud,1);translate:0 calc((1 - var(--hud,1)) * 22px);transition:opacity .25s linear}
 .hudcard__code{display:inline-flex;align-items:center;gap:.5rem;font-size:.78rem;letter-spacing:.22em;color:var(--accent2,#FFD98A);
   border:1px solid color-mix(in srgb,var(--accent,#F4A93C) 45%,transparent);border-radius:999px;padding:.32rem .8rem;margin-bottom:1rem}
 .hudcard__code::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent,#F4A93C);box-shadow:0 0 10px var(--accent,#F4A93C)}
@@ -180,7 +186,7 @@ img{max-width:100%}
 .hudcard__count::before{content:"";width:18px;height:1px;background:var(--accent,#F4A93C)}
 
 /* --- مدارها و هولوکارت‌ها --- */
-.orbits{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none;z-index:3}
+.orbits{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none;z-index:3;opacity:var(--orb,1)}
 .holo{position:absolute;inset-block-start:50%;inset-inline-end:clamp(6%,12vw,18%);width:min(70vw,266px);
   transform-style:preserve-3d;pointer-events:auto;cursor:pointer;
   background:linear-gradient(160deg,rgba(20,20,46,.66),rgba(12,12,28,.5));
@@ -342,21 +348,21 @@ img{max-width:100%}
 @media (max-width:1100px){
   .planet{inset-inline-end:clamp(4%,8vw,12%)}
 }
-/* موبایل/تبلت: چیدمانِ خوانا — سیاره بالا، کارت‌ها در جریانِ عمودی */
+/* موبایل/تبلت: سیارهٔ سه‌بعدیِ چرخان بالا (با عمق و چرخشِ اسکرول)، کارت‌ها در جریانِ عمودیِ خوانا */
 @media (max-width:900px){
   .bay--system{min-height:auto;padding-block:9vh 6vh}
   .system{position:relative;height:auto;display:block}
   .system__view{perspective:none;height:auto}
-  .system__scene{position:relative;transform:none!important;transform-style:flat}
-  .planet{position:relative;inset:auto;transform:none!important;width:min(54vw,260px);margin:0 auto 1.4rem;
-    transform-style:flat;scale:1}
-  .planet__body::after{animation-duration:40s}
+  .system__scene{position:relative;transform:none!important;transform-style:flat;opacity:1!important}
+  /* سیاره روی موبایل پرسپکتیوِ خودش را دارد تا سه‌بعدی و چرخان بماند */
+  .planet{position:relative;inset:auto;width:min(58vw,280px);margin:0 auto 1.6rem;transform-style:preserve-3d;opacity:1!important;
+    transform:perspective(720px) rotateY(var(--rotY,0deg)) rotateX(var(--rotX,0deg)) scale(var(--pscale,1))!important}
   .hudcard{position:relative;inset:auto;transform:none;max-width:none;text-align:center;margin-bottom:1.6rem;opacity:1!important;translate:none!important}
   .hudcard__count{justify-content:center}
-  .orbits{position:relative;inset:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:14px;pointer-events:auto}
+  .orbits{position:relative;inset:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:14px;pointer-events:auto;opacity:1!important}
   .holo{position:relative!important;inset:auto!important;width:auto!important;transform:none!important;opacity:1!important;transform-style:flat}
   .dots{display:none}
-  .hud__cta{display:none}
+  .hud__cta .hud__badge{margin-inline-start:.1rem}
 }
 @media (max-width:560px){
   .hud__nav{max-width:none;flex:1}
@@ -368,9 +374,9 @@ img{max-width:100%}
   html{scroll-behavior:auto}
   *{animation:none!important}
   .system__scene{transform:none!important}
-  .planet{transform:translateY(-50%)!important}
+  .planet{opacity:1!important}
   .hudcard{opacity:1!important;translate:none!important}
-  .holo{opacity:1!important;transition:none}
+  .orbits,.holo{opacity:1!important;transition:none}
   .warp__fill{transition:none}
 }
 

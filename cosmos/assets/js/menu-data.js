@@ -72,65 +72,65 @@ const TAG_LABELS = {
    id, planet, name, en, desc, price, tags, kcal, glyph (آیکنِ روی هولوکارت)
    --------------------------------------------------------------------------- */
 const DISHES = [
-  /* ---- KP-01 · قهوه و دمنوش ---- */
-  { id: "b1", planet: "brew", name: "اسپرسوی سیاه‌چاله", en: "Black-Hole Espresso", price: 90000,
-    desc: "دو شاتِ ریستریتو با کرمای غلیظ؛ غلیظ‌تر از جاذبه.", tags: ["chef"], kcal: 15, glyph: "cup" },
-  { id: "b2", planet: "brew", name: "لاتهٔ کهکشانی", en: "Galaxy Latte", price: 135000,
-    desc: "اسپرسو، شیرِ مخملی و نقشِ مارپیچِ کهکشان روی فوم.", tags: ["signature"], kcal: 180, glyph: "cup" },
-  { id: "b3", planet: "brew", name: "موکای شهاب‌سنگ", en: "Meteor Mocha", price: 150000,
-    desc: "شکلاتِ تلخ، اسپرسو و خرده‌های کاکائوی برشته.", tags: [], kcal: 240, glyph: "cup" },
-  { id: "b4", planet: "brew", name: "دمنوشِ سحابی", en: "Nebula Infusion", price: 110000,
-    desc: "گلِ گاوزبان، اسطوخودوس و به‌لیمو؛ آرام‌بخشِ مدارها.", tags: ["veg", "cold"], kcal: 30, glyph: "leaf" },
+  /* ---- قهوه و دمنوش ---- */
+  { id: "b1", planet: "brew", name: "اسپرسو", en: "Espresso", price: 90000,
+    desc: "دو شاتِ اسپرسوی غلیظ با کرمای طلایی.", tags: ["chef"], kcal: 15, glyph: "cup" },
+  { id: "b2", planet: "brew", name: "لاتهٔ کلاسیک", en: "Caffè Latte", price: 135000,
+    desc: "اسپرسو با شیرِ بخارپزِ مخملی و فومِ نرم.", tags: ["signature"], kcal: 180, glyph: "cup" },
+  { id: "b3", planet: "brew", name: "موکا", en: "Caffè Mocha", price: 150000,
+    desc: "اسپرسو، شیر و شکلاتِ تلخ با کمی خامه.", tags: [], kcal: 240, glyph: "cup" },
+  { id: "b4", planet: "brew", name: "دمنوشِ گیاهی", en: "Herbal Tea", price: 110000,
+    desc: "بابونه، اسطوخودوس و به‌لیمو؛ آرام‌بخش و سبک.", tags: ["veg", "cold"], kcal: 30, glyph: "leaf" },
 
-  /* ---- KP-02 · صبحانه ---- */
-  { id: "d1", planet: "dawn", name: "املتِ خورشیدی", en: "Solar Omelette", price: 185000,
+  /* ---- صبحانه ---- */
+  { id: "d1", planet: "dawn", name: "املتِ ویژه", en: "Special Omelette", price: 185000,
     desc: "تخم‌مرغِ محلی، قارچ، پنیرِ گودا و سبزیجاتِ تفت‌داده.", tags: ["chef"], kcal: 420, glyph: "sun" },
-  { id: "d2", planet: "dawn", name: "پنکیکِ حلقهٔ زحل", en: "Saturn-Ring Pancakes", price: 210000,
-    desc: "سه لایه پنکیکِ پفی با شربتِ افرا و کرهٔ بادام.", tags: ["new"], kcal: 560, glyph: "sun" },
-  { id: "d3", planet: "dawn", name: "بِنِدیکتِ مداری", en: "Orbit Benedict", price: 240000,
+  { id: "d2", planet: "dawn", name: "پنکیک", en: "Pancakes", price: 210000,
+    desc: "سه لایه پنکیکِ پفکی با شربتِ افرا و کرهٔ بادام.", tags: ["new"], kcal: 560, glyph: "sun" },
+  { id: "d3", planet: "dawn", name: "املتِ بندیکت", en: "Eggs Benedict", price: 240000,
     desc: "نانِ برشته، تخم‌مرغِ آب‌پزِ روان و سُسِ هلندی.", tags: ["signature"], kcal: 480, glyph: "sun" },
 
-  /* ---- KP-03 · پیش‌غذا و سالاد ---- */
-  { id: "v1", planet: "verdant", name: "سالادِ واحهٔ سبز", en: "Green-Oasis Salad", price: 195000,
+  /* ---- پیش‌غذا و سالاد ---- */
+  { id: "v1", planet: "verdant", name: "سالادِ فصل", en: "Garden Salad", price: 195000,
     desc: "کاهوی فرانسوی، آووکادو، انار و سُسِ مرکبات.", tags: ["veg", "cold"], kcal: 260, glyph: "leaf" },
-  { id: "v2", planet: "verdant", name: "سوپِ کدوی فضایی", en: "Cosmic Squash Soup", price: 165000,
+  { id: "v2", planet: "verdant", name: "سوپِ کدوحلوایی", en: "Pumpkin Soup", price: 165000,
     desc: "کدوحلوایی، شیرِ نارگیل و کمی زنجبیل؛ مخملی و گرم.", tags: ["veg"], kcal: 220, glyph: "leaf" },
-  { id: "v3", planet: "verdant", name: "بروشتای شهابی", en: "Shooting-Star Bruschetta", price: 180000,
+  { id: "v3", planet: "verdant", name: "بروشتا", en: "Bruschetta", price: 180000,
     desc: "نانِ سنگکِ برشته، گوجهٔ کنفی، ریحان و روغنِ زیتون.", tags: ["new"], kcal: 300, glyph: "leaf" },
 
-  /* ---- KP-04 · غذای اصلی ---- */
-  { id: "c1", planet: "core", name: "ریزوتوی هستهٔ مرکزی", en: "Core Risotto", price: 420000,
+  /* ---- غذای اصلی ---- */
+  { id: "c1", planet: "core", name: "ریزوتوی قارچ", en: "Mushroom Risotto", price: 420000,
     desc: "برنجِ آربوریو، قارچِ پورتوبلو و پارمزانِ رسیده.", tags: ["veg", "chef"], kcal: 560, glyph: "orbit" },
-  { id: "c2", planet: "core", name: "پاستای ماهِ سرخ", en: "Red-Moon Pasta", price: 390000,
-    desc: "فتوچینی با سُسِ گوجهٔ کبابی، فلفلِ دلمه و ریحان.", tags: ["spicy"], kcal: 640, glyph: "orbit" },
-  { id: "c3", planet: "core", name: "سالمونِ مدارِ قطبی", en: "Polar-Orbit Salmon", price: 540000,
+  { id: "c2", planet: "core", name: "پاستای آرابیاتا", en: "Pasta Arrabbiata", price: 390000,
+    desc: "فتوچینی با سُسِ گوجهٔ تند، فلفلِ دلمه و ریحان.", tags: ["spicy"], kcal: 640, glyph: "orbit" },
+  { id: "c3", planet: "core", name: "ماهیِ سالمون", en: "Grilled Salmon", price: 540000,
     desc: "فیلهٔ سالمونِ سرخ‌شده با کرهٔ لیمو و سبزیجاتِ فصل.", tags: ["signature"], kcal: 610, glyph: "orbit" },
 
-  /* ---- KP-05 · گریل و باربیکیو ---- */
-  { id: "e1", planet: "ember", name: "استیکِ ابرنواختر", en: "Supernova Steak", price: 920000,
+  /* ---- گریل و باربیکیو ---- */
+  { id: "e1", planet: "ember", name: "استیکِ ریب‌آی", en: "Ribeye Steak", price: 920000,
     desc: "۳۰۰ گرم ریب‌آیِ رسیده روی زغال، سُسِ فلفلِ سیاه.", tags: ["chef", "signature"], kcal: 980, glyph: "flame" },
-  { id: "e2", planet: "ember", name: "کبابِ شعله‌ور", en: "Flare Kebab", price: 480000,
+  { id: "e2", planet: "ember", name: "کبابِ بره", en: "Lamb Chops", price: 480000,
     desc: "دنده‌های برهٔ مرینیت‌شده با رزماری و سیر.", tags: ["spicy"], kcal: 760, glyph: "flame" },
-  { id: "e3", planet: "ember", name: "جوجهٔ زعفرانِ خورشیدی", en: "Saffron Solar Chicken", price: 430000,
+  { id: "e3", planet: "ember", name: "جوجهٔ زعفرانی", en: "Saffron Chicken", price: 430000,
     desc: "سینهٔ مرغِ زعفرانی با کرهٔ محلی و لیموی عمانی.", tags: ["new"], kcal: 520, glyph: "flame" },
 
-  /* ---- KP-06 · دسر و بستنی ---- */
-  { id: "n1", planet: "nova", name: "سوفلهٔ سحابی شکلات", en: "Nebula Chocolate Soufflé", price: 240000,
+  /* ---- دسر و بستنی ---- */
+  { id: "n1", planet: "nova", name: "سوفلهٔ شکلات", en: "Chocolate Soufflé", price: 240000,
     desc: "سوفلهٔ گرمِ شکلاتِ تلخ با مرکزِ روان و بستنیِ وانیل.", tags: ["chef"], kcal: 480, glyph: "spark" },
-  { id: "n2", planet: "nova", name: "بستنیِ ماهِ یخی", en: "Ice-Moon Gelato", price: 160000,
+  { id: "n2", planet: "nova", name: "بستنیِ پسته", en: "Pistachio Gelato", price: 160000,
     desc: "ژلاتوی پسته و وانیل با تراشهٔ شکلاتِ سفید.", tags: ["cold", "veg"], kcal: 320, glyph: "spark" },
-  { id: "n3", planet: "nova", name: "چیزکیکِ کهکشان", en: "Galaxy Cheesecake", price: 200000,
+  { id: "n3", planet: "nova", name: "چیزکیک", en: "Cheesecake", price: 200000,
     desc: "چیزکیکِ نیویورکی با رویهٔ بلوبری و کاراملِ نمکی.", tags: ["signature"], kcal: 540, glyph: "spark" },
 ];
 
 /* نظراتِ مسافران */
 const TESTIMONIALS = [
   { name: "سارا و امید", role: "مسافرانِ شامِ سالگرد", rating: 5,
-    text: "حسِ سفر بینِ سیاره‌ها واقعی بود! استیکِ ابرنواختر بهترین چیزی بود که خوردیم." },
+    text: "حسِ سفر بینِ سیاره‌ها واقعی بود! استیکِ ریب‌آی بهترین چیزی بود که خوردیم." },
   { name: "دکتر رضوی", role: "مهمانِ ثابتِ ایستگاه", rating: 5,
-    text: "لاتهٔ کهکشانی و فضای بی‌نظیر. هر بار انگار دوباره پرتاب می‌شوی به یک دنیای تازه." },
+    text: "لاتهٔ کلاسیک و فضای بی‌نظیر. هر بار انگار دوباره پرتاب می‌شوی به یک دنیای تازه." },
   { name: "نگار ک.", role: "وبلاگ‌نویسِ سفر و غذا", rating: 5,
-    text: "خلاقیت در چیدمان و طعم بی‌نظیر است؛ سوفلهٔ سحابی حتماً باید امتحان شود." },
+    text: "خلاقیت در چیدمان و طعم بی‌نظیر است؛ سوفلهٔ شکلات حتماً باید امتحان شود." },
 ];
 
 window.DAMSA = { TOMAN, PLANETS, TAG_LABELS, DISHES, TESTIMONIALS };

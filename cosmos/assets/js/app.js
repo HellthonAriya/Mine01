@@ -131,19 +131,27 @@
       let t = 0;
       function frame() {
         t += 0.016;
+        warpV *= 0.9;                                   // فروکشِ نرمِ شتابِ warp
         ctx.clearRect(0, 0, W, H);
         const sx = camX * 26 * DPR, sy = camY * 26 * DPR, scr = scrollProg * 140 * DPR;
+        const warping = warpV > 0.06;
+        ctx.lineCap = "round";
         for (const s of stars) {
           const px = ((s.x * W + sx * (0.3 + s.depth)) % W + W) % W;
           const py = ((s.y * H + sy * (0.3 + s.depth) + scr * (0.2 + s.depth)) % H + H) % H;
           const a = reduce ? 0.7 : 0.35 + 0.45 * (0.5 + 0.5 * Math.sin(t * s.tws + s.tw)) * (0.4 + s.depth);
-          ctx.globalAlpha = a;
-          ctx.fillStyle = s.hue;
-          ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2); ctx.fill();
-          if (s.depth > 0.8) {                          // درخششِ ستاره‌های نزدیک
-            ctx.globalAlpha = a * 0.4;
-            ctx.beginPath(); ctx.arc(px, py, s.r * 3, 0, Math.PI * 2);
-            ctx.fillStyle = s.hue; ctx.fill();
+          if (warping) {                                // استریکِ سرعت (warp) هنگامِ اسکرول
+            const len = warpV * (8 + s.depth * 52) * DPR;
+            ctx.globalAlpha = Math.min(1, a * 1.1);
+            ctx.strokeStyle = s.hue; ctx.lineWidth = s.r * 1.3;
+            ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py - warpDir * len); ctx.stroke();
+          } else {
+            ctx.globalAlpha = a; ctx.fillStyle = s.hue;
+            ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2); ctx.fill();
+            if (s.depth > 0.8) {                        // درخششِ ستاره‌های نزدیک
+              ctx.globalAlpha = a * 0.4;
+              ctx.beginPath(); ctx.arc(px, py, s.r * 3, 0, Math.PI * 2); ctx.fill();
+            }
           }
         }
         ctx.globalAlpha = 1;
@@ -219,7 +227,10 @@
     const navLinks = $$("#hudNav a"), dotBtns = $$("#dots button");
     const allBays = () => $$(".bay, #launchpad, #dock");
     let scrollProg = 0, camX = 0, camY = 0, tcamX = 0, tcamY = 0;
+    let warpV = 0, warpDir = 1, lastScrollY = scrollY;        // سرعتِ اسکرول برای استریکِ warp
     const systemSecs = $$(".bay--system");
+    const root = document.documentElement;
+    const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 
     function onScroll() {
       const y = scrollY, vh = innerHeight;
@@ -228,14 +239,43 @@
       warpFill.style.width = (scrollProg * 100).toFixed(2) + "%";
       hud.classList.toggle("is-stuck", y > 40);
 
-      // --p هر صحنهٔ سیاره (مثلثی: نزدیک‌شدن → اوج → دورشدن)
+      // سرعتِ اسکرول → شتابِ warp
+      const dv = y - lastScrollY; lastScrollY = y;
+      if (!reduce) { if (dv) warpDir = Math.sign(dv); warpV = Math.max(warpV, Math.min(2.6, Math.abs(dv) / 42)); }
+
+      // چرخشِ سطحِ سیاره‌ها با اسکرول (حسِ چرخشِ کره)
+      root.style.setProperty("--spin", (reduce ? 0 : y * 0.6).toFixed(1));
+
+      // سفرِ عمقی: هر سیاره از دور می‌آید، از کنارِ بیننده رد می‌شود و محو می‌شود
       systemSecs.forEach((sec) => {
         const rect = sec.getBoundingClientRect();
+        if (reduce) {
+          sec.style.cssText += ";--p:1;--pz:0px;--pvis:1;--hud:1;--orb:1;--cz:0px;--rotY:0deg;--rotX:0deg;--pscale:1";
+          return;
+        }
         const total = sec.offsetHeight - vh;
-        const sc = clamp(-rect.top, 0, total);
-        const raw = total > 0 ? sc / total : (rect.top < vh ? 0.5 : 0);
-        const tri = 1 - Math.abs(raw * 2 - 1);
-        sec.style.setProperty("--p", (reduce ? 1 : tri).toFixed(3));
+        if (desktop && total > 60) {
+          // دسکتاپ: صحنهٔ چسبان → پروازِ عمقی
+          const raw = clamp(-rect.top / total, 0, 1);
+          sec.style.setProperty("--p", raw.toFixed(3));
+          sec.style.setProperty("--pz", (-560 + raw * 900).toFixed(0) + "px");
+          sec.style.setProperty("--pvis", (ss(0.03, 0.18, raw) * (1 - ss(0.74, 0.99, raw))).toFixed(3));
+          sec.style.setProperty("--hud", (ss(0.14, 0.34, raw) * (1 - ss(0.6, 0.82, raw))).toFixed(3));
+          sec.style.setProperty("--orb", (ss(0.16, 0.4, raw) * (1 - ss(0.66, 0.93, raw))).toFixed(3));
+          sec.style.setProperty("--cz", ((raw - 0.5) * 180).toFixed(0) + "px");
+          sec.style.setProperty("--rotY", ((raw - 0.5) * 26).toFixed(1) + "deg");
+          sec.style.setProperty("--rotX", "0deg");
+          sec.style.setProperty("--pscale", "1");
+        } else {
+          // موبایل: سیارهٔ سه‌بعدی که با عبور از صفحه می‌چرخد و عمق می‌گیرد
+          const d = clamp((rect.top + rect.height / 2 - vh / 2) / vh, -1.2, 1.2);
+          const near = clamp(1 - Math.abs(d), 0, 1);
+          sec.style.setProperty("--rotY", (d * 24).toFixed(1) + "deg");
+          sec.style.setProperty("--rotX", (-d * 7).toFixed(1) + "deg");
+          sec.style.setProperty("--pscale", (0.9 + near * 0.14).toFixed(3));
+          sec.style.setProperty("--pvis", "1"); sec.style.setProperty("--hud", "1");
+          sec.style.setProperty("--orb", "1"); sec.style.setProperty("--pz", "0px"); sec.style.setProperty("--cz", "0px");
+        }
       });
 
       // فعال‌سازیِ ناوبری بر اساسِ نزدیک‌ترین صحنه به مرکز
