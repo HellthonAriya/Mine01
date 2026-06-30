@@ -1,5 +1,5 @@
 /* ===========================================================================
-   کافهٔ دمسا · پنلِ مدیریت
+   رستوران دمسا · پنلِ مدیریت
    ورود با رمز، ویرایشِ تمِ هوشمند + رنگِ پیشرفته، متن‌ها، منو، دسته‌ها،
    نظرات، رویدادها، باشگاه و تماس؛ پیش‌نمایشِ زنده و ذخیره روی بک‌اند.
    =========================================================================== */
@@ -92,6 +92,8 @@
     content = await loadContent();
     buildTabs();
     buildAllPanels();
+    // اگر پیش‌نمایش پیش از ورود آماده شده بود، پنلِ متن‌ها را همین‌جا بساز
+    if (previewReady) buildTextPanel();
     pushPreview();
   }
 
@@ -355,9 +357,9 @@
      ========================================================================= */
   function brandPanel() {
     const p = el("section", { class: "panel", id: "panel-brand" });
-    p.appendChild(el("div", null, "<h2>برند</h2><p class='panel__lead'>نام و نشانهٔ کافه (در نوار بالا، فوتر و لودر استفاده می‌شود).</p>"));
+    p.appendChild(el("div", null, "<h2>برند</h2><p class='panel__lead'>نام و نشانهٔ رستوران (در نوار کناری، فوتر و لودر استفاده می‌شود).</p>"));
     const card = el("div", { class: "card" });
-    card.appendChild(textField("نامِ کافه", "brand.word", "text"));
+    card.appendChild(textField("نامِ رستوران", "brand.word", "text"));
     card.appendChild(textField("حرفِ نشانه (لوگو)", "brand.mark", "text"));
     p.appendChild(card);
     return p;

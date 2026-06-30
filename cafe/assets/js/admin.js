@@ -94,6 +94,8 @@
     content = await loadContent();
     buildTabs();
     buildAllPanels();
+    // اگر پیش‌نمایش پیش از ورود آماده شده بود، پنلِ متن‌ها را همین‌جا بساز
+    if (previewReady) buildTextPanel();
     pushPreview();
   }
 
