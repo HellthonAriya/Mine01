@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>دمسا · انتخابِ قالب</title>
+  <meta name="description" content="مجموعهٔ قالب‌های دمسا — یک قالب را برای ورود انتخاب کنید: کافه یا رستوران." />
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#0B0A0F; --ink:#F3EFE7; --dim:#A9A2B5;
+      --gold:#E0922B; --gold2:#F0B45C;
+      --wine:#C0392B; --wine2:#E0584A;
+      --cosmos:#7C5CFF; --cosmos2:#28E0C8;
+      --line:rgba(243,239,231,.10);
+      --font:"Vazirmatn",system-ui,sans-serif;
+      --ease:cubic-bezier(.22,1,.36,1);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%}
+    body{font-family:var(--font);background:var(--bg);color:var(--ink);overflow-x:hidden;overflow-y:auto;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+
+    /* پس‌زمینهٔ متحرک */
+    .bgwrap{position:fixed;inset:0;z-index:0;overflow:hidden}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;animation:drift 18s var(--ease) infinite alternate}
+    .orb--1{width:55vw;height:55vw;inset-inline-start:-10vw;inset-block-start:-12vw;background:radial-gradient(circle,var(--gold),transparent 65%)}
+    .orb--2{width:50vw;height:50vw;inset-inline-end:-12vw;inset-block-end:-14vw;background:radial-gradient(circle,var(--wine),transparent 65%);animation-delay:-6s}
+    .orb--3{width:36vw;height:36vw;inset-inline-start:40vw;inset-block-start:35vh;background:radial-gradient(circle,#3E2A86,transparent 65%);animation-delay:-11s;opacity:.4}
+    @keyframes drift{to{transform:translate3d(6vw,5vh,0) scale(1.12)}}
+    .grain{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(var(--ink) .5px,transparent .5px);background-size:4px 4px;mix-blend-mode:overlay}
+
+    .wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;padding:clamp(20px,4vw,46px)}
+    header.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.25rem;letter-spacing:.01em}
+    .brand .mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#15110b;font-weight:900;font-size:1.5rem;
+      background:linear-gradient(135deg,var(--gold),var(--wine));box-shadow:0 10px 30px -10px var(--gold)}
+    .top .hint{font-size:.85rem;color:var(--dim)}
+
+    .center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:clamp(22px,4vw,40px);padding-block:18px}
+    .lead{max-width:760px}
+    .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:700;color:var(--gold2);
+      border:1px solid var(--line);padding:.45em 1em;border-radius:999px;background:rgba(255,255,255,.03);
+      opacity:0;transform:translateY(14px);animation:rise .7s var(--ease) .05s forwards}
+    h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.18;margin-block:.5rem .4rem;
+      opacity:0;transform:translateY(20px);animation:rise .8s var(--ease) .12s forwards}
+    h1 b{background:linear-gradient(120deg,var(--gold),var(--wine2));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead p{color:var(--dim);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:54ch;margin-inline:auto;
+      opacity:0;transform:translateY(20px);animation:rise .8s var(--ease) .2s forwards}
+    @keyframes rise{to{opacity:1;transform:none}}
+
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,3vw,26px);width:min(1180px,100%)}
+    @media(max-width:980px){.cards{grid-template-columns:1fr 1fr}}
+    @media(max-width:680px){.cards{grid-template-columns:1fr}}
+
+    .card{position:relative;display:block;border:1px solid var(--line);border-radius:26px;overflow:hidden;
+      background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+      padding:clamp(22px,3vw,34px);min-height:clamp(220px,30vh,300px);transform-style:preserve-3d;
+      transition:transform .5s var(--ease),border-color .5s,box-shadow .5s;
+      opacity:0;animation:rise .9s var(--ease) forwards}
+    .card--cafe{animation-delay:.3s}
+    .card--rest{animation-delay:.42s}
+    .card--cosmos{animation-delay:.54s}
+    .card::before{content:"";position:absolute;inset:0;z-index:0;opacity:.16;transition:opacity .5s;
+      background:radial-gradient(120% 80% at 80% 0%,var(--ac),transparent 60%)}
+    .card:hover{transform:translateY(-8px);border-color:color-mix(in srgb,var(--ac) 55%,transparent);
+      box-shadow:0 40px 90px -30px color-mix(in srgb,var(--ac) 60%,transparent)}
+    .card:hover::before{opacity:.34}
+    .card--cafe{--ac:var(--gold)}
+    .card--rest{--ac:var(--wine2)}
+    .card--cosmos{--ac:var(--cosmos)}
+    .card__inner{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;gap:.7rem;text-align:right}
+    .card__icon{width:60px;height:60px;border-radius:17px;display:grid;place-items:center;color:#15110b;
+      background:linear-gradient(135deg,var(--ac),color-mix(in srgb,var(--ac) 50%,#fff));margin-bottom:.4rem;
+      transition:transform .5s var(--ease)}
+    .card:hover .card__icon{transform:rotate(-6deg) scale(1.08)}
+    .card__icon svg{width:32px;height:32px}
+    .card__t{font-size:clamp(1.4rem,3.4vw,1.9rem);font-weight:800}
+    .card__en{font-size:.82rem;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+    .card__d{color:var(--dim);font-size:.92rem;line-height:1.7;margin-top:.2rem;flex:1}
+    .card__go{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;color:var(--ac);margin-top:.4rem;
+      transition:gap .3s var(--ease)}
+    .card:hover .card__go{gap:.95rem}
+    .card__go svg{width:1.1rem;height:1.1rem;transform:scaleX(-1)}
+    .card__admin{position:absolute;inset-block-start:18px;inset-inline-start:18px;z-index:3;font-size:.76rem;color:var(--dim);
+      border:1px solid var(--line);padding:.3em .8em;border-radius:999px;background:rgba(0,0,0,.25);transition:color .3s,border-color .3s}
+    .card__admin:hover{color:var(--ink);border-color:color-mix(in srgb,var(--ac) 60%,transparent)}
+
+    footer.bot{text-align:center;color:var(--dim);font-size:.82rem;padding-top:10px}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="bgwrap" aria-hidden="true">
+    <span class="orb orb--1"></span><span class="orb orb--2"></span><span class="orb orb--3"></span>
+    <span class="grain"></span>
+  </div>
+
+  <div class="wrap">
+    <header class="top">
+      <div class="brand"><span class="mark">د</span> دمسا</div>
+      <span class="hint">مجموعهٔ قالب‌ها</span>
+    </header>
+
+    <main class="center">
+      <div class="lead">
+        <span class="eyebrow">✦ یک قالب را انتخاب کن</span>
+        <h1>کدام تجربه را می‌خواهی <b>بسازی؟</b></h1>
+        <p>سه قالبِ مستقل با طراحی، چیدمان و پنلِ مدیریتِ جداگانه. هرکدام را جداگانه شخصی‌سازی کن.</p>
+      </div>
+
+      <nav class="cards">
+        <a class="card card--cafe" href="/cafe/">
+          <span class="card__admin" role="link" tabindex="0" onclick="event.preventDefault();event.stopPropagation();location.href='/cafe/admin'">پنل مدیریت ↗</span>
+          <div class="card__inner">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 8h11v5a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5z"/><path d="M16 9h2.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3c-.6 1 .6 2 0 3M11.5 3c-.6 1 .6 2 0 3"/>
+              </svg>
+            </span>
+            <div class="card__t">کافه دمسا</div>
+            <div class="card__en">Café · Template 1</div>
+            <div class="card__d">قهوهٔ دست‌ساز، صبحانه و دسر — تجربه‌ای سینمایی و تک‌صفحه‌ای با حرکتِ روان و منوی کامل.</div>
+            <span class="card__go">ورود به سایت
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a class="card card--rest" href="/restaurant/">
+          <span class="card__admin" role="link" tabindex="0" onclick="event.preventDefault();event.stopPropagation();location.href='/restaurant/admin'">پنل مدیریت ↗</span>
+          <div class="card__inner">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 3v8a2 2 0 0 0 4 0V3M9 3v18M17 3c-1.5 1-2 3-2 6s.5 4 2 4v8"/>
+              </svg>
+            </span>
+            <div class="card__t">رستوران دمسا</div>
+            <div class="card__en">Restaurant · Template 2</div>
+            <div class="card__d">فاین‌داینینگِ مدرن — چیدمانِ منو‌محور، حرکت‌های لایه‌ای و فضای تیره و لوکس. کاملاً متفاوت با قالبِ کافه.</div>
+            <span class="card__go">ورود به سایت
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a class="card card--cosmos" href="/cosmos/">
+          <span class="card__admin" role="link" tabindex="0" onclick="event.preventDefault();event.stopPropagation();location.href='/cosmos/admin'">پنل مدیریت ↗</span>
+          <div class="card__inner">
+            <span class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(28 12 12)"/>
+              </svg>
+            </span>
+            <div class="card__t">ایستگاهِ کیهانی دمسا</div>
+            <div class="card__en">Cosmos · Template 3</div>
+            <div class="card__d">کافه‌رستورانی فضایی — منو یک منظومه است؛ با اسکرول بینِ سیاره‌ها سفر می‌کنی و سه‌بعدی واردِ هر دسته می‌شوی.</div>
+            <span class="card__go">ورود به سایت
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+        </a>
+      </nav>
+    </main>
+
+    <footer class="bot">طراحی‌شده با عشق ☕🍷 — دمسا</footer>
+  </div>
+
+  <script>
+    if (matchMedia("(pointer:fine)").matches && !matchMedia("(prefers-reduced-motion:reduce)").matches) {
+      document.querySelectorAll(".card").forEach((c) => {
+        c.addEventListener("mousemove", (e) => {
+          const r = c.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+          c.style.transform = `translateY(-8px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+        });
+        c.addEventListener("mouseleave", () => { c.style.transform = ""; });
+      });
+    }
+  </script>
+</body>
+</html>

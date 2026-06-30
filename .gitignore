@@ -1,0 +1,27 @@
+# سیستم‌عامل
+.DS_Store
+Thumbs.db
+
+# ویرایشگرها
+.vscode/
+.idea/
+*.swp
+
+# لاگ و موقت
+*.log
+node_modules/
+.cache/
+
+# کشِ پایتون (تولیدشده هنگامِ اجرای اسکیل‌ها)
+__pycache__/
+*.pyc
+
+# محتوای ویرایش‌شده توسطِ ادمین (هر قالب جداگانه؛ روی سرور تولید می‌شود)
+content.json
+content.json.tmp
+**/content.json
+**/content.json.tmp
+
+# عکس‌های آپلودشدهٔ آیتم‌ها (هر قالب جداگانه، روی سرور)
+uploads/
+**/uploads/

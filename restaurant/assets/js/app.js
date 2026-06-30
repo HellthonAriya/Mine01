@@ -1,0 +1,313 @@
+/* ===========================================================================
+   رستوران دمسا · app.js (قالب ۲)
+   روترِ صحنه‌به‌صحنه (منو‌محور)، رندرِ منو، مودالِ غذا، شمارنده‌ها،
+   مارکی، نظرات و فرمِ رزرو — با حرکت‌های روان.
+   =========================================================================== */
+(function () {
+  "use strict";
+  function start() {
+    const D = window.DAMSA || {};
+    const { TOMAN, COURSES = [], TAG_LABELS = {}, ART = {}, DISHES = [], TESTIMONIALS = [] } = D;
+    const $ = (s, c = document) => c.querySelector(s);
+    const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+    const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+    const fmt = (n) => (TOMAN ? TOMAN(n) : n);
+    const esc = (s) => String(s == null ? "" : s).replace(/"/g, "&quot;");
+    const artBG = (k) => { const a = ART[k] || ["#3A1414", "#120707"]; return `linear-gradient(150deg,${a[0]},${a[1]})`; };
+    const hasImg = (m) => m && typeof m.image === "string" && m.image.trim() !== "";
+    const dtag = (k) => { const t = TAG_LABELS[k]; return t ? `<span class="dtag dtag--${t.tone}">${t.fa}</span>` : ""; };
+    const toast = (msg) => { const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; $("#toastWrap").appendChild(t); setTimeout(() => t.remove(), 2800); };
+
+    /* لودر */
+    setTimeout(() => { const b = $("#boot"); if (b) b.classList.add("is-done"); }, 350);
+
+    /* تم */
+    const root = document.documentElement;
+    const saved = localStorage.getItem("damsa-rest-theme");
+    if (saved) root.setAttribute("data-theme", saved);
+    $("#themeToggle").addEventListener("click", () => {
+      const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+      root.setAttribute("data-theme", next); localStorage.setItem("damsa-rest-theme", next);
+    });
+
+    /* ----------------------------- روترِ صحنه ----------------------------- */
+    const scenes = $$(".scene");
+    const validIds = scenes.map((s) => s.id.replace("scene-", ""));
+    const sheet = $("#msheet");
+    const closeSheet = () => { sheet.classList.remove("is-open"); sheet.setAttribute("aria-hidden", "true"); document.body.classList.remove("is-locked"); };
+    function go(id) {
+      if (!validIds.includes(id)) id = "home";
+      scenes.forEach((s) => s.classList.toggle("is-active", s.id === "scene-" + id));
+      $$("[data-scene]").forEach((a) => a.classList.toggle("is-active", a.dataset.scene === id));
+      const sc = $("#scene-" + id); if (sc) sc.scrollTop = 0;
+      if (location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
+      if (id === "home") runCounters();
+      if (id === "menu") replayDishes();
+      closeSheet();
+    }
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("[data-scene]"); if (!a) return;
+      e.preventDefault(); go(a.dataset.scene);
+    });
+    addEventListener("hashchange", () => go(location.hash.replace("#", "")));
+
+    /* منوی موبایل */
+    $("#burger").addEventListener("click", () => { sheet.classList.add("is-open"); sheet.setAttribute("aria-hidden", "false"); document.body.classList.add("is-locked"); });
+    $("#msheetClose").addEventListener("click", closeSheet);
+
+    /* ----------------------------- شمارنده‌ها ----------------------------- */
+    function runCounters() {
+      $$("[data-count-to]").forEach((el) => {
+        const to = parseFloat(el.dataset.countTo); const dec = parseInt(el.dataset.decimal || "0", 10);
+        if (reduce) { el.textContent = fmt(dec ? to.toFixed(dec) : to); return; }
+        const dur = 1100, t0 = performance.now();
+        const tick = (t) => {
+          const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = to * e;
+          el.textContent = fmt(dec ? v.toFixed(dec) : Math.round(v));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }
+
+    /* ----------------------------- مارکی ----------------------------- */
+    const words = DISHES.filter((d) => (d.tags || []).some((t) => t === "chef" || t === "signature")).map((d) => d.name);
+    const base = (words.length ? words : ["آشپزیِ خلاق", "موادِ فصلی", "گریلِ زغالی"]).concat(["رزروِ آنلاین", "فضای دنج"]);
+    const seg = base.map((w) => `${w} <i>✦</i>`).join(" ");
+    $("#marquee").innerHTML = `<span>${seg}</span><span>${seg}</span>`;
+
+    /* ----------------------------- منو ----------------------------- */
+    let activeCourse = COURSES[0] ? COURSES[0].id : "";
+
+    /* ---------- چرخِ انتخابِ دسته (دیسکِ سی‌دیِ چرخان) ---------- */
+    const wheel = $("#wheel"), disc = $("#wheelDisc");
+    const N = COURSES.length, SEG = N ? 360 / N : 0;
+    const rad = (d) => d * Math.PI / 180;
+    // حلقهٔ رنگیِ پیوسته‌ی هم‌خوان با تم: طلایی↔شرابی↔طلایی (حلقهٔ بسته؛ مستقل از زوج/فرد، بدونِ هم‌رنگیِ مجاور)
+    const cssv = (v, fb) => (getComputedStyle(document.documentElement).getPropertyValue(v).trim() || fb);
+    const toRGB = (s, fb) => {
+      s = (s || "").trim();
+      let m = s.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+      if (m) { let h = m[1]; if (h.length === 3) h = h.split("").map((c) => c + c).join(""); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+      m = s.match(/\d+(\.\d+)?/g);
+      return (m && m.length >= 3) ? [+m[0], +m[1], +m[2]] : fb;
+    };
+    const mixRGB = (a, b, t) => [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)];
+    const ringColor = (frac) => {
+      const g = toRGB(cssv("--accent-2", "#C99A3B"), [201, 154, 59]);
+      const w = toRGB(cssv("--accent", "#9E2B25"), [158, 43, 37]);
+      const t = (1 - Math.cos(2 * Math.PI * frac)) / 2; // 0=طلایی · 0.5=شرابی · 1=طلایی
+      const c = mixRGB(g, w, t);
+      return `rgb(${c[0]},${c[1]},${c[2]})`;
+    };
+    const cc = (i) => ringColor(N ? (i + 0.5) / N : 0); // رنگِ برچسب = جایگاهش روی حلقه
+    let rot = 0, selIdx = 0, dragging = false, hover = false, moved = false;
+    // تابشِ نرمِ سکتورها روی دیسک — گرادیانتِ پیوسته (بدونِ گُوِه‌های تیز)
+    function paintSectors() {
+      if (!N) return;
+      const tint = (frac) => `color-mix(in srgb, ${ringColor(frac)} 13%, transparent)`;
+      const stops = [`${tint(0)} 0deg`];
+      COURSES.forEach((c, i) => stops.push(`${tint((i + 0.5) / N)} ${((i + 0.5) * SEG).toFixed(2)}deg`));
+      stops.push(`${tint(1)} 360deg`); // tint(1)===tint(0) → درزِ بی‌نقص
+      disc.style.setProperty("--sectors", `conic-gradient(from 0deg, ${stops.join(",")})`);
+    }
+    paintSectors();
+    disc.innerHTML = COURSES.map((c, i) =>
+      `<button class="wheel__item" data-idx="${i}" data-course="${c.id}" type="button" style="--cc:${cc(i)}"><span>${c.fa}</span></button>`).join("");
+    const items = $$(".wheel__item", disc);
+    // هم‌خوان‌سازیِ رنگِ دیسک هنگامِ تغییرِ تم
+    new MutationObserver(() => {
+      paintSectors();
+      items.forEach((el, i) => el.style.setProperty("--cc", cc(i)));
+      const fa = $("#wheelFa"); if (fa && COURSES[selIdx]) fa.style.color = cc(selIdx);
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    function itemAngle(i) { return -90 + i * SEG + SEG / 2; } // مرکزِ سکتور
+    function layoutWheel() {
+      const D = disc.offsetWidth || 1; const c = D / 2; const Rr = D * 0.3;
+      items.forEach((el, i) => {
+        const a = itemAngle(i);
+        el.style.left = (c + Rr * Math.cos(rad(a))) + "px";
+        el.style.top = (c + Rr * Math.sin(rad(a))) + "px";
+        el.style.transform = `translate(-50%,-50%) rotate(${a - 90}deg)`; // شعاعی: بالا به مرکز
+      });
+    }
+    function drawWheel() { disc.style.transform = `rotate(${rot}deg)`; }
+    function selectCourse(i) {
+      if (!N) return; i = ((i % N) + N) % N; selIdx = i;
+      items.forEach((el, k) => el.classList.toggle("is-on", k === i));
+      const c = COURSES[i];
+      const fa = $("#wheelFa"); fa.textContent = c.fa; fa.style.color = cc(i);
+      $("#wheelEn").textContent = c.en || "";
+      if (activeCourse !== c.id) {
+        activeCourse = c.id; const w = $("#dishList"); w.classList.add("is-switching");
+        setTimeout(() => { menuScene.scrollTop = 0; renderDishes(); w.classList.remove("is-switching"); }, 200);
+      }
+    }
+    disc.addEventListener("click", (e) => { if (moved) return; const b = e.target.closest(".wheel__item"); if (b) selectCourse(+b.dataset.idx); });
+    /* چرخشِ نرمِ خودکار + درگِ دستی (بدونِ pointer-capture تا کلیک کار کند) */
+    let lastA = 0;
+    const angAt = (ev) => { const r = disc.getBoundingClientRect(); return Math.atan2(ev.clientY - (r.top + r.height / 2), ev.clientX - (r.left + r.width / 2)) * 180 / Math.PI; };
+    wheel.addEventListener("pointerenter", () => hover = true);
+    wheel.addEventListener("pointerleave", () => hover = false);
+    wheel.addEventListener("pointerdown", (e) => { dragging = true; moved = false; lastA = angAt(e); });
+    addEventListener("pointermove", (e) => { if (!dragging) return; const a = angAt(e); let d = a - lastA; if (d > 180) d -= 360; if (d < -180) d += 360; if (Math.abs(d) > 1.2) moved = true; rot += d; lastA = a; drawWheel(); });
+    addEventListener("pointerup", () => { dragging = false; setTimeout(() => { moved = false; }, 40); });
+    addEventListener("resize", () => { layoutWheel(); drawWheel(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layoutWheel(); drawWheel(); });
+    function spin() { if (!dragging && !hover && !reduce) { rot += 0.06; drawWheel(); } requestAnimationFrame(spin); }
+    requestAnimationFrame(spin);
+    const dishRow = (d, i) => `
+      <article class="dcard" data-dish="${d.id}" style="transition-delay:${((i % 6) * 0.06).toFixed(2)}s">
+        <div class="dcard__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
+          ${hasImg(d) ? `<img src="${esc(d.image)}" alt="${esc(d.name)}" loading="lazy" decoding="async">` : `<svg class="dcard__illus" viewBox="0 0 120 120"><use href="#illus-${d.illus || "plate"}"></use></svg>`}
+          <span class="dcard__price">${fmt(d.price)} <small>تومان</small></span>
+          ${(d.tags || []).slice(0, 2).map(dtag).join("")}
+          <span class="dcard__view"><svg class="ic"><use href="#i-arrow"></use></svg></span>
+        </div>
+        <div class="dcard__body">
+          <div class="dcard__top"><h3 class="dcard__name">${d.name}</h3>${d.kcal ? `<span class="dcard__kcal"><svg class="ic"><use href="#i-flame"></use></svg>${fmt(d.kcal)}</span>` : ""}</div>
+          <div class="dcard__en">${d.en || ""}</div>
+          <p class="dcard__desc">${d.desc || ""}</p>
+        </div>
+      </article>`;
+
+    const menuScene = $("#scene-menu");
+    let io = null;
+    function observeDishes() {
+      if (io) io.disconnect();
+      if (reduce) { $$(".dcard").forEach((el) => el.classList.add("is-in")); return; }
+      io = new IntersectionObserver((ents) => {
+        ents.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+      }, { root: menuScene, threshold: 0.18 });
+      $$(".dcard").forEach((el) => io.observe(el));
+    }
+    function renderDishes() {
+      const list = DISHES.filter((d) => d.course === activeCourse);
+      const wrap = $("#dishList");
+      wrap.innerHTML = list.length ? list.map(dishRow).join("") : `<p class="scene__lead" style="text-align:center;padding:40px">آیتمی در این دسته نیست.</p>`;
+      observeDishes();
+    }
+    function replayDishes() { menuScene.scrollTop = 0; renderDishes(); layoutWheel(); drawWheel(); }
+    renderDishes();
+    layoutWheel(); selectCourse(0);
+
+    /* مودالِ غذا */
+    const modal = $("#dishModal"), panel = $("#dishPanel");
+    const byId = Object.fromEntries(DISHES.map((d) => [d.id, d]));
+    const openDish = (id) => {
+      const d = byId[id]; if (!d) return;
+      panel.innerHTML = `
+        <div class="dm__media ${hasImg(d) ? "has-img" : ""}" style="background:${artBG(d.art)}">
+          ${hasImg(d) ? `<img src="${esc(d.image)}" alt="${esc(d.name)}">` : `<svg class="illus" viewBox="0 0 120 120"><use href="#illus-${d.illus || "plate"}"></use></svg>`}
+          <button class="dm__close" data-close aria-label="بستن"><svg class="ic"><use href="#i-close"></use></svg></button>
+        </div>
+        <div class="dm__body">
+          <div class="dm__head"><div><div class="dm__name">${d.name}</div><div class="dm__en">${d.en || ""}</div></div><div class="dm__price">${fmt(d.price)}</div></div>
+          <p class="dm__desc">${d.desc || ""}</p>
+          <div class="dm__facts">
+            ${d.kcal ? `<span class="dm__fact"><svg class="ic"><use href="#i-flame"></use></svg>${fmt(d.kcal)} کالری</span>` : ""}
+            ${(d.tags || []).map(dtag).join("")}
+          </div>
+        </div>`;
+      modal.classList.add("is-open"); modal.setAttribute("aria-hidden", "false"); document.body.classList.add("is-locked");
+    };
+    const closeDish = () => { modal.classList.remove("is-open"); modal.setAttribute("aria-hidden", "true"); document.body.classList.remove("is-locked"); };
+    document.addEventListener("click", (e) => {
+      const d = e.target.closest("[data-dish]"); if (d) return openDish(d.dataset.dish);
+      if (e.target.closest("[data-close]") || e.target.classList.contains("dmodal__scrim")) closeDish();
+    });
+    addEventListener("keydown", (e) => { if (e.key === "Escape") { closeDish(); closeSheet(); } });
+
+    /* ----------------------------- نظرات ----------------------------- */
+    const track = $("#testiTrack");
+    track.innerHTML = TESTIMONIALS.map((t) => `
+      <article class="tcard">
+        <div class="tcard__stars">${"<svg class='ic'><use href='#i-star'></use></svg>".repeat(t.rating || 5)}</div>
+        <p class="tcard__text">«${t.text}»</p>
+        <div class="tcard__who"><b>${t.name}</b> — <span>${t.role || ""}</span></div>
+      </article>`).join("");
+    let ti = 0;
+    if (TESTIMONIALS.length > 1) setInterval(() => {
+      ti = (ti + 1) % TESTIMONIALS.length;
+      track.style.transform = `translateX(calc(${ti} * (100% + 18px)))`; // RTL: مثبت به‌سمتِ بعدی
+    }, 4500);
+
+    /* ---------- پس‌زمینهٔ واکنشی به جهتِ اسکرول ---------- */
+    (function rbg() {
+      const cv = $("#rbgMotes"), washDown = $(".rbg__wash--down"), washUp = $(".rbg__wash--up");
+      if (!cv || reduce) return;
+      const ctx = cv.getContext("2d", { alpha: true });
+      const DPR = Math.min(devicePixelRatio || 1, 2);
+      let W = 0, H = 0;
+
+      // رنگِ واقعیِ تم (با تمِ هوشمند هماهنگ می‌ماند)
+      const probe = document.createElement("span");
+      probe.style.cssText = "position:absolute;left:-9999px;top:-9999px;opacity:0";
+      document.body.appendChild(probe);
+      const col = (v, fb) => { probe.style.color = fb; probe.style.color = `var(${v})`; const c = getComputedStyle(probe).color; return /^rgb/.test(c) ? c.match(/\d+/g).map(Number) : null; };
+      let gold = col("--accent-2", "#C99A3B") || [201, 154, 59];
+      let wine = col("--accent", "#9E2B25") || [158, 43, 37];
+      new MutationObserver(() => { gold = col("--accent-2", "#C99A3B") || gold; wine = col("--accent", "#9E2B25") || wine; })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+      const rnd = (a, b) => a + Math.random() * (b - a);
+      const N = innerWidth < 680 ? 30 : 56;
+      const motes = [];
+      for (let i = 0; i < N; i++) motes.push({ x: Math.random(), y: Math.random(), r: rnd(0.6, 2.4), depth: rnd(0.4, 1.4) });
+
+      const resize = () => { W = cv.clientWidth; H = cv.clientHeight; cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); };
+      addEventListener("resize", resize); resize();
+
+      // سرعتِ اسکرول از سه منبع: wheel، اسکرولِ داخلیِ صحنه‌ها، و لمس
+      let vel = 0, flow = 0, dir = 0;
+      const push = (d) => { vel += d; };
+      addEventListener("wheel", (e) => push(e.deltaY * 0.25), { passive: true });
+      const tops = new WeakMap();
+      addEventListener("scroll", (e) => {
+        const s = e.target; if (!s || !s.classList || !s.classList.contains("scene")) return;
+        const prev = tops.get(s) || 0; push((s.scrollTop - prev) * 0.45); tops.set(s, s.scrollTop);
+      }, true);
+
+      const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+      function frame() {
+        vel *= 0.82;                                   // با توقفِ اسکرول آرام می‌گیرد
+        if (Math.abs(vel) < 0.01) vel = 0;
+        flow += vel * 0.0003;
+        const target = vel > 0 ? 1 : vel < 0 ? -1 : dir;
+        dir += (target - dir) * 0.08;
+        const mag = Math.min(1, Math.abs(vel) / 40);
+
+        washDown.style.opacity = (vel > 0 ? mag * 0.32 : 0).toFixed(3);
+        washUp.style.opacity   = (vel < 0 ? mag * 0.32 : 0).toFixed(3);
+
+        const blend = (dir + 1) / 2; // 0=شرابی .. 1=طلایی
+        const c = [
+          Math.round(wine[0] + (gold[0] - wine[0]) * blend),
+          Math.round(wine[1] + (gold[1] - wine[1]) * blend),
+          Math.round(wine[2] + (gold[2] - wine[2]) * blend),
+        ];
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter";
+        for (const m of motes) {
+          let y = (m.y + flow * m.depth) % 1; if (y < 0) y += 1;
+          const px = m.x * W, py = y * H, R = m.r * 5;
+          const a = 0.1 + 0.55 * mag * m.depth;        // در سکون کم‌رنگ، با اسکرول روشن‌تر
+          const g = ctx.createRadialGradient(px, py, 0, px, py, R);
+          g.addColorStop(0, rgba(c, a));
+          g.addColorStop(1, rgba(c, 0));
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, R, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+
+    /* راه‌اندازیِ اولیه از روی هش */
+    go((location.hash || "#home").replace("#", ""));
+    runCounters();
+  }
+
+  if (window.__DAMSA_READY__) start();
+  else document.addEventListener("damsa:ready", start, { once: true });
+})();
