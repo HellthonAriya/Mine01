@@ -112,8 +112,8 @@
       // به لحظه‌ای پیمایش کن که سیاره و آیتم‌هایش در نمایان‌ترین حالت‌اند (raw ≈ 0.5).
       let top = base;
       if (t.classList.contains("bay--system") && !reduce) {
-        // لحظهٔ واضح (پینِ تمام‌صفحه که آیتم‌ها کاملاً پیدا هستند) ~ raw 0.28
-        top = base + t.offsetHeight * 0.28;
+        // ابتدای ناحیهٔ توقف: raw ≈ 0.20 → سیاره کاملاً واضح، همه‌چیز ساکن
+        top = base + t.offsetHeight * 0.20;
       }
       scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
     }
@@ -302,19 +302,25 @@
           // صحنهٔ چسبان → پروازِ عمقی (هم دسکتاپ هم موبایل)
           const raw = clamp(-rect.top / total, 0, 1);
           sec.style.setProperty("--p", raw.toFixed(3));
-          sec.style.setProperty("--pz", (-560 + raw * 900).toFixed(0) + "px");
-          // سیاره در لحظهٔ پین (صحنهٔ تمام‌صفحه) کاملاً واضح است و هنگامِ اسکرول به‌سمتِ
-          // بالا از کنارِ بیننده «پرواز» می‌کند و می‌رود؛ بلافاصله سیارهٔ بعدی می‌آید.
-          // اجزا زود نمایان می‌شوند و چون آیتم‌ها در پایینِ صحنه‌اند، هنگامِ اسکرول
-          // تقریباً تا انتهای بخش روی صفحه می‌مانند؛ پس دیر (نزدیکِ raw=1) محو می‌شوند
-          // تا فاصلهٔ خالیِ بینِ سیاره‌ها به‌حداقل برسد.
-          sec.style.setProperty("--pvis", (ss(0.02, 0.10, raw) * (1 - ss(0.86, 0.99, raw))).toFixed(3));
-          sec.style.setProperty("--hud", (ss(0.05, 0.15, raw) * (1 - ss(0.80, 0.95, raw))).toFixed(3));
-          sec.style.setProperty("--orb", (ss(0.07, 0.20, raw) * (1 - ss(0.84, 0.98, raw))).toFixed(3));
-          sec.style.setProperty("--cz", ((raw - 0.5) * 180).toFixed(0) + "px");
-          sec.style.setProperty("--rotY", ((raw - 0.5) * 26).toFixed(1) + "deg");
+
+          // ناحیهٔ توقف (dwell): raw بین D_START و D_END همهٔ متغیرهای انیمیشن
+          // (zoom/rotY/cz) قفل می‌شوند تا محتوا بی‌حرکت بماند؛ فقط sprite سیاره
+          // با اسکرول می‌چرخد (چون به scrollY مطلق وابسته است، نه raw).
+          const D_S = 0.20, D_E = 0.65;
+          const anim = raw < D_S ? raw / D_S * 0.5
+                     : raw > D_E ? 0.5 + (raw - D_E) / (1 - D_E) * 0.5
+                     : 0.5;
+
+          sec.style.setProperty("--pz",   (-560 + anim * 900).toFixed(0) + "px");
+          sec.style.setProperty("--cz",   ((anim - 0.5) * 180).toFixed(0) + "px");
+          sec.style.setProperty("--rotY", ((anim - 0.5) * 26).toFixed(1) + "deg");
           sec.style.setProperty("--rotX", "0deg");
           sec.style.setProperty("--pscale", "1");
+
+          // opacity: raw مستقیم — پنجرهٔ دید عریض است تا فاصلهٔ خالی بین سیاره‌ها کم باشد
+          sec.style.setProperty("--pvis", (ss(0.02, 0.10, raw) * (1 - ss(0.84, 0.97, raw))).toFixed(3));
+          sec.style.setProperty("--hud",  (ss(0.04, 0.14, raw) * (1 - ss(0.80, 0.95, raw))).toFixed(3));
+          sec.style.setProperty("--orb",  (ss(0.06, 0.18, raw) * (1 - ss(0.82, 0.97, raw))).toFixed(3));
         } else {
           // صحنهٔ کوتاه (نادر): حالتِ خنثی
           sec.style.cssText += ";--p:.5;--pz:0px;--pvis:1;--hud:1;--orb:1;--cz:0px;--rotY:0deg;--rotX:0deg;--pscale:1";
