@@ -33,15 +33,26 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-say "نصب پیش‌نیازها (nginx, git, nodejs)…"
+say "نصب پیش‌نیازها (nginx, git, curl)…"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y -qq
-apt-get install -y -qq nginx git
-# Node را اگر نبود نصب کن
-if ! command -v node >/dev/null 2>&1 && ! command -v nodejs >/dev/null 2>&1; then
-  apt-get install -y -qq nodejs
+apt-get install -y -qq nginx git curl ca-certificates
+
+# --- Node: اگر نبود یا خیلی قدیمی بود (EOL)، از NodeSource نسخهٔ LTS نصب کن ---
+# دیستروهای قدیمیِ Ubuntu/Debian معمولاً Node v12 (که از سال ۲۰۲۲ پشتیبانی نمی‌شود)
+# را با apt نصب می‌کنند؛ همین نسخهٔ خیلی قدیمی باعثِ ناپایداریِ سرویس می‌شود.
+NODE_BIN="$(command -v node || command -v nodejs || true)"
+NODE_MAJOR=0
+if [ -n "${NODE_BIN}" ]; then
+  NODE_MAJOR="$(${NODE_BIN} -v 2>/dev/null | sed -E 's/^v([0-9]+).*/\1/')"
 fi
-NODE_BIN="$(command -v node || command -v nodejs)"
+case "${NODE_MAJOR}" in ''|*[!0-9]*) NODE_MAJOR=0 ;; esac
+if [ -z "${NODE_BIN}" ] || [ "${NODE_MAJOR}" -lt 18 ]; then
+  say "نصب/ارتقاءِ Node به نسخهٔ LTS (۲۰.x) از NodeSource…"
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash - >/dev/null 2>&1
+  apt-get install -y -qq nodejs
+  NODE_BIN="$(command -v node || command -v nodejs)"
+fi
 say "Node: ${NODE_BIN} ($(${NODE_BIN} -v 2>/dev/null || echo '?'))"
 
 say "دریافت سورس سایت در ${APP_DIR}…"
