@@ -161,7 +161,7 @@
     })();
 
     /* ===================================================================
-       ۴) چیدمانِ مداریِ هولوکارت‌ها (فقط دسکتاپ)
+       ۴) چیدمانِ مداریِ هولوکارت‌ها (دسکتاپ و موبایل)
        =================================================================== */
     function layoutOrbits() {
       desktop = matchMedia("(min-width:901px)").matches;
@@ -169,13 +169,19 @@
         const scene = $(".system__scene", sec);
         const planet = $(".planet", sec);
         const holos = $$(".holo", sec);
-        if (!desktop || reduce) { holos.forEach((h) => { h.style.left = h.style.top = ""; h.style.removeProperty("--z"); }); return; }
+        if (reduce) { holos.forEach((h) => { h.style.left = h.style.top = ""; h.style.removeProperty("--z"); }); return; }
         const cx = planet.offsetLeft + planet.offsetWidth / 2;
         const cy = planet.offsetTop;                    // مرکزِ دیداری (top:50% + translateY(-50%))
         const sceneW = scene.offsetWidth, sceneH = scene.offsetHeight;
         const n = holos.length;
+        const narrow = sceneW < 760;
+        if (narrow) {
+          // موبایل: کارت‌ها نوارِ افقیِ قابلِ سوایپ در پایینِ صحنه‌اند (CSS می‌چیند)
+          holos.forEach((h) => { h.style.left = h.style.top = ""; h.style.removeProperty("--z"); });
+          return;
+        }
+        // دسکتاپ: بادبزنِ کارت‌ها در نیمهٔ راستِ سیاره؛ ربعِ راستِ صفحه برای HUD
         const R = clamp(planet.offsetWidth * 0.58 + 20, 150, 270);
-        // کارت‌ها در نیمهٔ سمتِ راستِ سیاره خوشه می‌شوند و ربعِ راستِ صفحه برای HUD خالی می‌ماند
         const maxLeft = sceneW * 0.60;
         holos.forEach((h, i) => {
           const w = h.offsetWidth, hh = h.offsetHeight;
@@ -183,12 +189,9 @@
           const dx = Math.cos(a) * R * 0.72 + 24;
           const dy = Math.sin(a) * R * 0.92;
           const z = (i % 2 === 0 ? 140 : -40);
-          let left = cx + dx - w / 2;
-          let top = cy + dy - hh / 2;
-          left = clamp(left, 12, Math.max(12, maxLeft - w / 2));
-          top = clamp(top, 104, sceneH - hh - 24);
-          h.style.left = left + "px";
-          h.style.top = top + "px";
+          let left = clamp(cx + dx - w / 2, 12, Math.max(12, maxLeft - w / 2));
+          let top = clamp(cy + dy - hh / 2, 104, sceneH - hh - 24);
+          h.style.left = left + "px"; h.style.top = top + "px";
           h.style.setProperty("--z", z + "px");
         });
       });
@@ -254,8 +257,8 @@
           return;
         }
         const total = sec.offsetHeight - vh;
-        if (desktop && total > 60) {
-          // دسکتاپ: صحنهٔ چسبان → پروازِ عمقی
+        if (total > 60) {
+          // صحنهٔ چسبان → پروازِ عمقی (هم دسکتاپ هم موبایل)
           const raw = clamp(-rect.top / total, 0, 1);
           sec.style.setProperty("--p", raw.toFixed(3));
           sec.style.setProperty("--pz", (-560 + raw * 900).toFixed(0) + "px");
@@ -267,14 +270,8 @@
           sec.style.setProperty("--rotX", "0deg");
           sec.style.setProperty("--pscale", "1");
         } else {
-          // موبایل: سیارهٔ سه‌بعدی که با عبور از صفحه می‌چرخد و عمق می‌گیرد
-          const d = clamp((rect.top + rect.height / 2 - vh / 2) / vh, -1.2, 1.2);
-          const near = clamp(1 - Math.abs(d), 0, 1);
-          sec.style.setProperty("--rotY", (d * 24).toFixed(1) + "deg");
-          sec.style.setProperty("--rotX", (-d * 7).toFixed(1) + "deg");
-          sec.style.setProperty("--pscale", (0.9 + near * 0.14).toFixed(3));
-          sec.style.setProperty("--pvis", "1"); sec.style.setProperty("--hud", "1");
-          sec.style.setProperty("--orb", "1"); sec.style.setProperty("--pz", "0px"); sec.style.setProperty("--cz", "0px");
+          // صحنهٔ کوتاه (نادر): حالتِ خنثی
+          sec.style.cssText += ";--p:.5;--pz:0px;--pvis:1;--hud:1;--orb:1;--cz:0px;--rotY:0deg;--rotX:0deg;--pscale:1";
         }
       });
 

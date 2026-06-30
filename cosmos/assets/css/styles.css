@@ -348,21 +348,26 @@ img{max-width:100%}
 @media (max-width:1100px){
   .planet{inset-inline-end:clamp(4%,8vw,12%)}
 }
-/* موبایل/تبلت: سیارهٔ سه‌بعدیِ چرخان بالا (با عمق و چرخشِ اسکرول)، کارت‌ها در جریانِ عمودیِ خوانا */
+/* موبایل/تبلت: همان سفرِ عمقیِ چسبانِ دسکتاپ — سیاره و نام پین می‌شوند و در عمق
+   پرواز می‌کنند؛ آیتم‌ها نوارِ افقیِ قابلِ سوایپ در پایینِ صحنه‌اند (خوانا). */
 @media (max-width:900px){
-  .bay--system{min-height:auto;padding-block:9vh 6vh}
-  .system{position:relative;height:auto;display:block}
-  .system__view{perspective:none;height:auto}
-  .system__scene{position:relative;transform:none!important;transform-style:flat;opacity:1!important}
-  /* سیاره روی موبایل پرسپکتیوِ خودش را دارد تا سه‌بعدی و چرخان بماند */
-  .planet{position:relative;inset:auto;width:min(58vw,280px);margin:0 auto 1.6rem;transform-style:preserve-3d;opacity:1!important;
-    transform:perspective(720px) rotateY(var(--rotY,0deg)) rotateX(var(--rotX,0deg)) scale(var(--pscale,1))!important}
-  .hudcard{position:relative;inset:auto;transform:none;max-width:none;text-align:center;margin-bottom:1.6rem;opacity:1!important;translate:none!important}
+  .system__view{perspective:780px}
+  /* سیاره وسط-بالا */
+  .planet{inset-inline-end:auto;left:0;right:0;margin-inline:auto;inset-block-start:31%;width:clamp(150px,44vw,210px)}
+  /* نامِ سیاره زیرِ آن، وسط‌چین */
+  .hudcard{inset-block-start:51%;inset-inline-start:14px;inset-inline-end:14px;max-width:none;text-align:center;z-index:6}
+  .hudcard__name{font-size:clamp(1.5rem,6.6vw,2.1rem);margin:.1rem 0 .3rem}
+  .hudcard__tag{font-size:.9rem;margin-bottom:.2rem}
   .hudcard__count{justify-content:center}
-  .orbits{position:relative;inset:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:14px;pointer-events:auto;opacity:1!important}
-  .holo{position:relative!important;inset:auto!important;width:auto!important;transform:none!important;opacity:1!important;transform-style:flat}
+  /* نوارِ افقیِ آیتم‌ها در پایین */
+  .orbits{inset:auto 0 0 0;display:flex;gap:12px;overflow-x:auto;overflow-y:visible;
+    padding:14px max(14px,var(--pad)) calc(14px + env(safe-area-inset-bottom));scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;transform-style:flat}
+  .orbits::-webkit-scrollbar{display:none}
+  .holo{position:relative!important;inset:auto!important;left:auto!important;top:auto!important;
+    flex:0 0 78vw;max-width:300px;scroll-snap-align:center;transform:none!important;--in:1;padding:15px}
+  .holo__desc{-webkit-line-clamp:2}
   .dots{display:none}
-  .hud__cta .hud__badge{margin-inline-start:.1rem}
 }
 @media (max-width:560px){
   .hud__nav{max-width:none;flex:1}
@@ -373,10 +378,15 @@ img{max-width:100%}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *{animation:none!important}
-  .system__scene{transform:none!important}
-  .planet{opacity:1!important}
-  .hudcard{opacity:1!important;translate:none!important}
-  .orbits,.holo{opacity:1!important;transition:none}
+  /* چیدمانِ ساکن و خوانا: سیاره بالا، کارت‌ها در شبکهٔ عمودی */
+  .bay--system{min-height:auto;padding-block:9vh 6vh}
+  .system{position:relative;height:auto;display:block}
+  .system__view{perspective:none}
+  .system__scene{position:relative;transform:none!important}
+  .planet{position:relative!important;inset:auto!important;left:auto;right:auto;margin:0 auto 1.4rem!important;transform:none!important;opacity:1!important;width:min(52vw,240px)}
+  .hudcard{position:relative;inset:auto;transform:none;max-width:none;text-align:center;margin-bottom:1.4rem;opacity:1!important;translate:none!important}
+  .orbits{position:relative;inset:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:14px;opacity:1!important;pointer-events:auto}
+  .holo{position:relative!important;inset:auto!important;left:auto!important;top:auto!important;width:auto!important;--in:1;transform:none!important;transition:none}
   .warp__fill{transition:none}
 }
 
