@@ -8,6 +8,7 @@ set -euo pipefail
 
 BRANCH="claude/wizardly-feynman-nc1fzn"
 APP_DIR="/var/www/damsa"
+RAW="https://raw.githubusercontent.com/HellthonAriya/Mine01/refs/heads/${BRANCH}/scripts"
 
 say() { printf "\033[1;33m▸ %s\033[0m\n" "$*"; }
 
@@ -31,11 +32,19 @@ chown -R www-data:www-data "${APP_DIR}"
 say "ری‌استارتِ سرویسِ سایت…"
 if systemctl list-unit-files 2>/dev/null | grep -q '^damsa\.service'; then
   systemctl restart damsa || say "هشدار: ری‌استارتِ damsa ناموفق بود؛ لاگ: journalctl -u damsa"
+  say "بارگذاری مجدد Nginx…"
+  nginx -t && systemctl reload nginx
+  say "آپدیت شد ✓"
 else
-  say "سرویسِ damsa یافت نشد؛ به‌نظر می‌رسد نسخهٔ قدیمی نصب است. یک‌بار deploy.sh را اجرا کن."
+  # نصبِ قدیمی (ایستا، بدونِ سرویسِ Node). به‌جای هشدار، خودکار deploy را اجرا
+  # می‌کنیم تا سرویسِ damsa و reverse-proxy ساخته شوند. deploy رمزِ موجود را
+  # در /etc/damsa.env حفظ می‌کند و idempotent است.
+  say "سرویسِ damsa یافت نشد (نصبِ قدیمی). اجرای خودکارِ deploy برای نصبِ سرویس…"
+  if [ -f "${APP_DIR}/scripts/deploy.sh" ]; then
+    bash "${APP_DIR}/scripts/deploy.sh"
+  else
+    curl -fsSL "${RAW}/deploy.sh" | bash
+  fi
+  # deploy خودش Nginx و سرویس را تنظیم و بارگذاری می‌کند.
+  say "آپدیت و ارتقا به نسخهٔ سرویس‌دار انجام شد ✓"
 fi
-
-say "بارگذاری مجدد Nginx…"
-nginx -t && systemctl reload nginx
-
-say "آپدیت شد ✓"

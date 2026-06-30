@@ -210,6 +210,7 @@ fi
 echo "   صفحهٔ انتخابِ قالب:  ${BASE}/"
 echo "   کافه:      ${BASE}/cafe/        · پنل: ${BASE}/cafe/admin"
 echo "   رستوران:   ${BASE}/restaurant/  · پنل: ${BASE}/restaurant/admin"
+echo "   کیهان:     ${BASE}/cosmos/      · پنل: ${BASE}/cosmos/admin"
 echo "   رمزِ هر دو پنل:  ${ADMIN_PASS}"
 echo "   (رمز در ${ENV_FILE} ذخیره شده؛ برای تغییر، آن را ویرایش و سرویس را restart کن.)"
 echo "   برای آپدیت بعدی:  sudo bash ${APP_DIR}/scripts/update.sh"
